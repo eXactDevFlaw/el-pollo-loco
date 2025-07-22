@@ -1,7 +1,30 @@
+@font-face {
+    font-family: 'WesternCowboy';
+    src: url('./fonts/WesternCowboy.ttf') format('truetype');
+}
+
+html{
+    font-size: 16px;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    background-image: url('./img/background/background-desert.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'WesternCowboy', sans-serif;
+    font-size: 3rem;
 }
 
 canvas {
