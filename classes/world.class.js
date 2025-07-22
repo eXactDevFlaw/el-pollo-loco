@@ -1,22 +1,25 @@
 class World {
     character = new Character();
-    level = level1;
+    level;
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
     statusBar = new StatusBar();
+    coinStatusBar = new CoinStatusBar();
+    bottleStatusBar = new BottleStatusBar();
     throwableObjects = []
 
-    constructor(canvas, keyboard) {
+
+    constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.level = level;
         this.draw();
         this.setWorld();
         this.run();
     }
-
 
     setWorld() {
         this.character.world = this;
@@ -62,7 +65,11 @@ class World {
 
         this.ctx.translate(-this.camera_x, 0)
         // ------ Space for fixed objects --------
+
+        
         this.addToMap(this.statusBar);
+        this.addToMap(this.coinStatusBar);
+        this.addToMap(this.bottleStatusBar);
         this.ctx.translate(this.camera_x, 0);
 
 

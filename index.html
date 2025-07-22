@@ -18,16 +18,19 @@
     <script src="./classes/level.class.js"></script>
     <script src="./classes/endboss.class.js"></script>
     <script src="./classes/throwable-objects.class.js"></script>
+    <script src="./classes/coin-status-bar.class.js"></script>
+    <script src="./classes/bottle-status-bar.class.js"></script>    
     <script src="./levels/level-1.js"></script>
     <script src="./js/game.js"></script>
 </head>
 
 <body>
-
-    <h1>El Pollo Loco</h1>
-
-    <canvas id="canvas" width="720" height="480"></canvas>
-
+    <div class="game-content-wrapper">
+        <h1>El Pollo Loco</h1>
+        <canvas id="canvas" width="720" height="480" class="d-none"></canvas>
+        <img id="start-game" src="./img/9_intro_outro_screens/start/startscreen_2.png" alt="">
+    </div>
+    <div id="portrait-mode">Please turn your device.</div>
 </body>
 
 </html>
