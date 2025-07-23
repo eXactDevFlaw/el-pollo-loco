@@ -22,7 +22,7 @@ class DrawableObjects {
     }
 
     drawBorder(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Bottle || this instanceof Coin) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
             ctx.beginPath();
             ctx.lineWidth = '3';
             ctx.strokeStyle = 'blue';
