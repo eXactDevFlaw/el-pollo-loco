@@ -13,11 +13,16 @@ class DrawableObjects {
     }
 
     draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        try{
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        } catch(err) {
+            console.warn('Error loading image', err);
+            console.log('Could not load image', this.img.src);
+        }
     }
 
     drawBorder(ctx) {
-        if (this instanceof Character || this instanceof Chicken) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
             ctx.beginPath();
             ctx.lineWidth = '3';
             ctx.strokeStyle = 'blue';

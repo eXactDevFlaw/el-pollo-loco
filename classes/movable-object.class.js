@@ -17,7 +17,7 @@ class MovableObject extends DrawableObjects {
     }
 
     isAboveGround() {
-        if(this instanceof ThrowableObjects) {
+        if (this instanceof ThrowableObjects) {
             return true
         } else {
             return this.y < 160
@@ -49,18 +49,18 @@ class MovableObject extends DrawableObjects {
 
     hit() {
         this.energy -= 5;
-        if(this.energy < 0) {
+        if (this.energy < 0) {
             this.energy = 0;
         } else {
             this.lastHit = new Date().getTime();
         }
     }
 
-    isDead(){
+    isDead() {
         return this.energy == 0;
     }
 
-    isHurt(){
+    isHurt() {
         let timePassed = new Date().getTime() - this.lastHit; // Difference in ms
         timePassed = timePassed / 1000; // Difference in s
         return timePassed < 1;

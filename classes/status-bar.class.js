@@ -42,7 +42,6 @@ class StatusBar extends DrawableObjects {
             return 0;
         }
     }
-
 }
 
 
