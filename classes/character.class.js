@@ -4,6 +4,7 @@ class Character extends MovableObject {
     speed = 5;
     world;
     isIdle = 0;
+
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -68,7 +69,7 @@ class Character extends MovableObject {
     ];
 
     constructor() {
-        super().loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
+        super().loadImage(this.IMAGES_IDLE[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
@@ -81,7 +82,7 @@ class Character extends MovableObject {
 
     animate() {
         this.isIdle = 0;
-        setInterval(() => {
+        setStopableIntervall(() => {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
@@ -94,39 +95,61 @@ class Character extends MovableObject {
 
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
+                console.log(this.speedY)
             }
-            // console.log(this.speedY)
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60)
 
 
-        setInterval(() => {
-            if(this.isDead()){
-                this.playAnimation(this.IMAGES_DEAD);
-                this.isIdle = 0
+        setStopableIntervall(() => {
+            if (this.isDead()) {
+                this.isDeadHanlder();
             } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-                this.isIdle = 0;
+                this.isHurtHandler();
             } else if (this.isAboveGround()) {
-                if(this.speedY > 0){
-                    
-                    this.playAnimation(this.IMAGES_JUMPING) // lade bilder 4-7
-                    console.log(this.IMAGES_JUMPING[0])
-                } else {
-   
-                    // this.playAnimation(this.IMAGES_JUMPING) // lade bilder 0-3
-                }
-                this.isIdle = 0;
+                this.isJumpingHandler();
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
+                this.isWalkingHandler();
             } else {
-                this.isIdle++;
-                if(this.isIdle < 300){
-                    this.playAnimation(this.IMAGES_IDLE);
-                } else {
-                    this.playAnimation(this.IMAGES_IDLE_LONG);
-                }
+                this.checkIdleStatus();
             }
         }, 100);
+    }
+
+    resetIsIdle() {
+        this.isIdle = 0;
+    }
+
+    checkIdleStatus() {
+        this.isIdle++;
+        if (this.isIdle < 200) {
+            this.playAnimation(this.IMAGES_IDLE);
+        } else {
+            this.playAnimation(this.IMAGES_IDLE_LONG);
+        }
+    }
+
+    isDeadHanlder() {
+        this.playAnimation(this.IMAGES_DEAD);
+        this.resetIsIdle();
+    }
+
+    isHurtHandler() {
+        this.playAnimation(this.IMAGES_HURT);
+        this.resetIsIdle();
+    }
+
+    isJumpingHandler() {
+        if (this.speedY > 0) {
+            this.playAnimation(this.IMAGES_JUMPING) // lade bilder 4-7
+        } else {
+            // this.playAnimation(this.IMAGES_JUMPING) // lade bilder 0-3
+        }
+        this.resetIsIdle()
+    }
+
+    isWalkingHandler() {
+        this.playAnimation(this.IMAGES_WALKING);
+        this.resetIsIdle()
     }
 }

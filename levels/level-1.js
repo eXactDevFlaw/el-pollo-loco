@@ -3,6 +3,35 @@ let level1;
 function startGame() {
     level1 = new Level(
         [
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle()
+        ],
+
+        [
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin()
+        ],
+
+        [
             new Chicken(),
             new Chicken(),
             new Chicken(),
