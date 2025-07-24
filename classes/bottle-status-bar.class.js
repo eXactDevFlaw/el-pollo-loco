@@ -18,12 +18,12 @@ class BottleStatusBar extends StatusBar {
         this.y = 100;
         this.width = 200;
         this.height = 60;
-        this.setPercentage(0);
+        this.setPercentage(this.percentage);
     }
 
     setPercentage(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES[this.resolveImageIndex()]
+        let calc = Math.trunc(percentage / 2);
+        let path = this.IMAGES[calc];
         this.img = this.imageCache[path];
     }
 }

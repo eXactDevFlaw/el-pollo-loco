@@ -8,7 +8,9 @@ class World {
     statusBar = new StatusBar();
     coinStatusBar = new CoinStatusBar();
     bottleStatusBar = new BottleStatusBar();
-    throwableObjects = []
+    throwableObjects = [];
+    bottleAmount = 0;
+    coinAmount = 0;
 
 
     constructor(canvas, keyboard, level) {
@@ -28,6 +30,8 @@ class World {
     run() {
         setInterval(() => {
             this.checkCollision();
+            this.checkCoinCollisions();
+            this.checkBottlePickup();
             this.checkThrowObjects();
         }, 200)
     }
@@ -46,6 +50,36 @@ class World {
                 this.statusBar.setPercentage(this.character.energy);
             }
         })
+    }
+
+    checkCoinCollisions() {
+        const coinsToRemove = [];
+        this.level.coins.forEach((coin, i) => {
+            if (this.character.isColliding(coin)) {
+                coinsToRemove.push(i);
+                this.coinAmount++;
+                this.coinStatusBar.setPercentage(this.coinAmount);
+            }
+        });
+
+        for (let i = coinsToRemove.length - 1; i >= 0; i--) {
+            this.level.coins.splice(coinsToRemove[i], 1);
+        }
+    }
+
+    checkBottlePickup() {
+        const bottlesToRemove = [];
+        this.level.bottles.forEach((bottle, i) => {
+            if (this.character.isColliding(bottle)) {
+                bottlesToRemove.push(i);
+                this.bottleAmount++;
+                this.bottleStatusBar.setPercentage(this.bottleAmount);
+            }
+        });
+
+        for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
+            this.level.bottles.splice(bottlesToRemove[i], 1);
+        }
     }
 
     draw() {
@@ -67,7 +101,7 @@ class World {
         this.ctx.translate(-this.camera_x, 0)
         // ------ Space for fixed objects --------
 
-        
+
         this.addToMap(this.statusBar);
         this.addToMap(this.coinStatusBar);
         this.addToMap(this.bottleStatusBar);
