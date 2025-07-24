@@ -18,6 +18,8 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.level = level;
+        this.lastThrowTime = 0;
+        this.throwCooldown = 300;
         this.draw();
         this.setWorld();
         this.run();
@@ -37,9 +39,18 @@ class World {
     }
 
     checkThrowObjects() {
-        if (this.keyboard.D) {
-            let bottle = new ThrowableObjects(this.character.x, this.character.y)
+        const now = Date.now();
+
+        if (this.keyboard.D &&
+            now - this.lastThrowTime > this.throwCooldown &&
+            this.bottleAmount > 0) {
+
+            let bottle = new ThrowableObjects(this.character.x, this.character.y);
             this.throwableObjects.push(bottle);
+
+            this.lastThrowTime = now;
+            this.bottleAmount--;
+            this.bottleStatusBar.setPercentage(this.bottleAmount);
         }
     }
 
@@ -69,16 +80,17 @@ class World {
 
     checkBottlePickup() {
         const bottlesToRemove = [];
-        this.level.bottles.forEach((bottle, i) => {
-            if (this.character.isColliding(bottle)) {
-                bottlesToRemove.push(i);
-                this.bottleAmount++;
-                this.bottleStatusBar.setPercentage(this.bottleAmount);
+        if(this.bottleAmount < 5){
+            this.level.bottles.forEach((bottle, i) => {
+                if (this.character.isColliding(bottle)) {
+                    bottlesToRemove.push(i);
+                    this.bottleAmount++;
+                    this.bottleStatusBar.setPercentage(this.bottleAmount);
+                }
+            });
+            for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
+                this.level.bottles.splice(bottlesToRemove[i], 1);
             }
-        });
-
-        for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
-            this.level.bottles.splice(bottlesToRemove[i], 1);
         }
     }
 

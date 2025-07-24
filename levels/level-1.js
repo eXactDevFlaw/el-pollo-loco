@@ -12,7 +12,6 @@ function startGame() {
             new Bottle(),
             new Bottle(),
             new Bottle(),
-            new Bottle(),
             new Bottle()
         ],
 
@@ -39,6 +38,10 @@ function startGame() {
 
         [
             new Cloud(),
+            new Cloud(),
+            new Cloud(),
+            new Cloud(),
+            new Cloud()
         ],
 
         [

@@ -22,7 +22,7 @@ class BottleStatusBar extends StatusBar {
     }
 
     setPercentage(percentage) {
-        let calc = Math.trunc(percentage / 2);
+        let calc = percentage;
         let path = this.IMAGES[calc];
         this.img = this.imageCache[path];
     }

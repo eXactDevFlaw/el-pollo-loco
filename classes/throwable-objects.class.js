@@ -36,7 +36,7 @@ class ThrowableObjects extends MovableObject {
     }
 
     animate() {
-        setInterval(() => {
+        setStopableIntervall(() => {
             this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
         }, 75);
     }
