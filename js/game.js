@@ -4,69 +4,33 @@ let keyboard = new Keyboard();
 let startBtn;
 let intervallIds = [];
 
+const keyMap = {
+    39: 'RIGHT',
+    37: 'LEFT',
+    38: 'UP',
+    40: 'DOWN',
+    32: 'SPACE',
+    68: 'D'
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    init();
+    startGameHandler();
 })
 
 window.addEventListener('keydown', (e) => {
-    if (e.keyCode == 39) {
-        keyboard.RIGHT = true;
-    }
-
-    if (e.keyCode == 37) {
-        keyboard.LEFT = true;
-    }
-
-    if (e.keyCode == 38) {
-        keyboard.UP = true;
-    }
-
-    if (e.keyCode == 40) {
-        keyboard.DOWN = true;
-    }
-
-    if (e.keyCode == 32) {
-        keyboard.SPACE = true;
-    }
-
-    if (e.keyCode == 68) {
-        keyboard.D = true;
-    }
-})
-
+    if (keyMap[e.keyCode]) keyboard[keyMap[e.keyCode]] = true;
+});
 window.addEventListener('keyup', (e) => {
-    if (e.keyCode == 39) {
-        keyboard.RIGHT = false;
-    }
-
-    if (e.keyCode == 37) {
-        keyboard.LEFT = false;
-    }
-
-    if (e.keyCode == 38) {
-        keyboard.UP = false;
-    }
-
-    if (e.keyCode == 40) {
-        keyboard.DOWN = false;
-    }
-
-    if (e.keyCode == 32) {
-        keyboard.SPACE = false;
-    }
-
-    if (e.keyCode == 68) {
-        keyboard.D = false;
-    }
-})
-
+    if (keyMap[e.keyCode]) keyboard[keyMap[e.keyCode]] = false;
+});
 
 function startGameHandler() {
     startBtn = document.getElementById('start-game');
     startBtn.addEventListener('click', () => {
-    startBtn.classList.add('d-none')
-    loadGame();
-})
+        startBtn.classList.add('d-none')
+        loadGame();
+    })
 }
 
 function loadGame() {
@@ -86,8 +50,4 @@ function stopGame() {
         clearInterval(id);
     });
     intervallIds = [];
-}
-
-function init() {
-    startGameHandler();
 }

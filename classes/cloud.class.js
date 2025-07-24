@@ -11,13 +11,9 @@ class Cloud extends MovableObject {
     constructor() {
         super()
         let randomNumber = Math.floor(Math.random() * 2);
-        console.log(randomNumber);
-        
         this.loadImage(this.IMAGES_CLOUDS[randomNumber]);
-
         this.x = Math.floor(Math.random() * 2000);
         this.y = Math.floor(Math.random() * 30);
-        console.log(this.y);
         this.animate();
     }
 

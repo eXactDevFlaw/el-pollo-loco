@@ -23,8 +23,30 @@ class MovableObject extends DrawableObjects {
         }
     }
 
-    isColliding(mo) {
-        return this.x + this.width > mo.x && this.y + this.height > mo.y && this.x < mo.x && this.y < mo.y + mo.height
+    getHitbox() {
+        return {
+            x: this.x + (this.hitboxOffsetX || 0),
+            y: this.y + (this.hitboxOffsetY || 0),
+            width: this.hitboxWidth || this.width,
+            height: this.hitboxHeight || this.height
+        };
+    }
+
+    isColliding(otherObject) {
+        const myHitbox = this.getHitbox();
+        const otherHitbox = otherObject.getHitbox();
+
+        // Check horizontal and vertical overlap
+        const horizontallyOverlaps =
+            myHitbox.x < otherHitbox.x + otherHitbox.width &&
+            myHitbox.x + myHitbox.width > otherHitbox.x;
+
+        const verticallyOverlaps =
+            myHitbox.y < otherHitbox.y + otherHitbox.height &&
+            myHitbox.y + myHitbox.height > otherHitbox.y;
+
+        // If both overlap, collision detected
+        return horizontallyOverlaps && verticallyOverlaps;
     }
 
     playAnimation(images) {
