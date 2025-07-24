@@ -23,18 +23,9 @@ class MovableObject extends DrawableObjects {
         }
     }
 
-    getHitbox() {
-        return {
-            x: this.x + (this.hitboxOffsetX || 0),
-            y: this.y + (this.hitboxOffsetY || 0),
-            width: this.hitboxWidth || this.width,
-            height: this.hitboxHeight || this.height
-        };
-    }
-
-    isColliding(otherObject) {
+    isColliding(movableObject) {
         const myHitbox = this.getHitbox();
-        const otherHitbox = otherObject.getHitbox();
+        const otherHitbox = movableObject.getHitbox();
 
         // Check horizontal and vertical overlap
         const horizontallyOverlaps =

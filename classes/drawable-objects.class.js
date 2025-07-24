@@ -62,6 +62,15 @@ class DrawableObjects {
         });
     }
 
+    getHitbox() {
+        return {
+            x: this.x + (this.hitboxOffsetX || 0),
+            y: this.y + (this.hitboxOffsetY || 0),
+            width: this.hitboxWidth || this.width,
+            height: this.hitboxHeight || this.height
+        };
+    }
+
     /**
      * Draws the object's current image on the canvas.
      * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
@@ -75,165 +84,15 @@ class DrawableObjects {
         }
     }
 
-    /**
-     * Draws a debug frame around the object depending on its specific class.
-     * Calls the corresponding drawXYZ method based on instance type.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    // drawBorder(ctx) {
-    //     if (this instanceof Character) {
-    //         this.drawCharacter(ctx);
-    //     } else if (this instanceof Chicken) {
-    //         this.drawChicken(ctx);
-    //     } else if (this instanceof Coin) {
-    //         this.drawCoin(ctx);
-    //     } else if (this instanceof Bottle) {
-    //         this.drawBottle(ctx);
-    //     } else if (this instanceof Endboss) {
-    //         this.drawEndboss(ctx);
-    //     }
-    // }
 
     drawBorder(ctx) {
         const { x, y, width, height } = this.getHitbox ? this.getHitbox() : this;
-        ctx.beginPath();
-        ctx.strokeStyle = 'magenta'; // Use a distinct color for hitbox
-        ctx.lineWidth = 2;
-        ctx.rect(x, y, width, height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a blue rectangle frame around the character for debugging.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawCharacter(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'blue';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a black rectangle frame around the chicken for debugging.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawChicken(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a green rectangle frame around the coin for debugging.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawCoin(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a yellow rectangle frame around the bottle for debugging.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawBottle(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'yellow';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a white rectangle frame around the boss for debugging.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawEndboss(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-
-    /**
-     * Draws the object's hitbox for debugging purposes.
-     * @param {CanvasRenderingContext2D} ctx - The drawing context of the canvas.
-     */
-    drawHitbox(ctx) {
-        const hitbox = this.getHitbox();
-        ctx.beginPath();
-        ctx.strokeStyle = 'magenta';
-        ctx.lineWidth = 2;
-        ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-        ctx.stroke();
-    }
-
-    /**
-    * Draws a red rectangle frame around the character for visualite hitbox.
-    * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-    */
-    drawCharacterHitbox(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x + 16, this.y + 75, this.width - 30, this.height - 85);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a red rectangle frame around the chicken for visualite hitbox.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawChickenHitbox(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a red rectangle frame around the coin for visualite hitbox.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawCoinHitbox(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x + 40, this.y + 40, this.width - 80, this.height - 80);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a red rectangle frame around the bottle for visualite hitbox.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawBottleHitbox(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x + 15, this.y + 10, this.width - 30, this.height - 20);
-        ctx.stroke();
-    }
-
-    /**
-     * Draws a red rectangle frame around the boss for visualite hitbox.
-     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-     */
-    drawEndbossHitbox(ctx) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.rect(this.x + 15, this.y + 10, this.width - 30, this.height - 20);
-        ctx.stroke();
+        if (this instanceof Chicken || this instanceof Character || this instanceof Endboss || this instanceof Coin || this instanceof Bottle) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'magenta';
+            ctx.lineWidth = 2;
+            ctx.rect(x, y, width, height);
+            ctx.stroke();
+        }
     }
 }

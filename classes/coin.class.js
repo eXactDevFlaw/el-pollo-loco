@@ -2,10 +2,10 @@ class Coin extends DrawableObjects {
     height = 120;
     width = 120;
 
-    hitboxOffsetX = 20;
-    hitboxOffsetY = 20;
-    hitboxWidth = 80;
-    hitboxHeight = 80;
+    hitboxOffsetX = 40;
+    hitboxOffsetY = 40;
+    hitboxWidth = 40;
+    hitboxHeight = 40;
 
     IMAGES_COINS = [
         'img/8_coin/coin_1.png',

@@ -6,9 +6,9 @@ class Character extends MovableObject {
     isIdle = 0;
 
     hitboxOffsetX = 16;
-    hitboxOffsetY = 75;
+    hitboxOffsetY = 110;
     hitboxWidth = this.width - 30;
-    hitboxHeight = this.height - 85;
+    hitboxHeight = this.height - 120;
 
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
