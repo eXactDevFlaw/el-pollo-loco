@@ -38,10 +38,26 @@ class ThrowableObjects extends MovableObject {
 
     /**
      * Handles the throw logic for the bottle.
+     * @param {number} x - Starting x position (not used currently)
+     * @param {number} y - Starting y position (not used currently)
      */
     throw(x, y) {
-        this.speedY = 20;
+        this.startBottleThrow();
         this.applyGravity();
+        this.moveBottleForward();
+    }
+
+    /**
+     * Sets the initial upward speed for the bottle.
+     */
+    startBottleThrow() {
+        this.speedY = 20;
+    }
+
+    /**
+     * Moves the bottle forward continuously.
+     */
+    moveBottleForward() {
         setInterval(() => {
             this.x += 7.5;
         }, 25);

@@ -31,23 +31,21 @@ class Chicken extends MovableObject {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
-        this.x = 300 + (Math.random() * 2000);
+        this.x = 300 + (Math.random() * 1860);
         this.speed = 0.15 + Math.random() * 0.3;
         this.animate();
     }
 
     /**
-     * Kills the chicken, sets dead image, and schedules removal.
-     * @param {Function} removeCallback - callback to remove chicken from world
+     * Kills the chicken and sets dead image.
      */
-    die(removeCallback) {
+    die() {
         if (this.isDead) return;
         this.isDead = true;
         this.speed = 0;
-        this.playAnimation(this.IMAGES_DEAD);
-        setStopableIntervall(() => {
-            if (removeCallback) removeCallback();
-        }, 3000);
+        this.deathTime = Date.now();
+        // Immediately set the dead image
+        this.loadImage(this.IMAGES_DEAD[0]);
     }
 
     /**
@@ -61,8 +59,6 @@ class Chicken extends MovableObject {
         setStopableIntervall(() => {
             if (!this.isDead) {
                 this.playAnimation(this.IMAGES_WALKING);
-            } else {
-                this.playAnimation(this.IMAGES_DEAD);
             }
         }, 200);
     }

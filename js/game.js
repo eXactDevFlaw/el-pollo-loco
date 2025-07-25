@@ -33,18 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Handles keydown events and updates the Keyboard object.
- * @param {KeyboardEvent} e
+ * @param {KeyboardEvent} e - The keyboard event
  */
 window.addEventListener('keydown', (e) => {
-    if (keyMap[e.keyCode]) keyboard[keyMap[e.keyCode]] = true;
+    if (keyMap[e.keyCode]) {
+        keyboard[keyMap[e.keyCode]] = true;
+    }
 });
 
 /**
  * Handles keyup events and updates the Keyboard object.
- * @param {KeyboardEvent} e
+ * @param {KeyboardEvent} e - The keyboard event
  */
 window.addEventListener('keyup', (e) => {
-    if (keyMap[e.keyCode]) keyboard[keyMap[e.keyCode]] = false;
+    if (keyMap[e.keyCode]) {
+        keyboard[keyMap[e.keyCode]] = false;
+    }
 });
 
 /**
@@ -52,10 +56,15 @@ window.addEventListener('keyup', (e) => {
  */
 function startGameHandler() {
     startBtn = document.getElementById('start-game');
-    startBtn.addEventListener('click', () => {
-        startBtn.classList.add('d-none');
-        loadGame();
-    });
+    startBtn.addEventListener('click', handleStartButtonClick);
+}
+
+/**
+ * Handles the start button click event.
+ */
+function handleStartButtonClick() {
+    startBtn.classList.add('d-none');
+    loadGame();
 }
 
 /**
@@ -70,8 +79,8 @@ function loadGame() {
 
 /**
  * Sets an interval that can be stopped later using stopGame.
- * @param {Function} fn - The callback function to run at each interval.
- * @param {number} time - Interval in milliseconds.
+ * @param {Function} fn - The callback function to run at each interval
+ * @param {number} time - Interval in milliseconds
  */
 function setStopableIntervall(fn, time) {
     let id = setInterval(fn, time);
@@ -82,8 +91,22 @@ function setStopableIntervall(fn, time) {
  * Stops all active game intervals and resets interval ID storage.
  */
 function stopGame() {
+    clearAllIntervals();
+    resetIntervalStorage();
+}
+
+/**
+ * Clears all stored intervals.
+ */
+function clearAllIntervals() {
     intervallIds.forEach((id) => {
         clearInterval(id);
     });
+}
+
+/**
+ * Resets the interval ID storage array.
+ */
+function resetIntervalStorage() {
     intervallIds = [];
 }

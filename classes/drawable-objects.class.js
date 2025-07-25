@@ -63,11 +63,16 @@ class DrawableObjects {
 
     /**
      * Draws a border (hitbox) for debugging.
-     * @param {CanvasRenderingContext2D} ctx
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
      */
     drawBorder(ctx) {
         const { x, y, width, height } = this.getHitbox ? this.getHitbox() : this;
-        if (this instanceof Chicken || this instanceof Character || this instanceof Endboss || this instanceof Coin || this instanceof Bottle) {
+        if (this instanceof Chicken || 
+            this instanceof SmallChicken || 
+            this instanceof Character || 
+            this instanceof Endboss || 
+            this instanceof Coin || 
+            this instanceof Bottle) {
             ctx.beginPath();
             ctx.strokeStyle = 'magenta';
             ctx.lineWidth = 2;
