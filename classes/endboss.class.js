@@ -1,3 +1,7 @@
+/**
+ * The endboss enemy.
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
     height = 400;
     width = 250;
@@ -19,6 +23,9 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/2_alert/G12.png',
     ];
 
+    /**
+     * Creates a new Endboss at a fixed location.
+     */
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
@@ -27,13 +34,16 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Animates the endboss.
+     */
     animate() {
-        setInterval(() => {
+        setStopableIntervall(() => {
             this.moveLeft();
-        }, 1000 / 60)
+        }, 1000 / 60);
 
-        setInterval(() => {
+        setStopableIntervall(() => {
             this.playAnimation(this.IMAGES_WALKING);
-        }, 200)
+        }, 200);
     }
 }

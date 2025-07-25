@@ -1,44 +1,13 @@
+/**
+ * Base class for drawable objects on the canvas.
+ */
 class DrawableObjects {
-    /**
-     * Currently displayed image object.
-     * @type {HTMLImageElement}
-     */
     img;
-
-    /**
-     * Cache of loaded images mapped by their file path.
-     * @type {Object.<string, HTMLImageElement>}
-     */
     imageCache = {};
-
-    /**
-     * Index or key of the current image in use.
-     * @type {number}
-     */
     currentImage = 0;
-
-    /**
-     * X-coordinate of the object on the canvas.
-     * @type {number}
-     */
     x = 120;
-
-    /**
-     * Y-coordinate of the object on the canvas.
-     * @type {number}
-     */
     y = 280;
-
-    /**
-     * Height of the object in pixels.
-     * @type {number}
-     */
     height = 150;
-
-    /**
-     * Width of the object in pixels.
-     * @type {number}
-     */
     width = 100;
 
     /**
@@ -52,7 +21,7 @@ class DrawableObjects {
 
     /**
      * Loads multiple images into the image cache.
-     * @param {string[]} arr - Array of image file paths (e.g. ['img/img1.png', 'img/img2.png']).
+     * @param {string[]} arr - Array of image file paths.
      */
     loadImages(arr) {
         arr.forEach((path) => {
@@ -62,6 +31,10 @@ class DrawableObjects {
         });
     }
 
+    /**
+     * Returns the hitbox of the object.
+     * @returns {{x: number, y: number, width: number, height: number}}
+     */
     getHitbox() {
         return {
             x: this.x + (this.hitboxOffsetX || 0),
@@ -76,6 +49,10 @@ class DrawableObjects {
      * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
      */
     draw(ctx) {
+        if (!this.img) {
+            console.warn('No image to draw for', this);
+            return;
+        }
         try {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         } catch (err) {
@@ -84,7 +61,10 @@ class DrawableObjects {
         }
     }
 
-
+    /**
+     * Draws a border (hitbox) for debugging.
+     * @param {CanvasRenderingContext2D} ctx
+     */
     drawBorder(ctx) {
         const { x, y, width, height } = this.getHitbox ? this.getHitbox() : this;
         if (this instanceof Chicken || this instanceof Character || this instanceof Endboss || this instanceof Coin || this instanceof Bottle) {

@@ -1,3 +1,7 @@
+/**
+ * Status bar for displaying collected coins.
+ * @extends StatusBar
+ */
 class CoinStatusBar extends StatusBar {
     IMAGES = [
         'img/7_statusbars/1_statusbar/1_statusbar_coin/green/0.png',
@@ -10,7 +14,9 @@ class CoinStatusBar extends StatusBar {
 
     percentage = 0;
 
-
+    /**
+     * Creates a new CoinStatusBar.
+     */
     constructor() {
         super();
         this.loadImages(this.IMAGES);
@@ -21,6 +27,10 @@ class CoinStatusBar extends StatusBar {
         this.setPercentage(this.percentage);
     }
 
+    /**
+     * Sets the coin percentage and updates the bar image.
+     * @param {number} percentage - Number of coins collected.
+     */
     setPercentage(percentage) {
         let calc = Math.trunc(percentage / 2);
         let path = this.IMAGES[calc];
