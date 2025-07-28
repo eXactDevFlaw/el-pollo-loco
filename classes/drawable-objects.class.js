@@ -70,7 +70,8 @@ class DrawableObjects {
         if (this instanceof Chicken || 
             this instanceof SmallChicken || 
             this instanceof Character || 
-            this instanceof Endboss) {
+            this instanceof Endboss ||
+            this instanceof Bottle) {
             ctx.beginPath();
             ctx.strokeStyle = 'magenta';
             ctx.lineWidth = 2;

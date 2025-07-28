@@ -74,7 +74,6 @@ class World {
         const keyPressed = this.keyboard.D;
         const cooldownPassed = now - this.lastThrowTime > this.throwCooldown;
         const hasBottles = this.bottleAmount > 0;
-        
         return keyPressed && cooldownPassed && hasBottles;
     }
 
@@ -202,6 +201,7 @@ class World {
     increaseBottleAmount() {
         this.bottleAmount++;
         const percentage = (this.bottleAmount / 5) * 100;
+        
         this.bottleStatusBar.setPercentage(percentage);
     }
 
