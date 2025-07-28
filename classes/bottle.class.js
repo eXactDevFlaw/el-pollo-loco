@@ -21,10 +21,10 @@ class Bottle extends DrawableObjects {
      */
     constructor() {
         super();
-        let randomNumber = Math.trunc(Math.random() * 2);
+        let randomNumber = Math.floor(Math.random() * 2);
         this.loadImage(this.IMAGES_BOTTLE[randomNumber]);
 
-        this.x = Math.trunc((Math.random() * 2000) + 100);
+        this.x = Math.floor(250 + (Math.random() * 2000));
         this.y = 380;
     }
 }

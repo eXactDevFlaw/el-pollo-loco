@@ -21,9 +21,9 @@ class Coin extends DrawableObjects {
      */
     constructor() {
         super();
-        let randomNumber = Math.trunc(Math.random() * 2);
+        let randomNumber = Math.floor(Math.random() * 2);
         this.loadImage(this.IMAGES_COINS[randomNumber]);
-        this.x = (Math.random() * 2000) + 200;
-        this.y = (Math.random() * 260) + 80;
+        this.x = Math.floor(200 + (Math.random() * 2000));
+        this.y = Math.floor(80 + (Math.random() * 260));
     }
 }

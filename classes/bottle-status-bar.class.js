@@ -32,8 +32,8 @@ class BottleStatusBar extends StatusBar {
      * @param {number} percentage - Percentage of bottles collected.
      */
     setPercentage(percentage) {
-        let calc = percentage;
-        let path = this.IMAGES[calc];
+        this.percentage = percentage;
+        let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
 }

@@ -49,7 +49,6 @@ class World {
             this.checkCoinCollisions();
             this.checkBottlePickup();
             this.checkThrowObjects();
-            this.removeDeadChickens();
         }, 200);
     }
 
@@ -100,196 +99,19 @@ class World {
      */
     decreaseBottleAmount() {
         this.bottleAmount--;
-        this.bottleStatusBar.setPercentage(this.bottleAmount);
+        const percentage = (this.bottleAmount / 5) * 100;
+        this.bottleStatusBar.setPercentage(percentage);
     }
 
     /**
      * Checks collisions between the character and all enemies.
      */
     checkCollision() {
-        const enemiesToRemove = [];
-        
-        this.level.enemies.forEach((enemy, i) => {
+        this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
-                if (this.shouldRemoveEnemy(enemy, i)) {
-                    enemiesToRemove.push(i);
-                }
-            }
-        });
-        
-        this.removeEnemiesFromWorld(enemiesToRemove);
-    }
-
-    /**
-     * Determines if enemy should be removed and handles collision.
-     * @param {MovableObject} enemy - The enemy that collided
-     * @param {number} index - Index of the enemy in the array
-     * @returns {boolean} True if enemy should be removed
-     */
-    shouldRemoveEnemy(enemy, index) {
-        if (this.isStompableChicken(enemy)) {
-            return this.handleStompableChicken(enemy);
-        } else if (enemy instanceof Endboss) {
-            this.handlePlayerDamage(enemy);
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if enemy is a stompable chicken type.
-     * @param {MovableObject} enemy - The enemy to check
-     * @returns {boolean} True if enemy can be stomped
-     */
-    isStompableChicken(enemy) {
-        return (enemy instanceof Chicken || enemy instanceof SmallChicken) && !enemy.isDead;
-    }
-
-    /**
-     * Handles collision with stompable chickens.
-     * @param {MovableObject} enemy - The chicken enemy
-     * @returns {boolean} True if chicken should be removed
-     */
-    handleStompableChicken(enemy) {
-        if (this.isChickenStomped(enemy)) {
-            this.handleChickenStomp(enemy);
-            return true;
-        } else {
-            this.handlePlayerDamage(enemy);
-            return false;
-        }
-    }
-
-    /**
-     * Removes enemies from the world safely.
-     * @param {number[]} indicesToRemove - Array of enemy indices to remove
-     */
-    removeEnemiesFromWorld(indicesToRemove) {
-        for (let i = indicesToRemove.length - 1; i >= 0; i--) {
-            this.level.enemies.splice(indicesToRemove[i], 1);
-        }
-    }
-
-    /**
-     * Removes dead chickens after 2 seconds.
-     */
-    removeDeadChickens() {
-        const currentTime = Date.now();
-        const deadChickensToRemove = [];
-        
-        this.level.enemies.forEach((enemy, i) => {
-            if (this.isChickenReadyToRemove(enemy, currentTime)) {
-                deadChickensToRemove.push(i);
-            }
-        });
-        
-        this.removeEnemiesFromWorld(deadChickensToRemove);
-    }
-
-    /**
-     * Checks if a dead chicken should be removed.
-     * @param {MovableObject} enemy - The enemy to check
-     * @param {number} currentTime - Current timestamp
-     * @returns {boolean} True if chicken should be removed
-     */
-    isChickenReadyToRemove(enemy, currentTime) {
-        const isChickenType = enemy instanceof Chicken || enemy instanceof SmallChicken;
-        const hasBeenDeadLongEnough = enemy.isDead && 
-                                      enemy.deathTime && 
-                                      currentTime - enemy.deathTime >= 2000;
-        
-        return isChickenType && hasBeenDeadLongEnough;
-    }
-
-    /**
-     * Handles collision with a single enemy.
-     * @param {MovableObject} enemy
-     * @param {number} index - Index of the enemy in the enemies array.
-     */
-    handleEnemyCollision(enemy, index) {
-        if (enemy instanceof Chicken && !enemy.isDead) {
-            if (this.isChickenStomped(enemy)) {
-                this.handleChickenStomp(enemy, index);
-            } else {
                 this.handlePlayerDamage(enemy);
             }
-        } else if (enemy instanceof Endboss) {
-            this.handlePlayerDamage(enemy);
-        }
-    }
-
-    /**
-     * Determines if the chicken was stomped from above.
-     * @param {Chicken} chicken - The chicken to check
-     * @returns {boolean} True if chicken was stomped from above
-     */
-    isChickenStomped(chicken) {
-        return this.isCharacterFalling() && this.isCharacterStompingFromAbove(chicken);
-    }
-
-    /**
-     * Checks if character is stomping the chicken from above.
-     * @param {Chicken} chicken - The chicken to check against
-     * @returns {boolean} True if character is stomping from above
-     */
-    isCharacterStompingFromAbove(chicken) {
-        if (!this.hasHorizontalOverlap(chicken)) {
-            return false;
-        }
-
-        return this.isVerticalStompingPosition(chicken);
-    }
-
-    /**
-     * Checks if character is in correct vertical position for stomping.
-     * @param {Chicken} chicken - The chicken to check against
-     * @returns {boolean} True if in stomping position
-     */
-    isVerticalStompingPosition(chicken) {
-        const charHitbox = this.character.getHitbox();
-        const chickHitbox = chicken.getHitbox();
-        
-        const charBottom = charHitbox.y + charHitbox.height;
-        const charCenter = charHitbox.y + (charHitbox.height / 2);
-        const chickTop = chickHitbox.y;
-        const chickCenter = chickHitbox.y + (chickHitbox.height / 2);
-        
-        // Character center must be above chicken center (coming from above)
-        const isComingFromAbove = charCenter < chickCenter;
-        // Character's bottom must be close to chicken's top (not deep inside)
-        const hitsTopArea = charBottom >= chickTop && charBottom <= chickTop + 15;
-        
-        return isComingFromAbove && hitsTopArea;
-    }
-
-    /**
-     * Checks if character is falling down.
-     * @returns {boolean} True if character is falling
-     */
-    isCharacterFalling() {
-        return this.character.speedY < 0;
-    }
-
-    /**
-     * Checks if character and chicken overlap horizontally.
-     * @param {Chicken} chicken - The chicken to check against
-     * @returns {boolean} True if there is horizontal overlap
-     */
-    hasHorizontalOverlap(chicken) {
-        const charHitbox = this.character.getHitbox();
-        const chickHitbox = chicken.getHitbox();
-        
-        return charHitbox.x < chickHitbox.x + chickHitbox.width &&
-               charHitbox.x + charHitbox.width > chickHitbox.x;
-    }
-
-    /**
-     * Handles the logic when a chicken is stomped.
-     * @param {Chicken} chicken - The chicken that was stomped
-     */
-    handleChickenStomp(chicken) {
-        chicken.die();
-        this.character.speedY = 20; // Rebound
+        });
     }
 
     /**
@@ -379,7 +201,8 @@ class World {
      */
     increaseBottleAmount() {
         this.bottleAmount++;
-        this.bottleStatusBar.setPercentage(this.bottleAmount);
+        const percentage = (this.bottleAmount / 5) * 100;
+        this.bottleStatusBar.setPercentage(percentage);
     }
 
     /**
