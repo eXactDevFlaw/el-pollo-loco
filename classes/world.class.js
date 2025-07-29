@@ -57,7 +57,7 @@ class World {
      */
     checkThrowObjects() {
         const now = Date.now();
-        
+
         if (this.canThrowBottle(now)) {
             this.throwNewBottle();
             this.updateThrowCooldown(now);
@@ -127,7 +127,7 @@ class World {
      */
     checkCoinCollisions() {
         const coinsToRemove = [];
-        
+
         this.findCollidingCoins(coinsToRemove);
         this.removeCollectedCoins(coinsToRemove);
     }
@@ -188,7 +188,7 @@ class World {
      */
     findCollidingBottles(bottlesToRemove) {
         this.level.bottles.forEach((bottle, i) => {
-            if (this.character.isColliding(bottle)) {
+            if (this.character.isColliding(bottle) && this.bottleAmount < 5) {
                 bottlesToRemove.push(i);
                 this.increaseBottleAmount();
             }
@@ -200,8 +200,10 @@ class World {
      */
     increaseBottleAmount() {
         this.bottleAmount++;
+        if (this.bottleAmount > 5) {
+            this.bottleAmount = 5;
+        }
         const percentage = (this.bottleAmount / 5) * 100;
-        
         this.bottleStatusBar.setPercentage(percentage);
     }
 
