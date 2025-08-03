@@ -1,23 +1,34 @@
 /**
  * Health bar display for the endboss.
- * @extends DrawableObjects
+ * @extends StatusBar
  */
-class EndbossStatusBar extends DrawableObjects {
+class EndbossStatusBar extends StatusBar {
+    IMAGES = [
+        'img/7_statusbars/2_statusbar_endboss/orange/orange0.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange20.png',  
+        'img/7_statusbars/2_statusbar_endboss/orange/orange40.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange60.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange80.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange100.png'
+    ];
+
+
     constructor(endboss) {
         super();
         this.endboss = endboss;
+        this.loadImages(this.IMAGES);
         this.width = 200;
-        this.height = 20;
+        this.height = 60; // Make it bigger for visibility
+        this.setPercentage(100);
     }
 
     /**
-     * Draws the HP bar above the endboss.
+     * Updates bar position and draws using parent method.
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      */
     draw(ctx) {
         this.updatePosition();
-        this.drawBackground(ctx);
-        this.drawHealthBar(ctx);
+        super.draw(ctx); // Call parent's draw method for image-based drawing
     }
 
     /**
@@ -25,8 +36,18 @@ class EndbossStatusBar extends DrawableObjects {
      */
     updatePosition() {
         if (this.endboss) {
-            this.x = this.endboss.x + (this.endboss.width / 2) - (this.width / 2); // Center above endboss
-            this.y = this.endboss.y - 30; // 30 pixels above endboss
+            this.x = this.endboss.x + (this.endboss.width / 2) - (this.width / 2);
+            this.y = this.endboss.y - 30;
+        }
+    }
+
+    /**
+     * Updates the status bar based on endboss health.
+     */
+    updateStatusBar() {
+        if (this.endboss) {
+            const percentage = (this.endboss.health / this.endboss.maxHealth) * 100;
+            this.setPercentage(percentage);
         }
     }
 

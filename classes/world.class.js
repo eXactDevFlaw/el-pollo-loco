@@ -40,6 +40,11 @@ class World {
      */
     setWorld() {
         this.character.world = this;
+        this.level.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss) {
+                enemy.world = this;
+            }
+        });
     }
 
     /**
@@ -154,8 +159,8 @@ class World {
      */
     drawGameObjects() {
         this.ctx.translate(this.camera_x, 0);
-        this.addObjectToMap(this.throwableObjects);
         this.addObjectToMap(this.level.enemies);
+        this.addObjectToMap(this.throwableObjects);
         this.addToMap(this.character);
         this.addToMap(this.endbossStatusBar);
         this.ctx.translate(-this.camera_x, 0);

@@ -95,6 +95,33 @@ class Endboss extends MovableObject {
     }
 
     /**
+     * Checks if character is within alert range.
+     * @returns {boolean} True if character is close enough to trigger alert
+     */
+    isCharacterNearby() {
+        if (!this.world || !this.world.character) {
+            return 'walking';
+        }
+
+        const distance = Math.abs(this.world.character.x - this.x);
+        if (distance < 200) return 'attack';
+        if (distance < 400) return 'alert';
+        return 'walking';
+    }
+
+    /**
+     * Determines current animation state based on proximity and health.
+     * @returns {string} Animation state: 'dead', 'alert', or 'walking'
+     */
+    getCurrentAnimationState() {
+        if (this.health <= 0) {
+            return 'dead';
+        } else {
+            return this.isCharacterNearby(); // Just return whatever isCharacterNearby() returns
+        }
+    }
+
+    /**
      * Plays the death animation once and stops on last frame.
      */
     playDeathAnimation() {
@@ -117,10 +144,21 @@ class Endboss extends MovableObject {
         }, 1000 / 60);
 
         setStopableIntervall(() => {
-            if (this.health <= 0) {
-                this.playDeathAnimation();
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
+            const animationState = this.getCurrentAnimationState();
+
+            switch (animationState) {
+                case 'dead':
+                    this.playDeathAnimation();
+                    break;
+                case 'alert':
+                    this.playAnimation(this.IMAGES_ALERT);
+                    break;
+                case 'walking':
+                    this.playAnimation(this.IMAGES_WALKING);
+                    break;
+                case 'attack':
+                    this.playAnimation(this.IMAGES_ATTACK);
+                    break;
             }
         }, 200);
     }

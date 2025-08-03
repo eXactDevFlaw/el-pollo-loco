@@ -67,11 +67,7 @@ class DrawableObjects {
      */
     drawBorder(ctx) {
         const { x, y, width, height } = this.getHitbox ? this.getHitbox() : this;
-        if (this instanceof Chicken || 
-            this instanceof SmallChicken || 
-            this instanceof Character || 
-            this instanceof Endboss ||
-            this instanceof Bottle) {
+        if (this instanceof Chicken || this instanceof SmallChicken || this instanceof Character || this instanceof Endboss) {
             ctx.beginPath();
             ctx.strokeStyle = 'magenta';
             ctx.lineWidth = 2;

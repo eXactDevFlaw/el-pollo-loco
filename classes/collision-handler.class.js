@@ -20,6 +20,7 @@ class CollisionHandler {
         this.checkCoinCollisions();
         this.checkBottlePickup();
         this.checkFlaskVsEndboss();
+        this.removeCompletedSplashes();
     }
 
     /**
@@ -146,10 +147,15 @@ class CollisionHandler {
 
         this.world.throwableObjects.forEach((flask, flaskIndex) => {
             this.world.level.enemies.forEach((enemy) => {
-                if (enemy instanceof Endboss && flask.isColliding(enemy)) {
+                if (enemy instanceof Endboss && flask.isColliding(enemy) && !flask.isImpacting) {
                     enemy.takeDamage();
-                    flask.triggerImpactAnimation(); // You'll need this method
-                    flasksToRemove.push(flaskIndex);
+                    this.world.endbossStatusBar.updateStatusBar();
+                    flask.triggerImpact(enemy);
+                    setTimeout(() => {
+                        if (flask.splashAnimationComplete) {
+                            flasksToRemove.push(flaskIndex);
+                        }
+                    }, 600);
                 }
             });
         });
@@ -165,5 +171,20 @@ class CollisionHandler {
         for (let i = flasksToRemove.length - 1; i >= 0; i--) {
             this.world.throwableObjects.splice(flasksToRemove[i], 1);
         }
+    }
+
+    /**
+     * Removes flasks that have completed their splash animation.
+     */
+    removeCompletedSplashes() {
+        const flasksToRemove = [];
+
+        this.world.throwableObjects.forEach((flask, index) => {
+            if (flask.splashAnimationComplete) {
+                flasksToRemove.push(index);
+            }
+        });
+
+        this.removeUsedFlasks(flasksToRemove);
     }
 }

@@ -28,6 +28,9 @@ class ThrowableObjects extends MovableObject {
     constructor(x, y) {
         super().loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
         this.loadImages(this.IMAGES_BOTTLE_ROTATION);
+        this.loadImages(this.IMAGES_BOTTLE_SPLASH);
+        this.isImpacting = false;
+        this.splashAnimationComplete = false;
         this.x = x;
         this.y = y;
         this.height = 60;
@@ -68,16 +71,34 @@ class ThrowableObjects extends MovableObject {
      */
     animate() {
         setStopableIntervall(() => {
-            this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
-        }, 75);
+            if (this.isImpacting) {
+                this.playSplashAnimation();
+            } else {
+                this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+            }
+        }, 100); // Adjust timing as needed
     }
 
     /**
-     * Triggers impact animation when flask hits target.
+     * Triggers the splash animation when hitting a target.
      */
-    triggerImpactAnimation() {
-        // Change to impact/explosion animation
+    triggerImpact() {
         this.isImpacting = true;
-        // You might want to load impact images and switch animation
+        this.speedY = 0;
+        this.speedX = 0;
+        this.currentImage = 0; // Reset for splash animation
+    }
+
+    /**
+     * Plays the splash animation once.
+     */
+    playSplashAnimation() {
+        if (this.currentImage < this.IMAGES_BOTTLE_SPLASH.length - 1) {
+            this.currentImage++;
+            let path = this.IMAGES_BOTTLE_SPLASH[this.currentImage];
+            this.img = this.imageCache[path];
+        } else {
+            this.splashAnimationComplete = true;
+        }
     }
 }
