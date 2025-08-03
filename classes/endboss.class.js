@@ -20,8 +20,42 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/2_alert/G9.png',
         'img/4_enemie_boss_chicken/2_alert/G10.png',
         'img/4_enemie_boss_chicken/2_alert/G11.png',
-        'img/4_enemie_boss_chicken/2_alert/G12.png',
+        'img/4_enemie_boss_chicken/2_alert/G12.png'
     ];
+
+    IMAGES_ALERT = [
+        'img/4_enemie_boss_chicken/2_alert/G5.png',
+        'img/4_enemie_boss_chicken/2_alert/G6.png',
+        'img/4_enemie_boss_chicken/2_alert/G7.png',
+        'img/4_enemie_boss_chicken/2_alert/G8.png',
+        'img/4_enemie_boss_chicken/2_alert/G9.png',
+        'img/4_enemie_boss_chicken/2_alert/G10.png',
+        'img/4_enemie_boss_chicken/2_alert/G11.png',
+        'img/4_enemie_boss_chicken/2_alert/G12.png'
+    ];
+
+    IMAGES_HURT = [
+        'img/4_enemie_boss_chicken/4_hurt/G21.png',
+        'img/4_enemie_boss_chicken/4_hurt/G22.png',
+        'img/4_enemie_boss_chicken/4_hurt/G23.png'
+    ];
+
+    IMAGES_ATTACK = [
+        'img/4_enemie_boss_chicken/3_attack/G13.png',
+        'img/4_enemie_boss_chicken/3_attack/G14.png',
+        'img/4_enemie_boss_chicken/3_attack/G15.png',
+        'img/4_enemie_boss_chicken/3_attack/G16.png',
+        'img/4_enemie_boss_chicken/3_attack/G17.png',
+        'img/4_enemie_boss_chicken/3_attack/G18.png',
+        'img/4_enemie_boss_chicken/3_attack/G19.png',
+        'img/4_enemie_boss_chicken/3_attack/G20.png'
+    ];
+
+    IMAGES_DEAD = [
+        'img/4_enemie_boss_chicken/5_dead/G24.png',
+        'img/4_enemie_boss_chicken/5_dead/G25.png',
+        'img/4_enemie_boss_chicken/5_dead/G26.png'
+    ]
 
     /**
      * Creates a new Endboss at a fixed location.
@@ -29,9 +63,47 @@ class Endboss extends MovableObject {
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_ALERT);
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_ATTACK);
+        this.loadImages(this.IMAGES_DEAD);
         this.x = 2500;
         this.speed = 0.3;
+        this.maxHealth = 5;
+        this.health = this.maxHealth;
         this.animate();
+    }
+
+    /**
+     * Reduces endboss health when hit by player flask.
+     * @param {number} damage - Amount of damage to take
+     */
+    takeDamage(damage = 1) {
+        this.health -= damage;
+        if (this.health <= 0) {
+            this.health = 0;
+            this.die();
+        }
+    }
+
+    /**
+     * Handles endboss death.
+     */
+    die() {
+        this.speed = 0;
+        this.currentImage = 0;
+    }
+
+    /**
+     * Plays the death animation once and stops on last frame.
+     */
+    playDeathAnimation() {
+        if (this.currentImage < this.IMAGES_DEAD.length - 1) {
+            this.currentImage++;
+        }
+        let i = Math.min(this.currentImage, this.IMAGES_DEAD.length - 1);
+        let path = this.IMAGES_DEAD[i];
+        this.img = this.imageCache[path];
     }
 
     /**
@@ -39,11 +111,17 @@ class Endboss extends MovableObject {
      */
     animate() {
         setStopableIntervall(() => {
-            this.moveLeft();
+            if (this.health > 0) {
+                this.moveLeft();
+            }
         }, 1000 / 60);
 
         setStopableIntervall(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            if (this.health <= 0) {
+                this.playDeathAnimation();
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 200);
     }
 }

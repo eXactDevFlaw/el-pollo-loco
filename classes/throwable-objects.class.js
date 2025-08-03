@@ -71,4 +71,13 @@ class ThrowableObjects extends MovableObject {
             this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
         }, 75);
     }
+
+    /**
+     * Triggers impact animation when flask hits target.
+     */
+    triggerImpactAnimation() {
+        // Change to impact/explosion animation
+        this.isImpacting = true;
+        // You might want to load impact images and switch animation
+    }
 }

@@ -19,6 +19,7 @@ class CollisionHandler {
         this.checkEnemyCollisions();
         this.checkCoinCollisions();
         this.checkBottlePickup();
+        this.checkFlaskVsEndboss();
     }
 
     /**
@@ -134,6 +135,35 @@ class CollisionHandler {
     removeCollectedBottles(bottlesToRemove) {
         for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
             this.world.level.bottles.splice(bottlesToRemove[i], 1);
+        }
+    }
+
+    /**
+     * Checks collisions between player flasks and endboss.
+     */
+    checkFlaskVsEndboss() {
+        const flasksToRemove = [];
+
+        this.world.throwableObjects.forEach((flask, flaskIndex) => {
+            this.world.level.enemies.forEach((enemy) => {
+                if (enemy instanceof Endboss && flask.isColliding(enemy)) {
+                    enemy.takeDamage();
+                    flask.triggerImpactAnimation(); // You'll need this method
+                    flasksToRemove.push(flaskIndex);
+                }
+            });
+        });
+
+        this.removeUsedFlasks(flasksToRemove);
+    }
+
+    /**
+     * Removes flasks that have hit targets.
+     * @param {number[]} flasksToRemove - Array of flask indices to remove
+     */
+    removeUsedFlasks(flasksToRemove) {
+        for (let i = flasksToRemove.length - 1; i >= 0; i--) {
+            this.world.throwableObjects.splice(flasksToRemove[i], 1);
         }
     }
 }

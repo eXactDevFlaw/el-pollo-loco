@@ -29,6 +29,7 @@ class World {
         this.lastThrowTime = 0;
         this.throwCooldown = 300;
         this.collisionHandler = new CollisionHandler(this);
+        this.endbossStatusBar = new EndbossStatusBar(this.getEndboss());
         this.draw();
         this.setWorld();
         this.run();
@@ -102,6 +103,14 @@ class World {
     }
 
     /**
+     * Gets the endboss from the level.
+     * @returns {Endboss} The endboss enemy
+     */
+    getEndboss() {
+        return this.level.enemies.find(enemy => enemy instanceof Endboss);
+    }
+
+    /**
      * Main render loop.
      */
     draw() {
@@ -148,6 +157,7 @@ class World {
         this.addObjectToMap(this.throwableObjects);
         this.addObjectToMap(this.level.enemies);
         this.addToMap(this.character);
+        this.addToMap(this.endbossStatusBar);
         this.ctx.translate(-this.camera_x, 0);
     }
 
