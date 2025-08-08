@@ -18,7 +18,7 @@ class EndbossStatusBar extends StatusBar {
         this.endboss = endboss;
         this.loadImages(this.IMAGES);
         this.width = 200;
-        this.height = 60; // Make it bigger for visibility
+        this.height = 60;
         this.setPercentage(100);
     }
 
@@ -28,7 +28,7 @@ class EndbossStatusBar extends StatusBar {
      */
     draw(ctx) {
         this.updatePosition();
-        super.draw(ctx); // Call parent's draw method for image-based drawing
+        super.draw(ctx);
     }
 
     /**

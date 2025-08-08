@@ -9,6 +9,7 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let startBtn;
+let startRef;
 let intervallIds = [];
 
 /**
@@ -55,7 +56,8 @@ window.addEventListener('keyup', (e) => {
  * Sets up the start button and its click handler to start the game.
  */
 function startGameHandler() {
-    startBtn = document.getElementById('start-game');
+    startBtn = document.getElementById('play-btn');
+    startRef = document.getElementById('start-game');
     startBtn.addEventListener('click', handleStartButtonClick);
 }
 
@@ -63,7 +65,7 @@ function startGameHandler() {
  * Handles the start button click event.
  */
 function handleStartButtonClick() {
-    startBtn.classList.add('d-none');
+    startRef.classList.add('d-none');
     loadGame();
 }
 
@@ -110,3 +112,4 @@ function clearAllIntervals() {
 function resetIntervalStorage() {
     intervallIds = [];
 }
+

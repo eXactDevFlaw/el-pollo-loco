@@ -1,0 +1,55 @@
+/**
+ * Base Layout and Typography
+ * Contains fundamental styling for body, containers, and basic elements
+ */
+
+html {
+    font-size: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('../img/background/background-desert.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'WesternCowboy', sans-serif;
+}
+
+/* Utility Classes */
+.d-none {
+    display: none !important;
+}
+
+/* Game Container */
+.game-content-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--game-width);
+    height: var(--game-height);
+}
+
+/* Typography */
+h1 {
+    font-size: clamp(3rem, 5vw, 5rem);
+    letter-spacing: 3px;
+    text-shadow: 10px 10px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Canvas */
+canvas {
+    background-color: black;
+    display: block;
+}

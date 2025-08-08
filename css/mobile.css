@@ -1,0 +1,64 @@
+/**
+ * Mobile Responsive Styles
+ * Contains all media queries and mobile-specific styling
+ */
+
+/* Tablet and Small Desktop */
+@media only screen and (max-width: 720px) {
+    canvas {
+        width: 100%;
+    }
+
+    .game-btn {
+        font-size: 20px;
+        padding: 12px 25px;
+        min-width: 160px;
+        margin: 0 10px;
+    }
+
+    .button-container {
+        gap: 15px;
+        margin-top: 50%;
+    }
+}
+
+/* Mobile Landscape */
+@media only screen and (max-height: 480px) {
+    canvas {
+        height: 100vh;
+    }
+
+    h1 {
+        display: none;
+    }
+
+    .game-btn {
+        font-size: 18px;
+        padding: 10px 20px;
+        min-width: 140px;
+    }
+
+    .button-container {
+        margin-top: 60%;
+    }
+}
+
+/* Mobile Touch Enhancements */
+@media (max-width: 768px) {
+    .game-btn {
+        /* Touch-friendly button sizing */
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Prevent text selection on mobile */
+    #start-game {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+    }
+}
