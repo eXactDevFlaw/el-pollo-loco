@@ -83,6 +83,17 @@ class Endboss extends MovableObject {
         if (this.health <= 0) {
             this.health = 0;
             this.die();
+            this.notifyGameWin();
+        }
+    }
+
+    /**
+     * Notifies the world that the game is won.
+     */
+    notifyGameWin() {
+        if (this.world) {
+            this.world.gameWon = true;
+            this.world.isPaused = true;
         }
     }
 
@@ -104,8 +115,8 @@ class Endboss extends MovableObject {
         }
 
         const distance = Math.abs(this.world.character.x - this.x);
-        if (distance < 200) return 'attack';
-        if (distance < 400) return 'alert';
+        if (distance < 300) return 'attack';
+        if (distance < 500) return 'alert';
         return 'walking';
     }
 
@@ -127,6 +138,13 @@ class Endboss extends MovableObject {
     playDeathAnimation() {
         if (this.currentImage < this.IMAGES_DEAD.length - 1) {
             this.currentImage++;
+        } else if (!this.winTriggered) {
+            this.winTriggered = true;
+            setTimeout(() => {
+                if (typeof handleGameWin === 'function') {
+                    handleGameWin();
+                }
+            }, 1000)
         }
         let i = Math.min(this.currentImage, this.IMAGES_DEAD.length - 1);
         let path = this.IMAGES_DEAD[i];

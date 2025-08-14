@@ -147,6 +147,45 @@ function createGameWorld() {
 }
 
 // ================================
+// GAME STATE MANAGEMENT FUNCTIONS
+// ================================
+
+/**
+ * Handles the game win condition when endboss is defeated.
+ */
+function handleGameWin() {
+    stopAllGameAnimations();
+    scheduleWinScreen();
+}
+
+/**
+ * Stops all game animations and intervals.
+ */
+function stopAllGameAnimations() {
+    stopGame();
+    if (world) {
+        world.isPaused = true;
+    }
+}
+
+/**
+ * Shows the win screen after a delay.
+ */
+function scheduleWinScreen() {
+    setTimeout(() => {
+        showWinScreen();
+    }, 2000);
+}
+
+/**
+ * Displays the you-won screen and hides the canvas.
+ */
+function showWinScreen() {
+    hideElementById('canvas');
+    showElementById('you-won-screen');
+}
+
+// ================================
 // SCREEN NAVIGATION FUNCTIONS
 // ================================
 

@@ -12,16 +12,10 @@ class SmallChicken extends MovableObject {
     hitboxWidth = this.width - 16;
     hitboxHeight = this.height - 16;
 
-    isDead = false;
-
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
-    ];
-
-    IMAGES_DEAD = [
-        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
 
     /**
@@ -36,11 +30,10 @@ class SmallChicken extends MovableObject {
     }
 
     /**
-     * Loads all images for walking and dead animations.
+     * Loads all images for walking animations.
      */
     setupImages() {
         this.loadImages(this.IMAGES_WALKING);
-        this.loadImages(this.IMAGES_DEAD);
     }
 
     /**
@@ -58,17 +51,6 @@ class SmallChicken extends MovableObject {
     }
 
     /**
-     * Kills the small chicken and sets dead image.
-     */
-    die() {
-        if (this.isDead) return;
-        this.isDead = true;
-        this.speed = 0;
-        this.deathTime = Date.now();
-        this.loadImage(this.IMAGES_DEAD[0]);
-    }
-
-    /**
      * Starts animation loops for movement and walking.
      */
     animate() {
@@ -81,7 +63,7 @@ class SmallChicken extends MovableObject {
      */
     startMovementAnimation() {
         setStopableIntervall(() => {
-            if (!this.isDead) this.moveLeft();
+            this.moveLeft();
         }, 1000 / 60);
     }
 
@@ -90,9 +72,7 @@ class SmallChicken extends MovableObject {
      */
     startWalkingAnimation() {
         setStopableIntervall(() => {
-            if (!this.isDead) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.playAnimation(this.IMAGES_WALKING);
         }, 200);
     }
 }

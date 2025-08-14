@@ -21,7 +21,8 @@ function startGame() {
         createCoins(),
         createEnemies(),
         createClouds(),
-        createBackgrounds()
+        createBackgrounds(),
+        createEndbosses()
     );
 }
 
@@ -48,7 +49,7 @@ function createCoins() {
 }
 
 /**
- * Creates all enemies for the level.
+ * Creates all enemies for the level (without endboss).
  * @returns {MovableObject[]} Array of enemy objects
  */
 function createEnemies() {
@@ -58,7 +59,16 @@ function createEnemies() {
         new Chicken(),
         new SmallChicken(),
         new SmallChicken(),
-        new SmallChicken(),
+        new SmallChicken()
+    ];
+}
+
+/**
+ * Creates the endboss for the level.
+ * @returns {Endboss[]} Array with single endboss
+ */
+function createEndbosses() {
+    return [
         new Endboss()
     ];
 }

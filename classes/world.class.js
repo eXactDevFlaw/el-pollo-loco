@@ -30,20 +30,25 @@ class World {
         this.throwCooldown = 300;
         this.collisionHandler = new CollisionHandler(this);
         this.endbossStatusBar = new EndbossStatusBar(this.getEndboss());
+        this.gameWon = false;
+        this.isPaused = false;
         this.draw();
         this.setWorld();
         this.run();
     }
 
     /**
-     * Links the character to the world.
+     * Links all game objects to the world instance.
      */
     setWorld() {
         this.character.world = this;
+
         this.level.enemies.forEach(enemy => {
-            if (enemy instanceof Endboss) {
-                enemy.world = this;
-            }
+            enemy.world = this;
+        });
+
+        this.level.endboss.forEach(boss => {
+            boss.world = this;
         });
     }
 
@@ -51,10 +56,20 @@ class World {
      * Main game loop for collision and actions.
      */
     run() {
-        setInterval(() => {
-            this.collisionHandler.checkAllCollisions();
-            this.checkThrowObjects();
-        }, 200);
+        setStopableIntervall(() => {
+            if (!this.isPaused) {
+                this.executeGameLoop();
+            }
+        }, 300);
+    }
+
+    /**
+     * Executes one iteration of the game loop.
+     */
+    executeGameLoop() {
+        this.collisionHandler.checkAllCollisions();
+        this.checkThrowObjects();
+        this.checkForGameWin();
     }
 
     /**
@@ -109,10 +124,23 @@ class World {
 
     /**
      * Gets the endboss from the level.
-     * @returns {Endboss} The endboss enemy
+     * @returns {Endboss|undefined} The endboss if found
      */
     getEndboss() {
-        return this.level.enemies.find(enemy => enemy instanceof Endboss);
+        return this.level.endboss[0];  // Get first endboss from endboss array
+    }
+
+    /**
+     * Checks if endboss is dead and triggers win condition.
+     */
+    checkForGameWin() {
+        if (this.level.endboss && this.level.endboss.length > 0) {
+            const endboss = this.level.endboss[0];
+            if (endboss.isDead() && !this.gameWon) {
+                this.gameWon = true;
+                handleGameWin();
+            }
+        }
     }
 
     /**
@@ -160,6 +188,7 @@ class World {
     drawGameObjects() {
         this.ctx.translate(this.camera_x, 0);
         this.addObjectToMap(this.level.enemies);
+        this.addObjectToMap(this.level.endboss);
         this.addObjectToMap(this.throwableObjects);
         this.addToMap(this.character);
         this.addToMap(this.endbossStatusBar);
@@ -167,13 +196,15 @@ class World {
     }
 
     /**
-     * Schedules the next animation frame.
+     * Schedules the next animation frame with frame rate limiting.
      */
     scheduleNextFrame() {
-        let self = this;
-        requestAnimationFrame(function () {
-            self.draw();
-        });
+        const self = this;
+        setTimeout(() => {
+            requestAnimationFrame(function () {
+                self.draw();
+            });
+        }, 16);
     }
 
     /**
@@ -196,7 +227,6 @@ class World {
         }
 
         mo.draw(this.ctx);
-        mo.drawBorder(this.ctx);
 
         if (mo.otherDirection) {
             this.flipImageBack(mo);

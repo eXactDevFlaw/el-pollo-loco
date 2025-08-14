@@ -144,13 +144,14 @@ class CollisionHandler {
      */
     checkFlaskVsEndboss() {
         const flasksToRemove = [];
+        const endboss = this.world.level.endboss[0];
 
-        this.world.throwableObjects.forEach((flask, flaskIndex) => {
-            this.world.level.enemies.forEach((enemy) => {
-                if (enemy instanceof Endboss && flask.isColliding(enemy) && !flask.isImpacting) {
-                    enemy.takeDamage();
+        if (endboss) {
+            this.world.throwableObjects.forEach((flask, flaskIndex) => {
+                if (flask.isColliding(endboss) && !flask.isImpacting) {
+                    endboss.takeDamage();
                     this.world.endbossStatusBar.updateStatusBar();
-                    flask.triggerImpact(enemy);
+                    flask.triggerImpact(endboss);
                     setTimeout(() => {
                         if (flask.splashAnimationComplete) {
                             flasksToRemove.push(flaskIndex);
@@ -158,7 +159,7 @@ class CollisionHandler {
                     }, 600);
                 }
             });
-        });
+        }
 
         this.removeUsedFlasks(flasksToRemove);
     }
