@@ -94,6 +94,7 @@ class Endboss extends MovableObject {
         if (this.world) {
             this.world.gameWon = true;
             this.world.isPaused = true;
+            console.log(this.world.gameWon, this.world.isPaused)
         }
     }
 

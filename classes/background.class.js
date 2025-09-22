@@ -12,7 +12,8 @@ class BackgroundObject extends MovableObject {
      * @param {number} x - X coordinate for the background.
      */
     constructor(imagePath, x) {
-        super().loadImage(imagePath);
+        super()
+        this.loadImage(imagePath);
         this.x = x;
         this.y = 480 - this.height;
     }
