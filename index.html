@@ -8,26 +8,6 @@
     <meta http-equiv="Content-Language" content="en">
     <link rel="stylesheet" href="./main.css">
     <title>El Pollo Loco</title>
-    <script src="./classes/drawable-objects.class.js"></script>
-    <script src="./classes/movable-objects.class.js"></script>
-    <script src="./classes/status-bar.class.js"></script>
-    <script src="./classes/character.class.js"></script>
-    <script src="./classes/chicken.class.js"></script>
-    <script src="./classes/small-chicken.class.js"></script>
-    <script src="./classes/cloud.class.js"></script>
-    <script src="./classes/world.class.js"></script>
-    <script src="./classes/background.class.js"></script>
-    <script src="./classes/keyboard.class.js"></script>
-    <script src="./classes/level.class.js"></script>
-    <script src="./classes/endboss.class.js"></script>
-    <script src="./classes/throwable-objects.class.js"></script>
-    <script src="./classes/coin-status-bar.class.js"></script>
-    <script src="./classes/bottle-status-bar.class.js"></script>
-    <script src="./classes/bottle.class.js"></script>
-    <script src="./classes/coin.class.js"></script>
-    <script src="./classes/collision-handler.class.js"></script>
-    <script src="./classes/endboss-status-bar.class.js"></script>
-    <script src="./levels/level-1.js"></script>
     <script src="./js/game.js"></script>
 </head>
 
@@ -36,60 +16,10 @@
 
         <h1>El Pollo Loco</h1>
 
-        <canvas id="canvas" width="720" height="480" class="d-none"></canvas>
+        <canvas id="canvas" width="720" height="480"></canvas>
 
-        <div id="start-game" class="game-overlay">
-            <div class="start-content">
-                <div class="button-container">
-                    <button id="play-btn" class="game-btn start-btn">START GAME</button>
-                    <button id="help-btn" class="game-btn help-btn">HELP</button>
-                </div>
-            </div>
-
-            <div id="game-over-screen" class="overlay d-none">
-                <div class="game-over-content">
-                    <img src="./img/You won, you lost/You lost.png" alt="Game Over">
-                    <button id="restart-btn" class="game-btn">Play Again</button>
-                    <button id="menu-btn" class="game-btn">Main Menu</button>
-                </div>
-            </div>
-
-            <div id="you-won-screen" class="overlay d-none">
-                <div class="you-won-content">
-                    <img src="./img/You won, you lost/You won A.png" alt="You Won">
-                    <button id="restart-won-btn" class="game-btn">Play Again</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="help-screen" class="game-overlay d-none">
-            <div class="help-content">
-                <div class="controls-grid">
-                    <div class="control-item">
-                        <span class="key">←</span>
-                        <span class="action">Move Left</span>
-                    </div>
-                    <div class="control-item">
-                        <span class="key">→</span>
-                        <span class="action">Move Right</span>
-                    </div>
-                    <div class="control-item">
-                        <span class="key">SPACE</span>
-                        <span class="action">Jump</span>
-                    </div>
-                    <div class="control-item">
-                        <span class="key">D</span>
-                        <span class="action">Throw Bottle</span>
-                    </div>
-                </div>
-                <div class="help-buttons">
-                    <button id="back-to-menu-btn" class="game-btn help-btn">BACK TO MENU</button>
-                </div>
-            </div>
-        </div>
+        
     </div>
-
-    <div id="portrait-mode" class="d-none">Please turn your device.</div>
 </body>
 
 </html>

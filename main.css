@@ -1,10 +1,15 @@
-/**
- * El Pollo Loco - Main CSS File
- * Imports all modular CSS files for better organization
- */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
 
-/* Import all CSS modules */
-@import url('./css/variables.css');
-@import url('./css/layout.css');
-@import url('./css/components.css');
-@import url('./css/mobile.css');
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+canvas{
+    background-color: black;
+}
