@@ -1,9 +1,12 @@
 let canvas;
-let character = new Image();
+let world;
 
 function init() {
     canvas = document.getElementById('canvas');
-    character.src = '../img/2_character_pepe/2_walk/W-21.png'
+    world = new World(canvas);
+
+    console.log('My Chatracter is', world.character)
+    console.log('My Enemyies are', world.enemies)
 }
 
 window.addEventListener('DOMContentLoaded', () => {
