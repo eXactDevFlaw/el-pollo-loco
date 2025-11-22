@@ -4,7 +4,11 @@ class MovableObject {
     height = 150;
     width = 150;
     img;
+    speed = 0.15;
 
+    imageCache = {};
+    currentImage = 0;
+    otherDirection = false;
 
     /**
      * 
@@ -15,11 +19,28 @@ class MovableObject {
         this.img.src = path;
     }
 
+    /**
+     * 
+     * @param {Array} arr
+     */
+    loadImages(arr) {
+        arr.forEach((path) => {
+            let img = new Image();
+            img.src = path;
+            this.imageCache[path] = img;
+        });
+    }
+
+
+
     moveRight() {
         console.log('move right!');
     }
 
     moveLeft() {
-        console.log('move left!');
+        setInterval(() => {
+            this.x -= this.speed;
+        }, 1000 / 60)
     }
 }
+///// 11- Kamera verschieben
