@@ -19,6 +19,8 @@ class World {
         this.character.world = this;
     }
 
+
+
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -31,6 +33,7 @@ class World {
         this.addToMap(this.character);
 
         this.ctx.translate(-this.camera_x, 0);
+
 
         // draw() wird wiederholt gecallt
         let self = this;
@@ -47,15 +50,26 @@ class World {
 
     addToMap(moveObject) {
         if (moveObject.otherDirection) {
-            this.ctx.save();
-            this.ctx.translate(moveObject.width, 0);
-            this.ctx.scale(-1, 1);
-            moveObject.x = moveObject.x * -1;
+            this.flipImage(moveObject);
         }
-        this.ctx.drawImage(moveObject.img, moveObject.x, moveObject.y, moveObject.width, moveObject.height)
+
+        moveObject.draw(this.ctx);
+        moveObject.drawRect(this.ctx);
+
         if (moveObject.otherDirection) {
-            moveObject.x = moveObject.x * -1;
-            this.ctx.restore();
+            this.flipImageBack(moveObject)
         }
+    }
+
+    flipImage(moveObject) {
+        this.ctx.save();
+        this.ctx.translate(moveObject.width, 0);
+        this.ctx.scale(-1, 1);
+        moveObject.x = moveObject.x * -1;
+    }
+
+    flipImageBack(moveObject) {
+        moveObject.x = moveObject.x * -1;
+        this.ctx.restore();
     }
 }

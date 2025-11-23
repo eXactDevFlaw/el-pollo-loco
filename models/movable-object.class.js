@@ -6,6 +6,9 @@ class MovableObject {
     img;
     speed = 0.15;
 
+    speedY = 0;
+    acceleration = 2.5;
+
     imageCache = {};
     currentImage = 0;
     otherDirection = false;
@@ -31,6 +34,20 @@ class MovableObject {
         });
     }
 
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
+    }
+
+    drawRect(ctx) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
+            ctx.beginPath();
+            ctx.lineWidth = '2';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
+    }
+
     playAnimation(images) {
         let index = this.currentImage % images.length;
         let path = images[index];
@@ -39,12 +56,27 @@ class MovableObject {
     }
 
     moveRight() {
-        console.log('move right!');
+        this.x += this.speed;
     }
 
     moveLeft() {
+        this.x -= this.speed;
+    }
+
+    applyGravity() {
         setInterval(() => {
-            this.x -= this.speed;
-        }, 1000 / 60)
+            if (this.isAboveGround() || this.speedY > 0) {
+                this.y -= this.speedY;
+                this.speedY -= this.acceleration;
+            }
+        }, 1000 / 25)
+    }
+
+    isAboveGround() {
+        return this.y < 160;
+    }
+
+    jump() {
+        this.speedY = 30;
     }
 }
