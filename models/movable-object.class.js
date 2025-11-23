@@ -31,7 +31,12 @@ class MovableObject {
         });
     }
 
-
+    playAnimation(images) {
+        let index = this.currentImage % images.length;
+        let path = images[index];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    }
 
     moveRight() {
         console.log('move right!');
@@ -43,4 +48,3 @@ class MovableObject {
         }, 1000 / 60)
     }
 }
-///// 11- Kamera verschieben
