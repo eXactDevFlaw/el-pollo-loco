@@ -3,6 +3,15 @@ class Character extends MovableObject {
     y = 160;
     speed = 10;
 
+    
+
+    offsetHitbox = {
+        top: 120,
+        left: 30,
+        right: 40,
+        bottom: 30
+    }
+
     IMAGES_WALK = [
         '../img/2_character_pepe/2_walk/W-21.png',
         '../img/2_character_pepe/2_walk/W-22.png',
@@ -22,7 +31,24 @@ class Character extends MovableObject {
         '../img/2_character_pepe/3_jump/J-37.png',
         '../img/2_character_pepe/3_jump/J-38.png',
         '../img/2_character_pepe/3_jump/J-39.png',
+    ];
+
+    IMAGES_DEAD = [
+        '../img/2_character_pepe/5_dead/D-51.png',
+        '../img/2_character_pepe/5_dead/D-52.png',
+        '../img/2_character_pepe/5_dead/D-53.png',
+        '../img/2_character_pepe/5_dead/D-54.png',
+        '../img/2_character_pepe/5_dead/D-55.png',
+        '../img/2_character_pepe/5_dead/D-56.png',
+        '../img/2_character_pepe/5_dead/D-57.png',
+    ];
+
+    IMAGES_HURT = [
+        '../img/2_character_pepe/4_hurt/H-41.png',
+        '../img/2_character_pepe/4_hurt/H-42.png',
+        '../img/2_character_pepe/4_hurt/H-43.png',
     ]
+
     world;
 
     constructor() {
@@ -30,6 +56,8 @@ class Character extends MovableObject {
         this.loadImage('../img/2_character_pepe/2_walk/W-21.png')
         this.loadImages(this.IMAGES_WALK);
         this.loadImages(this.IMAGES_JUMP);
+        this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_HURT)
         this.animate();
         this.applyGravity();
     };
@@ -53,7 +81,11 @@ class Character extends MovableObject {
         }, 1000 / 60)
 
         setInterval(() => {
-            if (this.isAboveGround()) {
+            if(this.isDead()){
+                this.playAnimation(this.IMAGES_DEAD)
+            } else if (this.isHurt()){
+                this.playAnimation(this.IMAGES_HURT);
+            } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMP)
             } else {
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
