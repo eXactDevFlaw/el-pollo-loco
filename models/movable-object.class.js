@@ -121,7 +121,7 @@ class MovableObject {
     isHurt(){
         let timePassed = new Date().getTime() - this.lastHit;
         timePassed = timePassed / 1000;
-        return timePassed < 5;
+        return timePassed < 1;
     }
 
     isColliding(moveObject){
