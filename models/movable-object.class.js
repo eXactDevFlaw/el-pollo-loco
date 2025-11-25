@@ -1,16 +1,10 @@
-class MovableObject {
-    x = 120;
-    y = 280;
-    height = 150;
-    width = 150;
-    img;
-    speed = 0.15;
+class MovableObject extends DrawableObject {
 
+
+    speed = 0.15;
     speedY = 0;
     acceleration = 2.5;
 
-    imageCache = {};
-    currentImage = 0;
     otherDirection = false;
 
     energy = 100;
@@ -22,32 +16,6 @@ class MovableObject {
         left: 0,
         right: 0,
         bottom: 0
-    }
-
-
-    /**
-     * 
-     * @param {String} path 
-     */
-    loadImage(path) {
-        this.img = new Image();
-        this.img.src = path;
-    }
-
-    /**
-     * 
-     * @param {Array} arr
-     */
-    loadImages(arr) {
-        arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
     }
 
     drawRect(ctx) {
@@ -107,24 +75,24 @@ class MovableObject {
 
     hit() {
         this.energy -= 5;
-        if(this.energy < 0) {
+        if (this.energy < 0) {
             this.energy = 0;
         } else {
             this.lastHit = new Date().getTime();
         }
     }
 
-    isDead(){
+    isDead() {
         return this.energy == 0;
     }
 
-    isHurt(){
+    isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;
         timePassed = timePassed / 1000;
         return timePassed < 1;
     }
 
-    isColliding(moveObject){
+    isColliding(moveObject) {
         const a = {
             left: this.x + this.offsetHitbox.left,
             right: this.x + this.width - this.offsetHitbox.right,
