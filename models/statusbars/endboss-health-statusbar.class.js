@@ -1,4 +1,4 @@
-class EndbossHealthBar extends StatusBar {
+class EndbossHealthStatusBar extends StatusBar {
     x = 20;
     y = 0;
     width = 200;

@@ -5,7 +5,12 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+
     healthStatusBar = new HealthStatusBar();
+    coinStatusBar = new CoinStatusBar();
+    flaskStatusBar = new FlaskStatusBar();
+    endbossStatusBar = new EndbossHealthStatusBar();
+
     throwableObjects = [];
 
     constructor(canvas, keyboard) {
@@ -51,11 +56,12 @@ class World {
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
+        this.addDynamicStatusBars();
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.character);
 
         this.ctx.translate(-this.camera_x, 0);
-        this.addToMap(this.healthStatusBar);
+        this.addStaticStatusBars();
         this.ctx.translate(this.camera_x, 0);
 
         this.ctx.translate(-this.camera_x, 0);
@@ -66,6 +72,16 @@ class World {
         requestAnimationFrame(function () {
             self.draw();
         });
+    }
+
+    addStaticStatusBars(){
+        this.addToMap(this.healthStatusBar);
+        this.addToMap(this.coinStatusBar);
+        this.addToMap(this.flaskStatusBar);
+    }
+
+    addDynamicStatusBars(){
+        this.addToMap(this.endbossStatusBar);
     }
 
     addObjectsToMap(objects) {

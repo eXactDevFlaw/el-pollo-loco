@@ -1,5 +1,5 @@
 class HealthStatusBar extends StatusBar {
-    x = 20;
+    x = 10;
     y = 0;
     width = 200;
     height = 60;
