@@ -1,15 +1,10 @@
 class MovableObject extends DrawableObject {
-
-
     speed = 0.15;
     speedY = 0;
     acceleration = 2.5;
-
     otherDirection = false;
-
     energy = 100;
     lastHit = 0;
-
 
     offsetHitbox = {
         top: 0,
