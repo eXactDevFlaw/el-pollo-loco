@@ -6,6 +6,7 @@
     <meta name="google" content="notranslate" />
     <meta http-equiv="Content-Language" content="en" />
     <link rel="stylesheet" href="./main.css" />
+    <link rel="icon" type="image/x-icon" href="./img/favicon.png" />
     <title>El Pollo Loco</title>
     <script src="./models/drawable-object.class.js"></script>
     <script src="./models/movable-object.class.js"></script>
@@ -31,6 +32,35 @@
     <div class="content-container">
       <h1>El Pollo Loco</h1>
       <canvas id="canvas" width="720" height="480"></canvas>
+
+
+      <!-- Fullscreen Button (immer sichtbar) -->
+      <button class="fullscreen-btn" id="fullscreenBtn">
+        <span class="fullscreen-icon">⛶</span>
+      </button>
+
+      <!-- Mobile Touch Buttons (nur auf Mobile sichtbar) -->
+      <div class="mobile-controls">
+        <div class="control-group left-controls">
+          <button class="btn-mobile btn-left" id="btnLeft">◄</button>
+          <button class="btn-mobile btn-right" id="btnRight">►</button>
+        </div>
+        <div class="control-group right-controls">
+          <button class="btn-mobile btn-jump" id="btnJump">JUMP</button>
+          <button class="btn-mobile btn-throw" id="btnThrow">THROW</button>
+        </div>
+      </div>
+
+      <!-- Rotate Device Overlay (nur im Hochformat) -->
+      <div class="rotate-device-overlay" id="rotateOverlay">
+        <div class="rotate-message">
+          <div class="rotate-icon">📱 ↻</div>
+          <h2>Turn your device</h2>
+          <p>Please rotate your device to landscape mode to play</p>
+        </div>
+      </div>
+
+      
     </div>
   </body>
 </html>

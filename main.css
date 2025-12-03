@@ -9,6 +9,32 @@
   --font-mono: "Courier New", monospace;
 }
 
+/* ===== RESET & BASE STYLES ===== */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body {
+  background-image: url("./img/background/background-desert.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* ===== TYPOGRAPHY ===== */
 h1,
 h2 {
   font-family: var(--font-heading);
@@ -18,8 +44,9 @@ h2 {
 h1 {
   font-size: 2.5rem;
   letter-spacing: 3px;
-  text-shadow: 2px 2px 8px rgba(0,0,0,1);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 1);
 }
+
 h2 {
   font-size: 2rem;
 }
@@ -38,23 +65,7 @@ h4 {
   font-size: 1.25rem;
 }
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: var(--font-primary);
-  font-size: 1rem;
-  line-height: 1.5;
-  background-image: url("./img/background/background-desert.svg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-}
-
+/* ===== LAYOUT ===== */
 .content-container {
   position: absolute;
   top: 50%;
@@ -64,7 +75,6 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-
 }
 
 canvas {
@@ -72,12 +82,142 @@ canvas {
   display: block;
 }
 
+canvas:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+}
+
+/* ===== FULLSCREEN BUTTON ===== */
+.fullscreen-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #fff;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.fullscreen-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== MOBILE CONTROLS ===== */
+.mobile-controls {
+  display: none; /* Versteckt auf Desktop */
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0 20px;
+  z-index: 100;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.control-group {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-mobile {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+
+}
+
+.btn-mobile:active {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0.95);
+}
+
+/* Spezielle Styles für bestimmte Buttons */
+.btn-jump,
+.btn-throw {
+  width: 50px;
+  height: 50px;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* ===== ROTATE DEVICE OVERLAY ===== */
+.rotate-device-overlay {
+  display: none; /* Wird per JS im Hochformat angezeigt */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.rotate-message {
+  text-align: center;
+  color: #fff;
+  padding: 40px;
+}
+
+.rotate-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: rotate-device 2s infinite ease-in-out;
+}
+
+@keyframes rotate-device {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+}
+
+.rotate-message h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-family: var(--font-heading);
+}
+
+.rotate-message p {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* ===== RESPONSIVE - MOBILE & TABLET ===== */
 @media only screen and (max-width: 720px) {
   canvas {
     width: 100%;
   }
 
-  .content-container h1 {
+  .content-container h1, .fullscreen-btn {
     display: none;
   }
 }
@@ -86,4 +226,22 @@ canvas {
   canvas {
     height: 100vh;
   }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  /* Mobile Controls nur im Querformat auf Tablets/Phones */
+  .mobile-controls {
+    display: flex;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  /* Rotate Overlay nur im Hochformat */
+  .rotate-device-overlay {
+    display: flex;
+  }
+
+  canvas {
+    display: none;
+  };
 }
