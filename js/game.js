@@ -14,13 +14,13 @@ let keyboard = new Keyboard();
 
 /**
  * Initializes the game
- * Creates canvas reference, world instance, and sets up responsive features
+ * Creates canvas reference and sets up responsive features
  * @returns {void}
  */
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
     initResponsiveFeatures();
+    startGame();
 }
 
 // ===== KEYBOARD EVENTS =====
@@ -173,6 +173,25 @@ function initResponsiveFeatures() {
 }
 
 // ===== START =====
+
+/**
+ * Starts the game and creat world instance
+ * @returns {void}
+ */
+function startGame(){
+    const startBtn = document.querySelector('.game-startBtn');
+    const infoContainer = document.querySelector('.info-container');
+    const contentContainer = document.querySelector('.content-container');
+    const fullscreenBtn = document.querySelector('.fullscreen-btn');
+    startBtn.addEventListener('click', () => {
+        infoContainer.classList.add('d-none');
+        contentContainer.classList.remove('d-none');
+        fullscreenBtn.classList.remove('d-none');
+        initLevel();
+        world = new World(canvas, keyboard);
+    })
+}
+
 
 /**
  * Entry point - initializes game when DOM is fully loaded
