@@ -1,8 +1,12 @@
 class EndbossHealthStatusBar extends StatusBar {
-    x = 20;
-    y = 0;
+    x = 400;
+    y = 8;
     width = 200;
     height = 60;
+
+    offsetX = 25;
+    offsetY = -20;
+
     percentage = 100;
 
     IMAGES = [
@@ -19,5 +23,10 @@ class EndbossHealthStatusBar extends StatusBar {
         this.loadImage(this.IMAGES[5]);
         this.loadImages(this.IMAGES);
         this.setPercentage(this.percentage)
+    }
+
+    updatePosition(endboss){
+        this.x = endboss.x + this.offsetX;
+        this.y = endboss.y + this.offsetY;
     }
 }

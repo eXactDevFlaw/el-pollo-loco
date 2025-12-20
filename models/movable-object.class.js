@@ -1,92 +1,104 @@
 class MovableObject extends DrawableObject {
-    speed = 0.15;
-    speedY = 0;
-    acceleration = 2.5;
-    otherDirection = false;
-    energy = 100;
-    lastHit = 0;
+  speed = 0.15;
+  speedY = 0;
+  acceleration = 2.5;
+  otherDirection = false;
+  energy = 100;
+  lastHit = 0;
 
-    offsetHitbox = {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
+  offsetHitbox = {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  };
+
+  playAnimation(images) {
+    let index = this.currentImage % images.length;
+    let path = images[index];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+  }
+
+  playAnimationOnce(images) {
+    if (this.currentImage < images.length) {
+      let path = images[this.currentImage];
+      this.img = this.imageCache[path];
+      this.currentImage++;
+    } else {
+      this.jumpAnimationFinished = true;
+      let path = images[images.length - 1];
+      this.img = this.imageCache[path];
     }
+  };
 
-    playAnimation(images) {
-        let index = this.currentImage % images.length;
-        let path = images[index];
-        this.img = this.imageCache[path];
-        this.currentImage++;
+  moveRight() {
+    this.x += this.speed;
+  }
+
+  moveLeft() {
+    this.x -= this.speed;
+  }
+
+  applyGravity() {
+    setInterval(() => {
+      if (this.isAboveGround() || this.speedY > 0) {
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
+      }
+    }, 1000 / 25);
+  }
+
+  isAboveGround() {
+    if (this instanceof ThrowableObject) {
+      return true;
     }
+    return this.y < 160;
+  }
 
-    moveRight() {
-        this.x += this.speed;
+  jump() {
+    this.speedY = 30;
+  }
+
+  hit() {
+    this.energy -= 5;
+    if (this.energy < 0) {
+      this.energy = 0;
+    } else {
+      this.lastHit = new Date().getTime();
     }
+  }
 
-    moveLeft() {
-        this.x -= this.speed;
-    }
+  isDead() {
+    return this.energy == 0;
+  }
 
-    applyGravity() {
-        setInterval(() => {
-            if (this.isAboveGround() || this.speedY > 0) {
-                this.y -= this.speedY;
-                this.speedY -= this.acceleration;
-            }
-        }, 1000 / 25)
-    }
+  isHurt() {
+    let timePassed = new Date().getTime() - this.lastHit;
+    timePassed = timePassed / 1000;
+    return timePassed < 1;
+  }
 
-    isAboveGround() {
-        if (this instanceof ThrowableObject){
-            return true;
-        }
-        return this.y < 160;
-    }
+  isColliding(moveObject) {
+    const a = {
+      left: this.x + this.offsetHitbox.left,
+      right: this.x + this.width - this.offsetHitbox.right,
+      top: this.y + this.offsetHitbox.top,
+      bottom: this.y + this.height - this.offsetHitbox.bottom,
+    };
 
-    jump() {
-        this.speedY = 30;
-    }
+    const b = {
+      left: moveObject.x + moveObject.offsetHitbox.left,
+      right: moveObject.x + moveObject.width - moveObject.offsetHitbox.right,
+      top: moveObject.y + moveObject.offsetHitbox.top,
+      bottom: moveObject.y + moveObject.height - moveObject.offsetHitbox.bottom,
+    };
 
-    hit() {
-        this.energy -= 5;
-        if (this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
-        }
-    }
-
-    isDead() {
-        return this.energy == 0;
-    }
-
-    isHurt() {
-        let timePassed = new Date().getTime() - this.lastHit;
-        timePassed = timePassed / 1000;
-        return timePassed < 1;
-    }
-
-    isColliding(moveObject) {
-        const a = {
-            left: this.x + this.offsetHitbox.left,
-            right: this.x + this.width - this.offsetHitbox.right,
-            top: this.y + this.offsetHitbox.top,
-            bottom: this.y + this.height - this.offsetHitbox.bottom
-        };
-
-        const b = {
-            left: moveObject.x + moveObject.offsetHitbox.left,
-            right: moveObject.x + moveObject.width - moveObject.offsetHitbox.right,
-            top: moveObject.y + moveObject.offsetHitbox.top,
-            bottom: moveObject.y + moveObject.height - moveObject.offsetHitbox.bottom
-        };
-
-        return (
-            a.left < b.right &&
-            a.right > b.left &&
-            a.top < b.bottom &&
-            a.bottom > b.top
-        );
-    }
+    return (
+      a.left < b.right &&
+      a.right > b.left &&
+      a.top < b.bottom &&
+      a.bottom > b.top
+    );
+  }
 }

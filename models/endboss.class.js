@@ -2,8 +2,9 @@ class Endboss extends MovableObject {
     height = 400;
     width = 250;
     y = 60;
-    x = 400;
+    x = 2400;
     energy = 100;
+    speed = 0.075
 
     offsetHitbox = {
         top: 100,
