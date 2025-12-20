@@ -30,53 +30,62 @@
   </head>
 
   <body>
-    <!-- Start Screen -->
-    <div class="info-container">
-      <div class="info-content">
-        <h1>El Pollo Loco</h1>
-
-        <div class="game-startBtn" id="game-startBtn">
-          <button>Start Game</button>
-        </div>
-
-        <div class="game-howTo">
-          <h3>How to Play</h3>
-          <p>
-            <strong>Desktop:</strong> Arrow keys to move • SPACE to jump • D to throw<br>
-            <strong>Mobile:</strong> Use on-screen buttons
-          </p>
-        </div>
-
-        <div class="impress">
-          <h4>Controls</h4>
-          <p>Defeat chickens and the final boss to win!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Game Container (initially hidden) -->
-    <div class="content-container d-none">
+    <div class="content-container">
       <h1>El Pollo Loco</h1>
-      <canvas id="canvas" width="720" height="480"></canvas>
-
-      <!-- Mobile Controls -->
-      <div class="mobile-controls">
-        <div class="control-group left-controls">
-          <button class="btn-mobile btn-left" id="btnLeft">◄</button>
-          <button class="btn-mobile btn-right" id="btnRight">►</button>
+      <div>
+        <div id="canvas-container" class="d-none">
+          <canvas id="canvas" width="720" height="480"></canvas>
         </div>
-        <div class="control-group right-controls">
-          <button class="btn-mobile btn-jump" id="btnJump">JUMP</button>
-          <button class="btn-mobile btn-throw" id="btnThrow">THROW</button>
-        </div>
-      </div>
 
-      <!-- Rotate Device Overlay -->
-      <div class="rotate-device-overlay" id="rotateOverlay">
-        <div class="rotate-message">
-          <div class="rotate-icon">📱 ↻</div>
-          <h2>Turn your device</h2>
-          <p>Please rotate your device to landscape mode to play</p>
+        <div class="info-container">
+          <!--<img src="./img/9_intro_outro_screens/start/startscreen_1.png" alt="">-->
+          <div class="info-content">
+            <div class="game-startBtn">
+              <button id="game-startBtn">Start Game</button>
+            </div>
+
+            <div class="game-startBtn">
+              <button id="game-infoBtn">Controls</button>
+            </div>
+
+            <div class="game-startBtn">
+              <button id="game-controlBtn">Information</button>
+            </div>
+
+          </div>
+          <div class="game-howTo d-none">
+            <h3>How to Play</h3>
+            <p>
+              <strong>Desktop:</strong> Arrow keys to move • SPACE to jump • D
+              to throw<br />
+              <strong>Mobile:</strong> Use on-screen buttons
+            </p>
+          </div>
+
+          <div class="impress d-none">
+            <h4>Controls</h4>
+            <p>Defeat chickens and the final boss to win!</p>
+          </div>
+        </div>
+        <!-- Mobile Controls -->
+        <div class="mobile-controls">
+          <div class="control-group left-controls">
+            <button class="btn-mobile btn-left" id="btnLeft">◄</button>
+            <button class="btn-mobile btn-right" id="btnRight">►</button>
+          </div>
+          <div class="control-group right-controls">
+            <button class="btn-mobile btn-jump" id="btnJump">JUMP</button>
+            <button class="btn-mobile btn-throw" id="btnThrow">THROW</button>
+          </div>
+        </div>
+
+        <!-- Rotate Device Overlay -->
+        <div class="rotate-device-overlay" id="rotateOverlay">
+          <div class="rotate-message">
+            <div class="rotate-icon">📱 ↻</div>
+            <h2>Turn your device</h2>
+            <p>Please rotate your device to landscape mode to play</p>
+          </div>
         </div>
       </div>
     </div>

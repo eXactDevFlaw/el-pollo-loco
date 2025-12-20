@@ -12,6 +12,8 @@ let world;
 /** @type {Keyboard} Keyboard state object */
 let keyboard = new Keyboard();
 
+let infoContainer;
+
 /**
  * Initializes the game
  * Creates canvas reference and sets up responsive features
@@ -21,6 +23,7 @@ function init() {
     canvas = document.getElementById('canvas');
     initResponsiveFeatures();
     startGame();
+    infoGame();
 }
 
 // ===== KEYBOARD EVENTS =====
@@ -179,16 +182,30 @@ function initResponsiveFeatures() {
  * @returns {void}
  */
 function startGame(){
-    const startBtn = document.querySelector('.game-startBtn');
-    const infoContainer = document.querySelector('.info-container');
-    const contentContainer = document.querySelector('.content-container');
+    const startBtn = document.querySelector('#game-startBtn');
+    const contentContainer = document.querySelector('#canvas-container');
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
-    startBtn.addEventListener('click', () => {
+    infoContainer = document.querySelector('.info-container');
+    startBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log(infoContainer)
         infoContainer.classList.add('d-none');
         contentContainer.classList.remove('d-none');
         fullscreenBtn.classList.remove('d-none');
         initLevel();
         world = new World(canvas, keyboard);
+    })
+}
+
+function infoGame(){
+    const infoBtn = document.querySelector('#game-infoBtn');
+    const infoContent = document.querySelector('.info-content');
+    const gameInfo = document.querySelector('.game-howTo');
+    infoBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        infoContent.classList.add('d-none');
+        console.log(infoContainer)
+        gameInfo.classList.remove('d-none');
     })
 }
 
