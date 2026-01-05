@@ -24,6 +24,7 @@ function init() {
     initResponsiveFeatures();
     startGame();
     infoGame();
+    backHomeScreen();
 }
 
 // ===== KEYBOARD EVENTS =====
@@ -181,7 +182,7 @@ function initResponsiveFeatures() {
  * Starts the game and creat world instance
  * @returns {void}
  */
-function startGame(){
+function startGame() {
     const startBtn = document.querySelector('#game-startBtn');
     const contentContainer = document.querySelector('#canvas-container');
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
@@ -197,18 +198,40 @@ function startGame(){
     })
 }
 
-function infoGame(){
-    const infoBtn = document.querySelector('#game-infoBtn');
+function infoGame() {
     const infoContent = document.querySelector('.info-content');
-    const gameInfo = document.querySelector('.game-howTo');
+    const controlBtn = document.querySelector('#game-controlBtn');
+    const gameControls = document.querySelector('.game-howTo');
+    const infoBtn = document.querySelector('#game-infoBtn');
+    const gameInfo = document.querySelector('.information');
+
+    controlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        infoContent.classList.add('d-none');
+        gameControls.classList.remove('d-none');
+    })
+
     infoBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         infoContent.classList.add('d-none');
-        console.log(infoContainer)
         gameInfo.classList.remove('d-none');
     })
 }
 
+
+function backHomeScreen() {
+    const backBtn = document.querySelectorAll('.backBtn');
+    const infoContent = document.querySelector('.info-content');
+    const gameInfo = document.querySelector('.game-howTo');
+    const infoContainer = document.querySelector('.information');
+    backBtn.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            infoContainer.classList.add('d-none');
+            gameInfo.classList.add('d-none');
+            infoContent.classList.remove('d-none');
+        })
+    })
+}
 
 /**
  * Entry point - initializes game when DOM is fully loaded

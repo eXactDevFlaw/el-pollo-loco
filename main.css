@@ -127,6 +127,10 @@ canvas:fullscreen {
 
 /* ===== INFO CONTAINER (START SCREEN) ===== */
 .info-container {
+  background-image: url('./img/9_intro_outro_screens/start/startscreen_1.png');
+  background-position: center;
+  background-size: cover;
+  border-radius: 0.625rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -141,6 +145,13 @@ canvas:fullscreen {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border: 0.1875rem solid rgba(139, 115, 85, 0.6);
+  border-radius: 0.625rem;
 }
 
 .info-container img {
@@ -219,8 +230,9 @@ canvas:fullscreen {
 
 /* How To & Impress Sections */
 .game-howTo,
-.impress {
-  width: 100%;
+.information {
+  width: 720px;
+  min-height: 480px;
   padding: var(--space-md);
   background: linear-gradient(
     135deg,
@@ -236,17 +248,10 @@ canvas:fullscreen {
   box-shadow: inset 0 0.125rem 0.25rem rgba(255, 255, 255, 0.1),
     0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-}
-
-.game-howTo:hover,
-.impress:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.5) 0%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  border-color: rgba(139, 115, 85, 0.8);
-  transform: translateY(-0.125rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .game-howTo {
