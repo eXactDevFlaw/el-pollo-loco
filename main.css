@@ -81,7 +81,7 @@ h2 {
 h1 {
   font-size: var(--font-size-5xl);
   letter-spacing: 0.1875rem;
-  text-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 1);
+  text-shadow: 0.125rem 0.125rem 0.5rem rgb(0, 0, 0);
 }
 
 h2 {

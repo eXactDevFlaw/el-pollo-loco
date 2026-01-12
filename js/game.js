@@ -233,6 +233,7 @@ function backHomeScreen() {
     })
 }
 
+
 /**
  * Entry point - initializes game when DOM is fully loaded
  */
