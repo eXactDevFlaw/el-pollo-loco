@@ -17,6 +17,7 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.audioManager = new AudioManager();
     this.draw();
     this.setWorld();
     this.run();
@@ -29,18 +30,29 @@ class World {
   run() {
     setInterval(() => {
       this.checkCollisions();
+    }, 50);
+
+    setInterval(() => {
       this.checkThrowObjects();
-    }, 200);
+    }, 150);
   }
 
   checkThrowObjects() {
-    if (this.keyboard.D) {
+    if (this.keyboard.D && this.character.collectedFlasks > 0) {
       let bottle = new ThrowableObject(this.character.x, this.character.y);
       this.throwableObjects.push(bottle);
+      this.character.collectedFlasks--;
+      this.updateFlaskStatusbar();
     }
   }
 
   checkCollisions() {
+    this.checkEnemyCollisions();
+    this.checkCoinCollisions();
+    this.checkFlaskCollisions()
+  }
+
+  checkEnemyCollisions() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
         this.character.hit();
@@ -49,59 +61,45 @@ class World {
     });
   }
 
-  // NEU: Coin Collision Check
   checkCoinCollisions() {
     this.level.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
-        // Coin einsammeln
         this.collectCoin(index);
       }
     });
   }
 
-  // NEU: Coin einsammeln
   collectCoin(index) {
-    // Coin aus Array entfernen
     this.level.coins.splice(index, 1);
-
-    // Counter erhöhen
     this.character.collectedCoins++;
 
-    // StatusBar updaten (0-100%, 10 Coins = 100%)
     let percentage = (this.character.collectedCoins / 10) * 100;
     if (percentage > 100) percentage = 100;
     this.coinStatusBar.setPercentage(percentage);
 
-    // Optional: Sound abspielen
-    // this.coinSound.play();
-  };
+    this.audioManager.play('coin');
+  }
 
-  // NEU: Flask Collision Check
   checkFlaskCollisions() {
     this.level.flasks.forEach((flask, index) => {
-      if (this.character.isColliding(flask)) {
-        // Flask einsammeln
+      if (this.character.isColliding(flask) && this.character.collectedFlasks < 5) {
         this.collectFlask(index);
       }
     });
-  };
+  }
 
-  // NEU: Flask einsammeln
   collectFlask(index) {
-    // Flask aus Array entfernen
     this.level.flasks.splice(index, 1);
+    this.character.collectedFlasks++;
+    this.updateFlaskStatusbar();
+    this.audioManager.play('flask')
+  }
 
-    // Inventory erhöhen
-    this.character.availableFlasks++;
-
-    // StatusBar updaten (0-100%, 5 Flasks = 100%)
-    let percentage = (this.character.availableFlasks / 5) * 100;
+  updateFlaskStatusbar() {
+    let percentage = (this.character.collectedFlasks / 5) * 100;
     if (percentage > 100) percentage = 100;
     this.flaskStatusBar.setPercentage(percentage);
-
-    // Optional: Sound abspielen
-    // this.flaskSound.play();
-  };
+  }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -109,9 +107,9 @@ class World {
 
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.flasks);
+    this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.throwableObjects);
     this.addDynamicStatusBars();
 
@@ -155,8 +153,8 @@ class World {
     }
 
     moveObject.draw(this.ctx);
-    //moveObject.drawRect(this.ctx);
-    //moveObject.drawRectHitbox(this.ctx);
+    // moveObject.drawRect(this.ctx);
+    // moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);

@@ -91,7 +91,7 @@ class Endboss extends MovableObject {
                 this.playAnimation(this.IMAGES_DEAD)
             }
 
-            if(world.character.x > 2180 && !this.hadFirstContact){
+            if(world.character.x > 2000 && !this.hadFirstContact){
                 this.hadFirstContact = true
             }
         }, 200)

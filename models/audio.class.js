@@ -3,8 +3,14 @@ class AudioManager {
         this.isMuted = false;
         this.sounds = {};
         this.music = null;
+        this.loadAllSounds();
     }
 
+    loadAllSounds() {
+        this.loadSound('coin', 'audio/coin_collect.wav');
+        this.loadSound('flask', 'audio/flask_collect.wav');
+
+    }
 
     loadSound(name, path) {
         this.sounds[name] = new Audio(path);
@@ -26,6 +32,13 @@ class AudioManager {
     startMusic() {
         if (!this.isMuted && this.music) {
             this.music.play();
+        }
+    }
+
+    stopMusic() {
+        if (this.music) {
+            this.music.pause();
+            this.music.currentTime = 0;
         }
     }
 

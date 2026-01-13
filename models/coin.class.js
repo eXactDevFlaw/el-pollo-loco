@@ -3,10 +3,10 @@ class Coin extends DrawableObject {
     height = 150;
 
     offsetHitbox = {
-        top: 40,
-        left: 40,
-        right: 40,
-        bottom: 40,
+        top: 50,
+        left: 50,
+        right: 50,
+        bottom: 50,
     };
 
     IMAGES_COIN = [

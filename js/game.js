@@ -189,7 +189,6 @@ function startGame() {
     infoContainer = document.querySelector('.info-container');
     startBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        console.log(infoContainer)
         infoContainer.classList.add('d-none');
         contentContainer.classList.remove('d-none');
         fullscreenBtn.classList.remove('d-none');

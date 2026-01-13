@@ -8,6 +8,7 @@ class DrawableObject {
     height = 150;
     width = 150;
 
+
     /**
     * 
     * @param {String} path 
