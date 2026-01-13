@@ -39,7 +39,7 @@ class World {
 
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedFlasks > 0) {
-      let bottle = new ThrowableObject(this.character.x, this.character.y);
+      let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
       this.throwableObjects.push(bottle);
       this.character.collectedFlasks--;
       this.updateFlaskStatusbar();
@@ -76,7 +76,6 @@ class World {
     let percentage = (this.character.collectedCoins / 10) * 100;
     if (percentage > 100) percentage = 100;
     this.coinStatusBar.setPercentage(percentage);
-
     this.audioManager.play('coin');
   }
 
