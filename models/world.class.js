@@ -1,3 +1,7 @@
+/**
+ * Hauptklasse für die Spielwelt
+ * Verwaltet alle Spielobjekte, Kollisionen und das Rendering
+ */
 class World {
   character = new Character();
   level = level1;
@@ -13,6 +17,11 @@ class World {
 
   throwableObjects = [];
 
+  /**
+   * Erstellt eine neue Spielwelt
+   * @param {HTMLCanvasElement} canvas - Das Canvas-Element
+   * @param {Object} keyboard - Das Keyboard-Objekt mit Tastenstatus
+   */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -23,10 +32,16 @@ class World {
     this.run();
   }
 
+  /**
+   * Setzt die World-Referenz im Character
+   */
   setWorld() {
     this.character.world = this;
   }
 
+  /**
+   * Startet die Game-Loops für Kollisionsprüfung und Wurfobjekte
+   */
   run() {
     setInterval(() => {
       this.checkCollisions();
@@ -37,6 +52,9 @@ class World {
     }, 150);
   }
 
+  /**
+   * Prüft ob der Spieler eine Flasche werfen möchte und erstellt diese
+   */
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedFlasks > 0) {
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
@@ -46,21 +64,86 @@ class World {
     }
   }
 
+  /**
+   * Prüft alle Arten von Kollisionen im Spiel
+   */
   checkCollisions() {
     this.checkEnemyCollisions();
     this.checkCoinCollisions();
-    this.checkFlaskCollisions()
+    this.checkFlaskCollisions();
   }
 
+  /**
+   * Prüft Kollisionen zwischen Character und Enemies
+   * Unterscheidet zwischen Jump-Kills (nur normale Enemies) und normalen Kollisionen
+   */
   checkEnemyCollisions() {
-    this.level.enemies.forEach((enemy) => {
+    this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
-        this.character.hit();
-        this.healthStatusBar.setPercentage(this.character.energy);
+        // Prüfe ob Character von oben auf Enemy springt
+        if (this.isJumpingOnEnemy(enemy)) {
+          // NUR normale Enemies können durch Springen besiegt werden
+          if (!(enemy instanceof Endboss)) {
+            this.killEnemyByJump(enemy, index);
+          } else {
+            // Endboss: Auch von oben nimmt Character Schaden
+            this.character.hit();
+            this.healthStatusBar.setPercentage(this.character.energy);
+          }
+        } else {
+          // Seitliche Kollision: Character nimmt Schaden
+          this.character.hit();
+          this.healthStatusBar.setPercentage(this.character.energy);
+        }
       }
     });
   }
 
+  /**
+   * Prüft ob der Character von oben auf einen Enemy springt
+   * Berücksichtigt die Fallrichtung und Hitbox-Offsets
+   * @param {MovableObject} enemy - Der zu prüfende Enemy
+   * @returns {boolean} True wenn Character von oben auf Enemy springt
+   */
+  isJumpingOnEnemy(enemy) {
+    // Character muss fallen (speedY ist negativ beim Fallen)
+    const isFalling = this.character.speedY < 0;
+    
+    // Character muss von oben kommen
+    // Prüfe ob der untere Rand des Characters (mit Hitbox-Offset) 
+    // knapp über dem oberen Rand des Enemies ist
+    const characterBottom = this.character.y + this.character.height - this.character.offsetHitbox.bottom;
+    const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
+    const wasAbove = characterBottom <= enemyTop + 30; // 30px Toleranz für smooth gameplay
+    
+    return isFalling && wasAbove;
+  }
+
+  /**
+   * Besiegt einen Enemy durch Draufspringen
+   * Entfernt den Enemy aus dem Level und lässt den Character hochspringen
+   * @param {MovableObject} enemy - Der zu besiegende Enemy
+   * @param {number} index - Index des Enemies im enemies-Array
+   */
+  killEnemyByJump(enemy, index) {
+    // Enemy aus dem Level entfernen
+    this.level.enemies.splice(index, 1);
+    
+    // Character bekommt einen kleinen Sprung nach oben (wie bei Mario)
+    // speedY ist negativ für Bewegung nach oben
+    this.character.speedY = 20;
+    
+    // Optional: Sound abspielen
+    // this.audioManager.play('enemyKill');
+    
+    // Optional: Score erhöhen
+    // this.score += 100;
+  }
+
+  /**
+   * Prüft Kollisionen zwischen Character und Münzen
+   * Sammelt Münzen beim Berühren ein
+   */
   checkCoinCollisions() {
     this.level.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
@@ -69,6 +152,11 @@ class World {
     });
   }
 
+  /**
+   * Sammelt eine Münze ein
+   * Entfernt die Münze aus dem Level und aktualisiert die Statusbar
+   * @param {number} index - Index der Münze im coins-Array
+   */
   collectCoin(index) {
     this.level.coins.splice(index, 1);
     this.character.collectedCoins++;
@@ -79,6 +167,10 @@ class World {
     this.audioManager.play('coin');
   }
 
+  /**
+   * Prüft Kollisionen zwischen Character und Flaschen
+   * Sammelt Flaschen ein, wenn das Maximum noch nicht erreicht ist
+   */
   checkFlaskCollisions() {
     this.level.flasks.forEach((flask, index) => {
       if (this.character.isColliding(flask) && this.character.collectedFlasks < 5) {
@@ -87,19 +179,32 @@ class World {
     });
   }
 
+  /**
+   * Sammelt eine Flasche ein
+   * Entfernt die Flasche aus dem Level und aktualisiert die Statusbar
+   * @param {number} index - Index der Flasche im flasks-Array
+   */
   collectFlask(index) {
     this.level.flasks.splice(index, 1);
     this.character.collectedFlasks++;
     this.updateFlaskStatusbar();
-    this.audioManager.play('flask')
+    this.audioManager.play('flask');
   }
 
+  /**
+   * Aktualisiert die Flaschen-Statusbar
+   * Berechnet den Prozentsatz basierend auf der maximalen Anzahl (5)
+   */
   updateFlaskStatusbar() {
     let percentage = (this.character.collectedFlasks / 5) * 100;
     if (percentage > 100) percentage = 100;
     this.flaskStatusBar.setPercentage(percentage);
   }
 
+  /**
+   * Hauptzeichenmethode - rendert alle Spielobjekte
+   * Wird kontinuierlich über requestAnimationFrame aufgerufen
+   */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
@@ -119,19 +224,26 @@ class World {
     this.addToMap(this.character);
     this.ctx.translate(-this.camera_x, 0);
 
-    // draw() wird wiederholt gecallt
     let self = this;
     requestAnimationFrame(function () {
       self.draw();
     });
   }
 
+  /**
+   * Zeichnet die statischen Statusbars (oben links)
+   * Diese bewegen sich nicht mit der Kamera
+   */
   addStaticStatusBars() {
     this.addToMap(this.healthStatusBar);
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.flaskStatusBar);
   }
 
+  /**
+   * Zeichnet die dynamischen Statusbars (z.B. Endboss-Healthbar)
+   * Diese bewegen sich mit der Kamera
+   */
   addDynamicStatusBars() {
     let endboss = this.level.enemies.find((e) => e instanceof Endboss);
     if (endboss && endboss.hadFirstContact) {
@@ -140,12 +252,21 @@ class World {
     }
   }
 
+  /**
+   * Zeichnet ein Array von Objekten auf die Map
+   * @param {Array} objects - Array von Objekten die gezeichnet werden sollen
+   */
   addObjectsToMap(objects) {
     objects.forEach((element) => {
       this.addToMap(element);
     });
   }
 
+  /**
+   * Zeichnet ein einzelnes Objekt auf die Map
+   * Berücksichtigt dabei die Blickrichtung (Spiegelung)
+   * @param {MovableObject} moveObject - Das zu zeichnende Objekt
+   */
   addToMap(moveObject) {
     if (moveObject.otherDirection) {
       this.flipImage(moveObject);
@@ -160,6 +281,10 @@ class World {
     }
   }
 
+  /**
+   * Spiegelt das Bild horizontal (für Blickrichtung nach links)
+   * @param {MovableObject} moveObject - Das zu spiegelnde Objekt
+   */
   flipImage(moveObject) {
     this.ctx.save();
     this.ctx.translate(moveObject.width, 0);
@@ -167,6 +292,10 @@ class World {
     moveObject.x = moveObject.x * -1;
   }
 
+  /**
+   * Stellt die normale Bildausrichtung wieder her
+   * @param {MovableObject} moveObject - Das Objekt dessen Spiegelung rückgängig gemacht wird
+   */
   flipImageBack(moveObject) {
     moveObject.x = moveObject.x * -1;
     this.ctx.restore();
