@@ -45,6 +45,7 @@ class World {
   run() {
     setInterval(() => {
       this.checkCollisions();
+      this.checkBottleCollisions();
     }, 50);
 
     setInterval(() => {
@@ -74,6 +75,75 @@ class World {
   }
 
   /**
+   * Prüft Kollisionen zwischen geworfenen Flaschen und Enemies
+   * Spielt Splash-Animation ab und fügt Schaden zu oder tötet den Enemy
+   */
+  checkBottleCollisions() {
+    this.throwableObjects.forEach((bottle, bottleIndex) => {
+      this.level.enemies.forEach((enemy, enemyIndex) => {
+        if (bottle.isColliding(enemy) && !bottle.hasHit) {
+          console.log('Bottle hit enemy!', enemy); // Debug
+          this.handleBottleHit(bottle, enemy, enemyIndex, bottleIndex);
+        }
+      });
+    });
+  }
+
+  /**
+   * Behandelt den Treffer einer Flasche auf einen Enemy
+   * @param {ThrowableObject} bottle - Die geworfene Flasche
+   * @param {MovableObject} enemy - Der getroffene Enemy
+   * @param {number} enemyIndex - Index des Enemies im Array
+   * @param {number} bottleIndex - Index der Flasche im Array
+   */
+  handleBottleHit(bottle, enemy, enemyIndex, bottleIndex) {
+    // Markiere Flasche als getroffen (verhindert mehrfache Treffer)
+    bottle.hasHit = true;
+    
+    // Spiele Splash-Animation ab
+    bottle.playSplash();
+    
+    // Entferne Flasche nach Animation (nach 200ms)
+    setTimeout(() => {
+      this.throwableObjects.splice(bottleIndex, 1);
+    }, 200);
+
+    // Unterscheide zwischen Boss und normalen Enemies
+    if (enemy instanceof Endboss) {
+      this.damageEndboss(enemy);
+    } else {
+      this.killEnemyByBottle(enemyIndex);
+    }
+  }
+
+  /**
+   * Fügt dem Endboss Schaden zu
+   * @param {Endboss} endboss - Der Endboss
+   */
+  damageEndboss(endboss) {
+    // Endboss bekommt 20 Schaden durch Flaschen (statt 5)
+    endboss.hit(20);
+    this.endbossStatusBar.setPercentage(endboss.energy);
+    
+    // Optional: Sound abspielen
+    // this.audioManager.play('bossHit');
+  }
+
+  /**
+   * Tötet einen normalen Enemy durch Flaschen-Treffer
+   * @param {number} enemyIndex - Index des zu tötenden Enemies
+   */
+  killEnemyByBottle(enemyIndex) {
+    this.level.enemies.splice(enemyIndex, 1);
+    
+    // Optional: Sound abspielen
+    // this.audioManager.play('enemyKill');
+    
+    // Optional: Score erhöhen
+    // this.score += 50;
+  }
+
+  /**
    * Prüft Kollisionen zwischen Character und Enemies
    * Unterscheidet zwischen Jump-Kills (nur normale Enemies) und normalen Kollisionen
    */
@@ -86,14 +156,18 @@ class World {
           if (!(enemy instanceof Endboss)) {
             this.killEnemyByJump(enemy, index);
           } else {
-            // Endboss: Auch von oben nimmt Character Schaden
+            // Endboss: Auch von oben nimmt Character Schaden (aber mit Cooldown)
+            if (!this.character.isHurt()) {
+              this.character.hit();
+              this.healthStatusBar.setPercentage(this.character.energy);
+            }
+          }
+        } else {
+          // Seitliche Kollision: Character nimmt Schaden (aber nur wenn nicht gerade verletzt)
+          if (!this.character.isHurt()) {
             this.character.hit();
             this.healthStatusBar.setPercentage(this.character.energy);
           }
-        } else {
-          // Seitliche Kollision: Character nimmt Schaden
-          this.character.hit();
-          this.healthStatusBar.setPercentage(this.character.energy);
         }
       }
     });
@@ -109,14 +183,19 @@ class World {
     // Character muss fallen (speedY ist negativ beim Fallen)
     const isFalling = this.character.speedY < 0;
     
-    // Character muss von oben kommen
-    // Prüfe ob der untere Rand des Characters (mit Hitbox-Offset) 
-    // knapp über dem oberen Rand des Enemies ist
+    // Character muss von oben kommen - mit verbesserter Berechnung
     const characterBottom = this.character.y + this.character.height - this.character.offsetHitbox.bottom;
     const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
-    const wasAbove = characterBottom <= enemyTop + 30; // 30px Toleranz für smooth gameplay
     
-    return isFalling && wasAbove;
+    // Verbesserte Toleranz: Prüfe ob Character gerade von oben kommt
+    // UND ob die vertikale Position stimmt
+    const verticalDistance = characterBottom - enemyTop;
+    const wasAbove = verticalDistance >= -10 && verticalDistance <= 40;
+    
+    // Zusätzlich: Character muss schnell genug fallen (nicht nur leicht touchieren)
+    const fallingFastEnough = this.character.speedY < -3;
+    
+    return isFalling && wasAbove && fallingFastEnough;
   }
 
   /**
