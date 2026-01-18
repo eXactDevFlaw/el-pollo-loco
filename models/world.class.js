@@ -18,6 +18,12 @@ class World {
   throwableObjects = [];
 
   /**
+   * Flag um zu verhindern dass Game Over/Win mehrfach getriggert wird
+   * @type {boolean}
+   */
+  gameEnded = false;
+
+  /**
    * Erstellt eine neue Spielwelt
    * @param {HTMLCanvasElement} canvas - Das Canvas-Element
    * @param {Object} keyboard - Das Keyboard-Objekt mit Tastenstatus
@@ -171,6 +177,57 @@ class World {
         }
       }
     });
+    
+    // Prüfe ob Character tot ist → Game Over
+    this.checkGameOver();
+    
+    // Prüfe ob Endboss tot ist → Win
+    this.checkGameWin();
+  }
+
+  /**
+   * Prüft ob der Character gestorben ist und zeigt Game Over Screen
+   */
+  checkGameOver() {
+    if (this.character.isDead() && !this.gameEnded) {
+      this.gameEnded = true;
+      this.showGameOver();
+    }
+  }
+
+  /**
+   * Prüft ob der Endboss besiegt wurde und zeigt Win Screen
+   */
+  checkGameWin() {
+    let endboss = this.level.enemies.find((e) => e instanceof Endboss);
+    if (endboss && endboss.isDead() && !this.gameEnded) {
+      this.gameEnded = true;
+      this.showGameWin();
+    }
+  }
+
+  /**
+   * Zeigt den Game Over Screen an
+   */
+  showGameOver() {
+    console.log('GAME OVER!');
+    // Hier kannst du deinen Game Over Screen einblenden:
+    // document.getElementById('gameOverScreen').style.display = 'block';
+    
+    // Optional: Stoppt das Spiel
+    // clearInterval(this.gameLoop);
+  }
+
+  /**
+   * Zeigt den Win Screen an
+   */
+  showGameWin() {
+    console.log('YOU WIN!');
+    // Hier kannst du deinen Win Screen einblenden:
+    // document.getElementById('winScreen').style.display = 'block';
+    
+    // Optional: Stoppt das Spiel
+    // clearInterval(this.gameLoop);
   }
 
   /**
@@ -187,15 +244,26 @@ class World {
     const characterBottom = this.character.y + this.character.height - this.character.offsetHitbox.bottom;
     const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
     
-    // Verbesserte Toleranz: Prüfe ob Character gerade von oben kommt
-    // UND ob die vertikale Position stimmt
+    // WICHTIG: Character muss wirklich VON OBEN kommen
+    // Vertikale Position: Character-Füße müssen über Enemy-Kopf sein
     const verticalDistance = characterBottom - enemyTop;
-    const wasAbove = verticalDistance >= -10 && verticalDistance <= 40;
     
-    // Zusätzlich: Character muss schnell genug fallen (nicht nur leicht touchieren)
-    const fallingFastEnough = this.character.speedY < -3;
+    // Sehr strenge Bedingung: Character muss deutlich von oben kommen
+    // Wenn Character auf gleicher Höhe läuft → KEINE Jump-Kill
+    const isComingFromAbove = verticalDistance >= 0 && verticalDistance <= 50;
     
-    return isFalling && wasAbove && fallingFastEnough;
+    // Character muss in der Luft sein (nicht am Boden laufen)
+    const isInAir = this.character.isAboveGround();
+    
+    // Zusätzlich: Character muss schnell genug fallen
+    const fallingFastEnough = this.character.speedY < -5;
+    
+    // ALLE Bedingungen müssen erfüllt sein:
+    // 1. Muss fallen
+    // 2. Muss von oben kommen
+    // 3. Muss in der Luft sein
+    // 4. Muss schnell genug fallen
+    return isFalling && isComingFromAbove && isInAir && fallingFastEnough;
   }
 
   /**

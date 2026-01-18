@@ -83,16 +83,12 @@ class Endboss extends MovableObject {
                 this.playAnimation(this.IMAGES_ATTACK);
             }
 
-            // if (this.isColliding(world.flask)) {
-            //     this.playAnimation(this.IMAGES_HURT);
-            // }
-
             if (this.energy == 0){
                 this.speed = 0
                 this.playAnimation(this.IMAGES_DEAD)
             }
 
-            if(world.character.x > 2000 && !this.hadFirstContact){
+            if(world.character.x > 1950 && !this.hadFirstContact){
                 this.hadFirstContact = true
             }
         }, 200)
