@@ -14,7 +14,7 @@ class Coin extends DrawableObject {
         './img/8_coin/coin_2.png',
     ];
 
-    constructor(){
+    constructor() {
         super();
         this.loadImage('./img/8_coin/coin_1.png');
         this.loadImages(this.IMAGES_COIN)
@@ -23,13 +23,13 @@ class Coin extends DrawableObject {
         this.animate();
     };
 
-    animate(){
-        setInterval(() => {
+    animate() {
+        setStoppableInterval(() => {
             this.playAnimation(this.IMAGES_COIN);
         }, 200);
     }
 
-    playAnimation(images){
+    playAnimation(images) {
         let index = this.currentImage % images.length;
         let path = images[index];
         this.img = this.imageCache[path];

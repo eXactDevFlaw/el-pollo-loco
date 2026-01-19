@@ -79,8 +79,8 @@ class ThrowableObject extends MovableObject {
     throw() {
         this.speedY = 25;
         this.applyGravity();
-        
-        this.throwInterval = setInterval(() => {
+
+        this.throwInterval = setStoppableInterval(() => {
             // Nur animieren wenn nicht am Splashen
             if (!this.isSplashing) {
                 this.playAnimation(this.IMAGES_THROW);
@@ -95,21 +95,21 @@ class ThrowableObject extends MovableObject {
      */
     playSplash() {
         if (this.isSplashing) return; // Verhindere doppelte Splash-Animation
-        
+
         this.isSplashing = true;
-        
+
         // Stoppe Wurf-Animation
         clearInterval(this.throwInterval);
-        
+
         // Stoppe Bewegung
         this.speedY = 0;
         this.speedX = 0;
-        
+
         // Setze currentImage zurück für Splash-Animation
         this.currentImage = 0;
-        
+
         // Spiele Splash-Animation ab
-        const splashInterval = setInterval(() => {
+        const splashInterval = setStoppableInterval(() => {
             if (this.currentImage < this.IMAGES_SPLASH.length) {
                 let path = this.IMAGES_SPLASH[this.currentImage];
                 this.img = this.imageCache[path];
@@ -119,7 +119,7 @@ class ThrowableObject extends MovableObject {
                 clearInterval(splashInterval);
             }
         }, 50);
-        
+
         // Optional: Sound abspielen
         // this.world?.audioManager?.play('bottleSplash');
     }

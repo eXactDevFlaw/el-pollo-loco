@@ -1,13 +1,13 @@
 class SmallChicken extends MovableObject {
     y = 380;
-    height = 40;
-    width = 40;
+    height = 50;
+    width = 50;
 
     offsetHitbox = {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
+        top: -5,
+        left: -5,
+        right: -5,
+        bottom: -5
     }
 
     IMAGES_WALK = [
@@ -26,19 +26,17 @@ class SmallChicken extends MovableObject {
         this.loadImages(this.IMAGES_WALK)
         this.loadImages(this.IMAGES_DEAD)
         this.x = 200 + Math.round(Math.random() * 2000);
-        this.speed = 0.15 + Math.random() * 0.25;
+        this.speed = 0.15 + Math.random() * 0.15;
         this.animate();
     };
 
     animate() {
-        setInterval(() => {
+        setStoppableInterval(() => {
             this.moveLeft();
         }, 1000 / 60)
 
-        setInterval(() => {
+        setStoppableInterval(() => {
             this.playAnimation(this.IMAGES_WALK);
         }, 100);
     };
-
-
 }

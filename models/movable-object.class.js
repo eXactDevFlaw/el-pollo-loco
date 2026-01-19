@@ -5,19 +5,19 @@
 class MovableObject extends DrawableObject {
   /** @type {number} Horizontale Bewegungsgeschwindigkeit */
   speed = 0.15;
-  
+
   /** @type {number} Vertikale Geschwindigkeit (negativ = fallen, positiv = steigen) */
   speedY = 0;
-  
+
   /** @type {number} Schwerkraft-Beschleunigung */
   acceleration = 2.5;
-  
+
   /** @type {boolean} Gibt an ob das Objekt in die andere Richtung schaut */
   otherDirection = false;
-  
+
   /** @type {number} Energie/Leben des Objekts (0-100) */
   energy = 100;
-  
+
   /** @type {number} Zeitstempel des letzten Treffers */
   lastHit = 0;
 
@@ -84,7 +84,7 @@ class MovableObject extends DrawableObject {
    * Lässt das Objekt fallen wenn es in der Luft ist
    */
   applyGravity() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;

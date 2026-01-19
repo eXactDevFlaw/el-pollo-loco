@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html translate="no" class="notranslate">
   <head>
     <meta charset="UTF-8" />
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./main.css" />
     <link rel="icon" type="image/x-icon" href="./img/favicon.png" />
     <title>El Pollo Loco</title>
+    <script src="./models/interval-manager.class.js"></script>
     <script src="./models/drawable-object.class.js"></script>
     <script src="./models/movable-object.class.js"></script>
     <script src="./models/throwable-object.class.js"></script>
@@ -105,5 +106,19 @@
     <button class="audio-mute-btn d-none" id="audioMuteBtn">
       <span class="audio-mute-icon">⛶</span>
     </button>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="game-end-screen d-none">
+      <h2>GAME OVER</h2>
+      <p>Better luck next time!</p>
+      <button onclick="location.reload()">Restart</button>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="winScreen" class="game-end-screen d-none">
+      <h2>YOU WIN!</h2>
+      <p>Congratulations, you defeated the boss!</p>
+      <button onclick="location.reload()">Play Again</button>
+    </div>
   </body>
 </html>

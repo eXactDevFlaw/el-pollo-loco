@@ -24,7 +24,7 @@ class Flask extends DrawableObject {
     }
 
     animate() {
-        setInterval(() => {
+        setStoppableInterval(() => {
             this.playAnimation(this.IMAGES_FLASK);
         }, 300);
     }
