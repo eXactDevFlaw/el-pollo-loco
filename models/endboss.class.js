@@ -25,7 +25,6 @@ class Endboss extends MovableObject {
 
     /**
      * Hitbox-Offsets für präzisere Kollisionserkennung
-     * Großes Offset oben wegen Kamm/Kopf des Huhns
      * @type {Object}
      */
     offsetHitbox = {
@@ -36,7 +35,7 @@ class Endboss extends MovableObject {
     }
 
     /**
-     * Bilder für die Walk-Animation (Lauf-Bewegung)
+     * Bilder für die Walk-Animation
      * @type {string[]}
      */
     IMAGES_WALK = [
@@ -47,8 +46,7 @@ class Endboss extends MovableObject {
     ];
 
     /**
-     * Bilder für die Alert-Animation (Wachsam/Wartend)
-     * Wird abgespielt bevor der Character nahe genug kommt
+     * Bilder für die Alert-Animation
      * @type {string[]}
      */
     IMAGES_ALERT = [
@@ -63,8 +61,7 @@ class Endboss extends MovableObject {
     ];
 
     /**
-     * Bilder für die Attack-Animation (Angriff)
-     * Wird bei Kollision mit dem Character abgespielt
+     * Bilder für die Attack-Animation
      * @type {string[]}
      */
     IMAGES_ATTACK = [
@@ -79,9 +76,7 @@ class Endboss extends MovableObject {
     ];
 
     /**
-     * Bilder für die Hurt-Animation (Verletzt)
-     * Wird abgespielt wenn Endboss Schaden nimmt
-     * Endboss stoppt Bewegung während dieser Animation
+     * Bilder für die Hurt-Animation
      * @type {string[]}
      */
     IMAGES_HURT = [
@@ -91,8 +86,7 @@ class Endboss extends MovableObject {
     ];
 
     /**
-     * Bilder für die Death-Animation (Tod)
-     * Wird einmal abgespielt wenn energy auf 0 fällt
+     * Bilder für die Death-Animation
      * @type {string[]}
      */
     IMAGES_DEAD = [
@@ -103,7 +97,6 @@ class Endboss extends MovableObject {
 
     /**
      * Flag ob der Endboss bereits aktiviert wurde
-     * Wird auf true gesetzt wenn Character x > 1950 erreicht
      * @type {boolean}
      */
     hadFirstContact = false;
@@ -125,56 +118,37 @@ class Endboss extends MovableObject {
 
     /**
      * Verwaltet alle Animationen und Bewegung des Endbosses
-     * Nutzt zwei separate Intervals:
-     * - Bewegung: 60 FPS für flüssige Bewegung
-     * - Animation: 200ms pro Frame für langsame, schwere Bewegung
-     * 
-     * Animations-Priorität:
-     * 1. Death (höchste Priorität, stoppt alles andere)
-     * 2. Hurt (stoppt Bewegung temporär)
-     * 3. Attack (bei Kollision mit Character)
-     * 4. Walk (nach erstem Kontakt)
-     * 5. Alert (vor erstem Kontakt)
      */
     animate() {
-        // Bewegungs-Loop (60 FPS) - Nur nach erstem Kontakt und wenn lebend
         setStoppableInterval(() => {
-            // Bewegung nur wenn: Aktiviert UND Lebend UND NICHT verletzt
             if (this.hadFirstContact && this.energy > 0) {
                 this.moveLeft();
             }
         }, 1000 / 60);
 
-        // Animations-Loop (200ms pro Frame) - Langsam für schweren Boss
         setStoppableInterval(() => {
-            // Death-Animation (nur einmal abspielen) - Höchste Priorität
             if (this.energy == 0) {
                 this.speed = 0;
                 this.playAnimationOnce(this.IMAGES_DEAD);
-                return; // Stoppt alle weiteren Animationen
+                return;
             }
 
-            // Hurt-Animation - Zweithöchste Priorität (stoppt Bewegung)
             if (this.isHurt()) {
                 this.playAnimationOnce(this.IMAGES_HURT);
-                return; // Stoppt Attack/Walk/Alert Animation
+                return;
             }
 
-            // Attack-Animation bei Kollision - Dritthöchste Priorität
             if (this.isColliding(world.character)) {
                 this.playAnimation(this.IMAGES_ATTACK);
-                return; // Stoppt Walk/Alert Animation
+                return;
             }
 
-            // Walking-Animation nach erstem Kontakt
             if (this.hadFirstContact) {
                 this.playAnimation(this.IMAGES_WALK);
             } else {
-                // Alert-Animation vor erstem Kontakt
                 this.playAnimation(this.IMAGES_ALERT);
             }
 
-            // Aktiviere Endboss wenn Character nah genug ist
             if (world.character.x > 2000 && !this.hadFirstContact) {
                 this.hadFirstContact = true;
             }

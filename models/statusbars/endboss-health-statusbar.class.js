@@ -1,3 +1,7 @@
+/**
+ * EndbossHealthStatusBar-Klasse
+ * Zeigt die Lebensenergie des Endbosses an
+ */
 class EndbossHealthStatusBar extends StatusBar {
     x = 400;
     y = 8;
@@ -18,6 +22,9 @@ class EndbossHealthStatusBar extends StatusBar {
         './img/7_statusbars/2_statusbar_endboss/green/green100.png',
     ]
 
+    /**
+     * Erstellt eine neue EndbossHealthStatusBar
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES[5]);
@@ -25,6 +32,10 @@ class EndbossHealthStatusBar extends StatusBar {
         this.setPercentage(this.percentage)
     }
 
+    /**
+     * Aktualisiert die Position der Statusbar basierend auf der Endboss-Position
+     * @param {Endboss} endboss - Der Endboss
+     */
     updatePosition(endboss){
         this.x = endboss.x + this.offsetX;
         this.y = endboss.y + this.offsetY;

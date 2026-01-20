@@ -11,7 +11,6 @@ class IntervalManager {
 
     /**
      * Registriert ein neues Interval
-     * Ersetzt das normale setInterval()
      * @param {Function} callback - Die auszuführende Funktion
      * @param {number} delay - Verzögerung in Millisekunden
      * @returns {number} Die Interval-ID
@@ -36,7 +35,6 @@ class IntervalManager {
 
     /**
      * Stoppt ALLE registrierten Intervals
-     * Wird bei Game Over oder Win aufgerufen
      */
     static clearAllIntervals() {
         this.intervals.forEach(intervalId => {
@@ -48,7 +46,6 @@ class IntervalManager {
 
     /**
      * Gibt die Anzahl der aktiven Intervals zurück
-     * Nützlich für Debugging
      * @returns {number} Anzahl aktiver Intervals
      */
     static getActiveCount() {

@@ -1,3 +1,7 @@
+/**
+ * Chicken-Klasse - Normales Hühnchen als Enemy
+ * Bewegt sich von rechts nach links
+ */
 class Chicken extends MovableObject {
     y = 360;
     height = 60;
@@ -20,7 +24,9 @@ class Chicken extends MovableObject {
         './img/3_enemies_chicken/chicken_normal/2_dead/dead.png',
     ];
 
-
+    /**
+     * Erstellt ein neues Hühnchen an zufälliger Position
+     */
     constructor() {
         super();
         this.loadImage('./img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
@@ -31,6 +37,9 @@ class Chicken extends MovableObject {
         this.animate();
     };
 
+    /**
+     * Startet Bewegung und Animation
+     */
     animate() {
         setStoppableInterval(() => {
             this.moveLeft();

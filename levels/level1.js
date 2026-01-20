@@ -1,5 +1,8 @@
 let level1;
 
+/**
+ * Initialisiert Level 1 mit allen Enemies, Objekten und Hintergründen
+ */
 function initLevel() {
     level1 = new Level(
         [

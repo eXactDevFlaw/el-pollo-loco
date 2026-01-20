@@ -1,3 +1,7 @@
+/**
+ * FlaskStatusBar-Klasse
+ * Zeigt die Anzahl gesammelter Flaschen an
+ */
 class FlaskStatusBar extends StatusBar {
     x = 10;
     y = 100;
@@ -14,6 +18,9 @@ class FlaskStatusBar extends StatusBar {
         './img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png',
     ]
 
+    /**
+     * Erstellt eine neue FlaskStatusBar
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES[0]);

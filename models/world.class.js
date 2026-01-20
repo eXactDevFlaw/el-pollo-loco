@@ -23,6 +23,24 @@ class World {
    */
   gameEnded = false;
 
+  IMAGES_WIN = [
+    "./img/You won, you lost/Game over A.png",
+    "./img/You won, you lost/Game Over.png",
+    "./img/You won, you lost/You lost b.png",
+    "./img/You won, you lost/You lost.png",
+    "./img/You won, you lost/You Win A.png",
+    "./img/You won, you lost/You win B.png",
+    "./img/You won, you lost/You won A.png",
+    "./img/You won, you lost/You Won B.png",
+  ];
+
+  IMAGES_LOOSE = [
+    "./img/9_intro_outro_screens/game_over/game over!.png",
+    "./img/9_intro_outro_screens/game_over/game over.png",
+    "./img/9_intro_outro_screens/game_over/oh no you lost!.png",
+    "./img/9_intro_outro_screens/game_over/you lost.png",
+  ];
+
   /**
    * Erstellt eine neue Spielwelt
    * @param {HTMLCanvasElement} canvas - Das Canvas-Element
@@ -52,7 +70,7 @@ class World {
     setStoppableInterval(() => {
       this.checkCollisions();
       this.checkBottleCollisions();
-    }, 1000 / 60);  // ← GEÄNDERT: Von 50ms auf ~16ms (60 FPS)
+    }, 1000 / 60);
 
     setStoppableInterval(() => {
       this.checkThrowObjects();
@@ -63,23 +81,25 @@ class World {
    * Prüft ob der Spieler eine Flasche werfen möchte und erstellt diese
    * Erlaubt nur eine fliegende Flasche gleichzeitig, um Spam zu verhindern
    * Das Inventar kann trotzdem bis zu 5 Flaschen enthalten
-   * 
+   *
    * Bedingungen für Wurf:
    * - D-Taste gedrückt
    * - Mindestens 1 Flasche im Inventar
    * - Keine andere Flasche fliegt gerade (hasHit === false)
    */
   checkThrowObjects() {
-    // Prüfe ob bereits eine aktive (noch nicht getroffene) Flasche fliegt
-    const hasActiveBottle = this.throwableObjects.some(bottle => !bottle.hasHit);
+    const hasActiveBottle = this.throwableObjects.some(
+      (bottle) => !bottle.hasHit,
+    );
 
-    if (this.keyboard.D &&
+    if (
+      this.keyboard.D &&
       this.character.collectedFlasks > 0 &&
-      !hasActiveBottle) {
-
+      !hasActiveBottle
+    ) {
       let bottle = new ThrowableObject(
         this.character.x + 100,
-        this.character.y + 100
+        this.character.y + 100,
       );
       this.throwableObjects.push(bottle);
       this.character.collectedFlasks--;
@@ -104,7 +124,6 @@ class World {
     this.throwableObjects.forEach((bottle, bottleIndex) => {
       this.level.enemies.forEach((enemy, enemyIndex) => {
         if (bottle.isColliding(enemy) && !bottle.hasHit) {
-          console.log('Bottle hit enemy!', enemy); // Debug
           this.handleBottleHit(bottle, enemy, enemyIndex, bottleIndex);
         }
       });
@@ -119,18 +138,14 @@ class World {
    * @param {number} bottleIndex - Index der Flasche im Array
    */
   handleBottleHit(bottle, enemy, enemyIndex, bottleIndex) {
-    // Markiere Flasche als getroffen (verhindert mehrfache Treffer)
     bottle.hasHit = true;
 
-    // Spiele Splash-Animation ab
     bottle.playSplash();
 
-    // Entferne Flasche nach Animation (nach 200ms)
     setTimeout(() => {
       this.throwableObjects.splice(bottleIndex, 1);
     }, 200);
 
-    // Unterscheide zwischen Boss und normalen Enemies
     if (enemy instanceof Endboss) {
       this.damageEndboss(enemy);
     } else {
@@ -143,12 +158,8 @@ class World {
    * @param {Endboss} endboss - Der Endboss
    */
   damageEndboss(endboss) {
-    // Endboss bekommt 20 Schaden durch Flaschen (statt 5)
     endboss.hit(20);
     this.endbossStatusBar.setPercentage(endboss.energy);
-
-    // Optional: Sound abspielen
-    // this.audioManager.play('bossHit');
   }
 
   /**
@@ -157,12 +168,6 @@ class World {
    */
   killEnemyByBottle(enemyIndex) {
     this.level.enemies.splice(enemyIndex, 1);
-
-    // Optional: Sound abspielen
-    // this.audioManager.play('enemyKill');
-
-    // Optional: Score erhöhen
-    // this.score += 50;
   }
 
   /**
@@ -172,20 +177,16 @@ class World {
   checkEnemyCollisions() {
     this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
-        // Prüfe ob Character von oben auf Enemy springt
         if (this.isJumpingOnEnemy(enemy)) {
-          // NUR normale Enemies können durch Springen besiegt werden
           if (!(enemy instanceof Endboss)) {
             this.killEnemyByJump(enemy, index);
           } else {
-            // Endboss: Auch von oben nimmt Character Schaden (aber mit Cooldown)
             if (!this.character.isHurt()) {
               this.character.hit();
               this.healthStatusBar.setPercentage(this.character.energy);
             }
           }
         } else {
-          // Seitliche Kollision: Character nimmt Schaden (aber nur wenn nicht gerade verletzt)
           if (!this.character.isHurt()) {
             this.character.hit();
             this.healthStatusBar.setPercentage(this.character.energy);
@@ -194,10 +195,8 @@ class World {
       }
     });
 
-    // Prüfe ob Character tot ist → Game Over
     this.checkGameOver();
 
-    // Prüfe ob Endboss tot ist → Win
     this.checkGameWin();
   }
 
@@ -208,12 +207,11 @@ class World {
     if (this.character.isDead() && !this.gameEnded) {
       this.gameEnded = true;
 
-      // Character hat 7 Death-Bilder × 50ms = 350ms
-      const frameCount = this.character.IMAGES_DEAD.length;  // 7
-      const frameDelay = 50;  // Von handleAnimations()
+      const frameCount = this.character.IMAGES_DEAD.length;
+      const frameDelay = 50;
       const loops = 1;
 
-      const animationDuration = frameCount * frameDelay * loops;  // 350ms
+      const animationDuration = frameCount * frameDelay * loops;
 
       setTimeout(() => {
         this.showGameOver();
@@ -229,12 +227,11 @@ class World {
     if (endboss && endboss.isDead() && !this.gameEnded) {
       this.gameEnded = true;
 
-      // Berechne Dauer automatisch
-      const frameCount = endboss.IMAGES_DEAD.length;  // 3 Bilder
-      const frameDelay = 200;  // 200ms pro Bild
-      const loops = 1;  // Nur 1x durchlaufen
+      const frameCount = endboss.IMAGES_DEAD.length;
+      const frameDelay = 200;
+      const loops = 1;
 
-      const animationDuration = frameCount * frameDelay * loops;  // 3 × 200 × 1 = 600ms
+      const animationDuration = frameCount * frameDelay * loops;
 
       setTimeout(() => {
         this.showGameWin();
@@ -243,30 +240,47 @@ class World {
   }
 
   /**
-   * Zeigt den Game Over Screen an
+   * Zeigt den Game Over Screen an und stoppt das Spiel
+   * Wählt zufälliges Game Over Bild aus
    */
   showGameOver() {
-    stopAllIntervals();  // Stoppt ALLES
-    console.log('GAME OVER!');
+    stopAllIntervals();
+    console.log("GAME OVER!");
 
-    // Aktiviere Game Over Screen
-    const gameOverScreen = document.getElementById('gameOverScreen');
+    const randomIndex = Math.floor(
+      Math.random() * this.IMAGES_GAME_OVER.length,
+    );
+    const randomImage = this.IMAGES_GAME_OVER[randomIndex];
+
+    const gameOverImg = document.getElementById("gameOverImage");
+    if (gameOverImg) {
+      gameOverImg.src = randomImage;
+    }
+
+    const gameOverScreen = document.getElementById("gameOverScreen");
     if (gameOverScreen) {
-      gameOverScreen.classList.remove('d-none');
+      gameOverScreen.classList.remove("d-none");
     }
   }
 
   /**
-   * Zeigt den Win Screen an
+   * Zeigt den Win Screen an und stoppt das Spiel
+   * Wählt zufälliges Win Bild aus
    */
   showGameWin() {
-    stopAllIntervals();  // Stoppt ALLES
-    console.log('YOU WIN!');
+    stopAllIntervals();
 
-    // Aktiviere Win Screen  
-    const winScreen = document.getElementById('winScreen');
+    const randomIndex = Math.floor(Math.random() * this.IMAGES_WIN.length);
+    const randomImage = this.IMAGES_WIN[randomIndex];
+
+    const winImg = document.getElementById("winImage");
+    if (winImg) {
+      winImg.src = randomImage;
+    }
+
+    const winScreen = document.getElementById("winScreen");
     if (winScreen) {
-      winScreen.classList.remove('d-none');
+      winScreen.classList.remove("d-none");
     }
   }
 
@@ -277,32 +291,22 @@ class World {
    * @returns {boolean} True wenn Character von oben auf Enemy springt
    */
   isJumpingOnEnemy(enemy) {
-    // Character muss fallen (speedY ist negativ beim Fallen)
     const isFalling = this.character.speedY < 0;
 
-    // Character muss von oben kommen - mit verbesserter Berechnung
-    const characterBottom = this.character.y + this.character.height - this.character.offsetHitbox.bottom;
+    const characterBottom =
+      this.character.y +
+      this.character.height -
+      this.character.offsetHitbox.bottom;
     const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
 
-    // WICHTIG: Character muss wirklich VON OBEN kommen
-    // Vertikale Position: Character-Füße müssen über Enemy-Kopf sein
     const verticalDistance = characterBottom - enemyTop;
 
-    // Sehr strenge Bedingung: Character muss deutlich von oben kommen
-    // Wenn Character auf gleicher Höhe läuft → KEINE Jump-Kill
     const isComingFromAbove = verticalDistance >= 0 && verticalDistance <= 50;
 
-    // Character muss in der Luft sein (nicht am Boden laufen)
     const isInAir = this.character.isAboveGround();
 
-    // Zusätzlich: Character muss schnell genug fallen
     const fallingFastEnough = this.character.speedY < -5;
 
-    // ALLE Bedingungen müssen erfüllt sein:
-    // 1. Muss fallen
-    // 2. Muss von oben kommen
-    // 3. Muss in der Luft sein
-    // 4. Muss schnell genug fallen
     return isFalling && isComingFromAbove && isInAir && fallingFastEnough;
   }
 
@@ -313,18 +317,9 @@ class World {
    * @param {number} index - Index des Enemies im enemies-Array
    */
   killEnemyByJump(enemy, index) {
-    // Enemy aus dem Level entfernen
     this.level.enemies.splice(index, 1);
 
-    // Character bekommt einen kleinen Sprung nach oben (wie bei Mario)
-    // speedY ist negativ für Bewegung nach oben
     this.character.speedY = 20;
-
-    // Optional: Sound abspielen
-    // this.audioManager.play('enemyKill');
-
-    // Optional: Score erhöhen
-    // this.score += 100;
   }
 
   /**
@@ -351,7 +346,7 @@ class World {
     let percentage = (this.character.collectedCoins / 10) * 100;
     if (percentage > 100) percentage = 100;
     this.coinStatusBar.setPercentage(percentage);
-    this.audioManager.play('coin');
+    this.audioManager.play("coin");
   }
 
   /**
@@ -360,7 +355,10 @@ class World {
    */
   checkFlaskCollisions() {
     this.level.flasks.forEach((flask, index) => {
-      if (this.character.isColliding(flask) && this.character.collectedFlasks < 5) {
+      if (
+        this.character.isColliding(flask) &&
+        this.character.collectedFlasks < 5
+      ) {
         this.collectFlask(index);
       }
     });
@@ -375,7 +373,7 @@ class World {
     this.level.flasks.splice(index, 1);
     this.character.collectedFlasks++;
     this.updateFlaskStatusbar();
-    this.audioManager.play('flask');
+    this.audioManager.play("flask");
   }
 
   /**
@@ -396,8 +394,6 @@ class World {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Runde Kamera-Position auf ganze Pixel ab
-    // Verhindert 1px-Lücken zwischen Background-Bildern
     const roundedCameraX = Math.floor(this.camera_x);
 
     this.ctx.translate(roundedCameraX, 0);
@@ -467,7 +463,7 @@ class World {
 
     moveObject.draw(this.ctx);
     // moveObject.drawRect(this.ctx);
-    moveObject.drawRectHitbox(this.ctx);
+    //moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);

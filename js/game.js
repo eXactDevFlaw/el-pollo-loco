@@ -27,11 +27,8 @@ function init() {
     backHomeScreen();
 }
 
-// ===== KEYBOARD EVENTS =====
-
 /**
  * Binds keyboard event listeners for desktop controls
- * Handles keydown and keyup events for arrow keys, space, and D key
  * @returns {void}
  */
 function bindKeyboardEvents() {
@@ -54,11 +51,8 @@ function bindKeyboardEvents() {
     });
 }
 
-// ===== MOBILE TOUCH CONTROLS =====
-
 /**
  * Binds touch event listeners for mobile controls
- * Prevents context menu on touch-and-hold and maps touch events to keyboard state
  * @returns {void}
  */
 function bindMobileControls() {
@@ -88,7 +82,7 @@ function preventContextMenu() {
 /**
  * Binds touch events to a button and maps them to keyboard state
  * @param {HTMLElement|null} button - The button element to bind
- * @param {string} keyProperty - The keyboard property to control (e.g., 'LEFT', 'SPACE')
+ * @param {string} keyProperty - The keyboard property to control
  * @returns {void}
  */
 function bindTouchButton(button, keyProperty) {
@@ -105,8 +99,6 @@ function bindTouchButton(button, keyProperty) {
     });
 }
 
-// ===== FULLSCREEN BUTTON =====
-
 /**
  * Initializes fullscreen button functionality
  * @returns {void}
@@ -121,7 +113,6 @@ function initFullscreen() {
 
 /**
  * Toggles fullscreen mode on and off
- * Enters fullscreen if not active, exits if already in fullscreen
  * @returns {void}
  */
 function toggleFullscreen() {
@@ -136,11 +127,8 @@ function toggleFullscreen() {
     }
 }
 
-// ===== ORIENTATION DETECTION =====
-
 /**
  * Checks device orientation and displays rotate overlay if needed
- * Shows overlay on mobile devices in portrait mode
  * @returns {void}
  */
 function checkOrientation() {
@@ -158,12 +146,8 @@ function checkOrientation() {
     }
 }
 
-// ===== RESPONSIVE FEATURES INITIALIZATION =====
-
 /**
  * Initializes all responsive features
- * Sets up keyboard controls, mobile touch controls, fullscreen button,
- * and orientation detection with event listeners
  * @returns {void}
  */
 function initResponsiveFeatures() {
@@ -176,10 +160,8 @@ function initResponsiveFeatures() {
     window.addEventListener('orientationchange', checkOrientation);
 }
 
-// ===== START =====
-
 /**
- * Starts the game and creat world instance
+ * Starts the game and creates world instance
  * @returns {void}
  */
 function startGame() {
@@ -197,6 +179,10 @@ function startGame() {
     })
 }
 
+/**
+ * Initializes info game sections
+ * @returns {void}
+ */
 function infoGame() {
     const infoContent = document.querySelector('.info-content');
     const controlBtn = document.querySelector('#game-controlBtn');
@@ -217,7 +203,10 @@ function infoGame() {
     })
 }
 
-
+/**
+ * Handles back button to return to home screen
+ * @returns {void}
+ */
 function backHomeScreen() {
     const backBtn = document.querySelectorAll('.backBtn');
     const infoContent = document.querySelector('.info-content');
@@ -231,7 +220,6 @@ function backHomeScreen() {
         })
     })
 }
-
 
 /**
  * Entry point - initializes game when DOM is fully loaded

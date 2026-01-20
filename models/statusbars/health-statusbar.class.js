@@ -1,3 +1,7 @@
+/**
+ * HealthStatusBar-Klasse
+ * Zeigt die Lebensenergie des Characters an
+ */
 class HealthStatusBar extends StatusBar {
     x = 10;
     y = 0;
@@ -14,6 +18,9 @@ class HealthStatusBar extends StatusBar {
         './img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png',
     ]
 
+    /**
+     * Erstellt eine neue HealthStatusBar
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES[5]);

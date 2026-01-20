@@ -26,7 +26,6 @@ class ThrowableObject extends MovableObject {
 
     /**
      * Gibt an ob die Flasche bereits getroffen hat
-     * Verhindert mehrfache Treffer
      * @type {boolean}
      */
     hasHit = false;
@@ -74,14 +73,12 @@ class ThrowableObject extends MovableObject {
 
     /**
      * Wirft die Flasche
-     * Startet Flugbahn und Rotations-Animation
      */
     throw() {
         this.speedY = 25;
         this.applyGravity();
 
         this.throwInterval = setStoppableInterval(() => {
-            // Nur animieren wenn nicht am Splashen
             if (!this.isSplashing) {
                 this.playAnimation(this.IMAGES_THROW);
                 this.x += 20;
@@ -91,36 +88,27 @@ class ThrowableObject extends MovableObject {
 
     /**
      * Spielt die Splash-Animation ab wenn die Flasche trifft
-     * Stoppt die Flug-Animation und zeigt den Aufprall
      */
     playSplash() {
-        if (this.isSplashing) return; // Verhindere doppelte Splash-Animation
+        if (this.isSplashing) return;
 
         this.isSplashing = true;
 
-        // Stoppe Wurf-Animation
         clearInterval(this.throwInterval);
 
-        // Stoppe Bewegung
         this.speedY = 0;
         this.speedX = 0;
 
-        // Setze currentImage zurück für Splash-Animation
         this.currentImage = 0;
 
-        // Spiele Splash-Animation ab
         const splashInterval = setStoppableInterval(() => {
             if (this.currentImage < this.IMAGES_SPLASH.length) {
                 let path = this.IMAGES_SPLASH[this.currentImage];
                 this.img = this.imageCache[path];
                 this.currentImage++;
             } else {
-                // Animation fertig - zeige letztes Bild
                 clearInterval(splashInterval);
             }
         }, 50);
-
-        // Optional: Sound abspielen
-        // this.world?.audioManager?.play('bottleSplash');
     }
 }

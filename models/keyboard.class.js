@@ -1,3 +1,7 @@
+/**
+ * Keyboard-Klasse
+ * Speichert den Status aller Tasten
+ */
 class Keyboard {
     LEFT = false;
     RIGHT = false;

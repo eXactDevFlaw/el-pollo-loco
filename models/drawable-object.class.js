@@ -1,3 +1,7 @@
+/**
+ * Basisklasse für alle zeichenbaren Objekte
+ * Verwaltet Bilder, Position und grundlegende Rendering-Funktionalität
+ */
 class DrawableObject {
     img;
     imageCache = {};
@@ -8,21 +12,19 @@ class DrawableObject {
     height = 150;
     width = 150;
 
-
     /**
-    * 
-    * @param {String} path 
-    */
+     * Lädt ein einzelnes Bild
+     * @param {String} path - Pfad zum Bild
+     */
     loadImage(path) {
         this.img = new Image();
         this.img.src = path;
     }
 
     /**
-    * 
-    * @param {Array} arr
-    * @param {String} path
-    */
+     * Lädt mehrere Bilder in den Cache
+     * @param {Array} arr - Array mit Bildpfaden
+     */
     loadImages(arr) {
         arr.forEach((path) => {
             let img = new Image();
@@ -32,8 +34,8 @@ class DrawableObject {
     }
 
     /**
-     * 
-     * @param {*} ctx 
+     * Zeichnet das Objekt auf das Canvas
+     * @param {CanvasRenderingContext2D} ctx - Canvas Context
      */
     draw(ctx) {
         try {
@@ -45,6 +47,10 @@ class DrawableObject {
 
     }
 
+    /**
+     * Zeichnet eine Rechteck-Hitbox um das Objekt
+     * @param {CanvasRenderingContext2D} ctx - Canvas Context
+     */
     drawRect(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
             ctx.beginPath();
@@ -55,6 +61,10 @@ class DrawableObject {
         }
     }
 
+    /**
+     * Zeichnet die tatsächliche Hitbox mit Offsets
+     * @param {CanvasRenderingContext2D} ctx - Canvas Context
+     */
     drawRectHitbox(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof Endboss || this instanceof Coin || this instanceof Flask) {
             ctx.beginPath();

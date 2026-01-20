@@ -1,9 +1,15 @@
+/**
+ * Cloud-Klasse - Wolke im Hintergrund
+ * Bewegt sich langsam von rechts nach links
+ */
 class Cloud extends MovableObject {
     y = 20;
     height = 250;
     width = 500;
 
-
+    /**
+     * Erstellt eine neue Wolke an zufälliger Position
+     */
     constructor() {
         super();
         this.loadImage('./img/5_background/layers/4_clouds/1.png');
@@ -12,6 +18,9 @@ class Cloud extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Startet die Bewegung der Wolke
+     */
     animate() {
         setStoppableInterval(() => {
             this.moveLeft();

@@ -5,7 +5,6 @@
 
 /**
  * Initialisiert den Mobile Fullscreen Handler
- * Wartet auf DOMContentLoaded und bindet Event Listener an Start-Button
  * @returns {void}
  */
 function initMobileFullscreen() {
@@ -20,14 +19,12 @@ function initMobileFullscreen() {
 
 /**
  * Handler für Game-Start Button Click
- * Aktiviert Fullscreen auf Mobile-Geräten im Landscape-Modus
  * @returns {void}
  */
 function handleGameStart() {
     const isMobile = window.innerWidth <= 768;
     const isLandscape = window.innerWidth > window.innerHeight;
 
-    // Fullscreen nur auf Mobile im Landscape aktivieren
     if (isMobile && isLandscape) {
         setTimeout(() => {
             requestCanvasFullscreen();
@@ -49,5 +46,4 @@ function requestCanvasFullscreen() {
     }
 }
 
-// Initialisierung starten
 initMobileFullscreen();

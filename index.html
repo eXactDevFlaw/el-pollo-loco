@@ -109,16 +109,32 @@
 
     <!-- Game Over Screen -->
     <div id="gameOverScreen" class="game-end-screen d-none">
-      <h2>GAME OVER</h2>
-      <p>Better luck next time!</p>
-      <button onclick="location.reload()">Restart</button>
+      <div class="end-screen-content">
+        <img
+          id="gameOverImage"
+          src=""
+          alt="Game Over"
+          class="end-screen-image game-over-image"
+        />
+        <div class="game-startBtn">
+          <button onclick="location.reload()">Try Again</button>
+        </div>
+      </div>
     </div>
 
     <!-- Win Screen -->
     <div id="winScreen" class="game-end-screen d-none">
-      <h2>YOU WIN!</h2>
-      <p>Congratulations, you defeated the boss!</p>
-      <button onclick="location.reload()">Play Again</button>
+      <div class="end-screen-content">
+        <img
+          id="winImage"
+          src=""
+          alt="You Win"
+          class="end-screen-image win-image"
+        />
+        <div class="game-startBtn">
+          <button onclick="location.reload()">Play Again</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

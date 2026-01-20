@@ -1,3 +1,7 @@
+/**
+ * SmallChicken-Klasse - Kleines Hühnchen als Enemy
+ * Bewegt sich von rechts nach links
+ */
 class SmallChicken extends MovableObject {
     y = 380;
     height = 50;
@@ -20,6 +24,9 @@ class SmallChicken extends MovableObject {
         './img/3_enemies_chicken/chicken_small/2_dead/dead.png',
     ];
 
+    /**
+     * Erstellt ein neues kleines Hühnchen an zufälliger Position
+     */
     constructor() {
         super();
         this.loadImage('./img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
@@ -30,6 +37,9 @@ class SmallChicken extends MovableObject {
         this.animate();
     };
 
+    /**
+     * Startet Bewegung und Animation
+     */
     animate() {
         setStoppableInterval(() => {
             this.moveLeft();

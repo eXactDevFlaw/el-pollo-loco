@@ -44,7 +44,7 @@ class Character extends MovableObject {
   ];
 
   /**
-   * Bild für die Peak-Animation (höchster Punkt des Sprungs)
+   * Bild für die Peak-Animation
    * @type {string[]}
    */
   IMAGES_PEAK = ["./img/2_character_pepe/3_jump/J-35.png"];
@@ -85,7 +85,7 @@ class Character extends MovableObject {
   ];
 
   /**
-   * Bilder für die Idle-Animation (kurz)
+   * Bilder für die Idle-Animation
    * @type {string[]}
    */
   IMAGES_IDLE = [
@@ -102,7 +102,7 @@ class Character extends MovableObject {
   ];
 
   /**
-   * Bilder für die Idle-Long-Animation (nach längerem Stillstand)
+   * Bilder für die Idle-Long-Animation
    * @type {string[]}
    */
   IMAGES_IDLE_LONG = [
@@ -132,7 +132,6 @@ class Character extends MovableObject {
 
   /**
    * Zeitstempel wann Character zuletzt idle wurde
-   * Wird verwendet um den Wechsel zu idle_long zu bestimmen
    * @type {number}
    */
   idleStartTime = 0;
@@ -141,7 +140,7 @@ class Character extends MovableObject {
    * Zeit in Millisekunden bis idle_long Animation startet
    * @type {number}
    */
-  idleLongDelay = 5000; // 5 Sekunden
+  idleLongDelay = 5000;
 
   /**
    * Anzahl gesammelter Münzen
@@ -177,7 +176,6 @@ class Character extends MovableObject {
 
   /**
    * Startet alle Animations- und Bewegungs-Loops
-   * Initialisiert Movement und Animation-Handler
    */
   animate() {
     this.handleMovement();
@@ -186,7 +184,6 @@ class Character extends MovableObject {
 
   /**
    * Verwaltet die Character-Bewegung basierend auf Keyboard-Input
-   * Kamera folgt sanft mit Interpolation
    */
   handleMovement() {
     setStoppableInterval(() => {
@@ -209,29 +206,19 @@ class Character extends MovableObject {
 
   /**
    * Aktualisiert die Kamera-Position mit sanfter Interpolation
-   * Kamera bewegt sich langsam zur Ziel-Position
-   * Nach links: Character weiter rechts (mehr Sicht links)
-   * Nach rechts: Character weiter links (mehr Sicht rechts)
    */
   updateCameraSmooth() {
-    // Ziel-Offset basierend auf Blickrichtung
     let targetOffset = this.otherDirection ? 300 : 100;
     let targetCameraX = -this.x + targetOffset;
 
-    // Sanfte Interpolation (Lerp) - 10% pro Frame
     let smoothSpeed = 0.075;
     this.world.camera_x += (targetCameraX - this.world.camera_x) * smoothSpeed;
   }
 
   /**
    * Verwaltet alle Animations-States des Characters
-   * Nutzt unterschiedliche Geschwindigkeiten für verschiedene Animationen:
-   * - Normale Animationen: 50ms
-   * - Sprung-Animationen: 150ms
-   * - Idle-Animationen: 200ms (langsamer für ruhigere Bewegung)
    */
   handleAnimations() {
-    // Schnelle Animationen (50ms) - für die meisten States
     setStoppableInterval(() => {
       let newState = this.determineState();
 
@@ -239,20 +226,17 @@ class Character extends MovableObject {
         this.changeState(newState);
       }
 
-      // Alle States außer jump/peak/fall/idle/idle_long
       if (!["jump", "peak", "fall", "idle", "idle_long"].includes(this.currentState)) {
         this.playCurrentStateAnimation();
       }
     }, 50);
 
-    // Jump/Fall Animationen (150ms) - Mittlere Geschwindigkeit
     setStoppableInterval(() => {
       if (["jump", "peak", "fall"].includes(this.currentState)) {
         this.playCurrentStateAnimation();
       }
     }, 150);
 
-    // Idle Animationen (200ms) - Langsamer für ruhigere Bewegung
     setStoppableInterval(() => {
       if (["idle", "idle_long"].includes(this.currentState)) {
         this.playCurrentStateAnimation();
@@ -261,11 +245,7 @@ class Character extends MovableObject {
   }
 
   /**
-   * Bestimmt den aktuellen State des Characters basierend auf:
-   * - Lebensstatus (tot/verletzt)
-   * - Position (in der Luft/am Boden)
-   * - Bewegung (laufend/stillstehend)
-   * Resettet den Idle-Timer bei Bewegung oder Sprüngen
+   * Bestimmt den aktuellen State des Characters
    * @returns {string} Der neue State
    */
   determineState() {
@@ -273,7 +253,6 @@ class Character extends MovableObject {
     if (this.isHurt()) return "hurt";
 
     if (this.isAboveGround()) {
-      // Reset idle timer wenn in der Luft
       this.idleStartTime = 0;
 
       if (this.speedY > 15) return "jump";
@@ -282,34 +261,27 @@ class Character extends MovableObject {
     }
 
     if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-      // Reset idle timer wenn Character sich bewegt
       this.idleStartTime = 0;
       return "walk";
     }
 
-    // Character steht still → Idle-Logik
     return this.determineIdleState();
   }
 
   /**
    * Bestimmt ob idle oder idle_long angezeigt werden soll
-   * Misst die Zeit seit dem letzten Stillstand
-   * Wechselt zu idle_long nach Ablauf von idleLongDelay
    * @returns {string} "idle" oder "idle_long"
    */
   determineIdleState() {
     const now = Date.now();
 
-    // Setze Start-Zeit beim ersten Mal idle
     if (this.idleStartTime === 0) {
       this.idleStartTime = now;
       return "idle";
     }
 
-    // Berechne wie lange Character bereits idle ist
     const idleDuration = now - this.idleStartTime;
 
-    // Wechsel zu idle_long nach X Sekunden
     if (idleDuration >= this.idleLongDelay) {
       return "idle_long";
     }
@@ -319,7 +291,7 @@ class Character extends MovableObject {
 
   /**
    * Wechselt den State und setzt die Animation zurück
-   * @param {string} newState - Der neue State (z.B. "walk", "jump", "idle")
+   * @param {string} newState - Der neue State
    */
   changeState(newState) {
     this.currentState = newState;
@@ -328,8 +300,6 @@ class Character extends MovableObject {
 
   /**
    * Spielt die Animation des aktuellen Character-States ab
-   * Nutzt playAnimationOnce für einmalige Animationen (Death, Jump, Peak, Fall)
-   * Nutzt playAnimation für Loop-Animationen (Walk, Idle, Hurt)
    */
   playCurrentStateAnimation() {
     switch (this.currentState) {

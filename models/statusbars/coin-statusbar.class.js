@@ -1,3 +1,7 @@
+/**
+ * CoinStatusBar-Klasse
+ * Zeigt die Anzahl gesammelter Münzen an
+ */
 class CoinStatusBar extends StatusBar {
     x = 10;
     y = 50;
@@ -14,6 +18,9 @@ class CoinStatusBar extends StatusBar {
         './img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png',
     ]
 
+    /**
+     * Erstellt eine neue CoinStatusBar
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES[0]);
