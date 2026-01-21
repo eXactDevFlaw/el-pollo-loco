@@ -76,6 +76,12 @@
             </div>
           </div>
         </div>
+
+        <!-- Impressum Link -->
+        <div style="position: fixed; bottom: 10px; left: 10px; z-index: 100;">
+          <a href="imprint.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.875rem; transition: color 0.3s;" onmouseover="this.style.color='rgba(255,255,255,1)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Impressum</a>
+        </div>
+
         <!-- Mobile Controls -->
         <div class="mobile-controls">
           <div class="control-group left-controls">
@@ -103,8 +109,10 @@
     <button class="fullscreen-btn d-none" id="fullscreenBtn">
       <span class="fullscreen-icon">⛶</span>
     </button>
+    
+    <!-- Mute Button -->
     <button class="audio-mute-btn d-none" id="audioMuteBtn">
-      <span class="audio-mute-icon">⛶</span>
+      <span class="audio-icon">🔊</span>
     </button>
 
     <!-- Game Over Screen -->
@@ -117,7 +125,10 @@
           class="end-screen-image game-over-image"
         />
         <div class="game-startBtn">
-          <button onclick="location.reload()">Try Again</button>
+          <button onclick="restartGame()">Try Again</button>
+        </div>
+        <div class="game-startBtn">
+          <button onclick="returnToHome()">Main Menu</button>
         </div>
       </div>
     </div>
@@ -132,7 +143,10 @@
           class="end-screen-image win-image"
         />
         <div class="game-startBtn">
-          <button onclick="location.reload()">Play Again</button>
+          <button onclick="restartGame()">Play Again</button>
+        </div>
+        <div class="game-startBtn">
+          <button onclick="returnToHome()">Main Menu</button>
         </div>
       </div>
     </div>

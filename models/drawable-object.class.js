@@ -13,6 +13,17 @@ class DrawableObject {
     width = 150;
 
     /**
+     * Hitbox-Offsets für präzisere Kollisionserkennung
+     * @type {Object}
+     */
+    offsetHitbox = {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    };
+
+    /**
      * Lädt ein einzelnes Bild
      * @param {String} path - Pfad zum Bild
      */
@@ -31,6 +42,19 @@ class DrawableObject {
             img.src = path;
             this.imageCache[path] = img;
         });
+    }
+
+    /**
+     * Berechnet die Hitbox des Objekts
+     * @returns {Object} Hitbox mit left, right, top, bottom
+     */
+    getHitbox() {
+        return {
+            left: this.x + this.offsetHitbox.left,
+            right: this.x + this.width - this.offsetHitbox.right,
+            top: this.y + this.offsetHitbox.top,
+            bottom: this.y + this.height - this.offsetHitbox.bottom,
+        };
     }
 
     /**

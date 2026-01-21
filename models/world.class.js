@@ -51,6 +51,7 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.audioManager = new AudioManager();
+    this.audioManager.startMusic();
     this.draw();
     this.setWorld();
     this.run();
@@ -79,32 +80,41 @@ class World {
 
   /**
    * Prüft ob der Spieler eine Flasche werfen möchte und erstellt diese
-   * Erlaubt nur eine fliegende Flasche gleichzeitig, um Spam zu verhindern
-   * Das Inventar kann trotzdem bis zu 5 Flaschen enthalten
-   *
-   * Bedingungen für Wurf:
-   * - D-Taste gedrückt
-   * - Mindestens 1 Flasche im Inventar
-   * - Keine andere Flasche fliegt gerade (hasHit === false)
    */
   checkThrowObjects() {
     const hasActiveBottle = this.throwableObjects.some(
       (bottle) => !bottle.hasHit,
     );
 
-    if (
+    if (this.canThrowBottle(hasActiveBottle)) {
+      this.throwBottle();
+    }
+  }
+
+  /**
+   * Prüft ob eine Flasche geworfen werden kann
+   * @param {boolean} hasActiveBottle - Gibt es bereits eine fliegende Flasche
+   * @returns {boolean} True wenn werfen möglich ist
+   */
+  canThrowBottle(hasActiveBottle) {
+    return (
       this.keyboard.D &&
       this.character.collectedFlasks > 0 &&
       !hasActiveBottle
-    ) {
-      let bottle = new ThrowableObject(
-        this.character.x + 100,
-        this.character.y + 100,
-      );
-      this.throwableObjects.push(bottle);
-      this.character.collectedFlasks--;
-      this.updateFlaskStatusbar();
-    }
+    );
+  }
+
+  /**
+   * Wirft eine neue Flasche
+   */
+  throwBottle() {
+    let bottle = new ThrowableObject(
+      this.character.x + 100,
+      this.character.y + 100,
+    );
+    this.throwableObjects.push(bottle);
+    this.character.collectedFlasks--;
+    this.updateFlaskStatusbar();
   }
 
   /**
@@ -160,6 +170,7 @@ class World {
   damageEndboss(endboss) {
     endboss.hit(20);
     this.endbossStatusBar.setPercentage(endboss.energy);
+    this.audioManager.play('bossHurt');
   }
 
   /**
@@ -168,6 +179,7 @@ class World {
    */
   killEnemyByBottle(enemyIndex) {
     this.level.enemies.splice(enemyIndex, 1);
+    this.audioManager.play('chickenDeath');
   }
 
   /**
@@ -177,27 +189,48 @@ class World {
   checkEnemyCollisions() {
     this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
-        if (this.isJumpingOnEnemy(enemy)) {
-          if (!(enemy instanceof Endboss)) {
-            this.killEnemyByJump(enemy, index);
-          } else {
-            if (!this.character.isHurt()) {
-              this.character.hit();
-              this.healthStatusBar.setPercentage(this.character.energy);
-            }
-          }
-        } else {
-          if (!this.character.isHurt()) {
-            this.character.hit();
-            this.healthStatusBar.setPercentage(this.character.energy);
-          }
-        }
+        this.handleEnemyCollision(enemy, index);
       }
     });
 
     this.checkGameOver();
-
     this.checkGameWin();
+  }
+
+  /**
+   * Behandelt eine Kollision zwischen Character und Enemy
+   * @param {MovableObject} enemy - Der Enemy
+   * @param {number} index - Index des Enemies
+   */
+  handleEnemyCollision(enemy, index) {
+    if (this.isJumpingOnEnemy(enemy)) {
+      this.handleJumpOnEnemy(enemy, index);
+    } else {
+      this.handleSideCollision();
+    }
+  }
+
+  /**
+   * Behandelt Jump-Kill auf Enemy
+   * @param {MovableObject} enemy - Der Enemy
+   * @param {number} index - Index des Enemies
+   */
+  handleJumpOnEnemy(enemy, index) {
+    if (!(enemy instanceof Endboss)) {
+      this.killEnemyByJump(enemy, index);
+    } else {
+      this.handleSideCollision();
+    }
+  }
+
+  /**
+   * Behandelt seitliche Kollision mit Enemy
+   */
+  handleSideCollision() {
+    if (!this.character.isHurt()) {
+      this.character.hit();
+      this.healthStatusBar.setPercentage(this.character.energy);
+    }
   }
 
   /**
@@ -245,7 +278,7 @@ class World {
    */
   showGameOver() {
     stopAllIntervals();
-    console.log("GAME OVER!");
+    this.audioManager.stopMusic();
 
     const randomIndex = Math.floor(
       Math.random() * this.IMAGES_GAME_OVER.length,
@@ -269,6 +302,7 @@ class World {
    */
   showGameWin() {
     stopAllIntervals();
+    this.audioManager.stopMusic();
 
     const randomIndex = Math.floor(Math.random() * this.IMAGES_WIN.length);
     const randomImage = this.IMAGES_WIN[randomIndex];
@@ -286,28 +320,32 @@ class World {
 
   /**
    * Prüft ob der Character von oben auf einen Enemy springt
-   * Berücksichtigt die Fallrichtung und Hitbox-Offsets
    * @param {MovableObject} enemy - Der zu prüfende Enemy
    * @returns {boolean} True wenn Character von oben auf Enemy springt
    */
   isJumpingOnEnemy(enemy) {
-    const isFalling = this.character.speedY < 0;
+    return (
+      this.character.speedY < 0 &&
+      this.isComingFromAbove(enemy) &&
+      this.character.isAboveGround() &&
+      this.character.speedY < -5
+    );
+  }
 
+  /**
+   * Prüft ob Character von oben auf Enemy kommt
+   * @param {MovableObject} enemy - Der Enemy
+   * @returns {boolean} True wenn von oben kommend
+   */
+  isComingFromAbove(enemy) {
     const characterBottom =
       this.character.y +
       this.character.height -
       this.character.offsetHitbox.bottom;
     const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
-
     const verticalDistance = characterBottom - enemyTop;
 
-    const isComingFromAbove = verticalDistance >= 0 && verticalDistance <= 50;
-
-    const isInAir = this.character.isAboveGround();
-
-    const fallingFastEnough = this.character.speedY < -5;
-
-    return isFalling && isComingFromAbove && isInAir && fallingFastEnough;
+    return verticalDistance >= 0 && verticalDistance <= 50;
   }
 
   /**
@@ -320,6 +358,8 @@ class World {
     this.level.enemies.splice(index, 1);
 
     this.character.speedY = 20;
+
+    this.audioManager.play('chickenDeath');
   }
 
   /**
@@ -463,7 +503,7 @@ class World {
 
     moveObject.draw(this.ctx);
     // moveObject.drawRect(this.ctx);
-    //moveObject.drawRectHitbox(this.ctx);
+    // moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);

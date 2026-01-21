@@ -7,10 +7,37 @@ class AudioManager {
      * Erstellt einen neuen AudioManager
      */
     constructor() {
-        this.isMuted = false;
         this.sounds = {};
         this.music = null;
+        this.loadMuteStateFromStorage();
         this.loadAllSounds();
+    }
+
+    /**
+     * Lädt den Mute-Status aus dem LocalStorage
+     */
+    loadMuteStateFromStorage() {
+        const savedMuteState = localStorage.getItem('elPolloLocoMuted');
+        this.isMuted = savedMuteState === 'true';
+        this.updateMuteButton();
+    }
+
+    /**
+     * Speichert den Mute-Status im LocalStorage
+     */
+    saveMuteStateToStorage() {
+        localStorage.setItem('elPolloLocoMuted', this.isMuted);
+    }
+
+    /**
+     * Aktualisiert das Mute Button Icon
+     */
+    updateMuteButton() {
+        const muteBtn = document.getElementById('audioMuteBtn');
+        const muteIcon = muteBtn?.querySelector('.audio-icon');
+        if (muteIcon) {
+            muteIcon.textContent = this.isMuted ? '🔇' : '🔊';
+        }
     }
 
     /**
@@ -19,6 +46,18 @@ class AudioManager {
     loadAllSounds() {
         this.loadSound('coin', 'audio/coin_collect.wav');
         this.loadSound('flask', 'audio/flask_collect.wav');
+        this.loadSound('jump', 'audio/jump.mp3');
+        this.loadSound('hurt', 'audio/hurt.mp3');
+        this.loadSound('death', 'audio/death.mp3');
+        this.loadSound('snoring', 'audio/snoring.mp3');
+        this.loadSound('walking', 'audio/walking.mp3');
+        this.loadSound('chickenDeath', 'audio/chicken_death.mp3');
+        this.loadSound('bossHurt', 'audio/boss_hurt.mp3');
+        this.loadSound('bossAttack', 'audio/boss_attack.mp3');
+        this.loadSound('bottleThrow', 'audio/bottle_throw.mp3');
+        this.loadSound('bottleSplash', 'audio/bottle_splash.mp3');
+
+        this.loadMusic('audio/background_music.mp3');
     }
 
     /**
@@ -75,6 +114,9 @@ class AudioManager {
      */
     toggleMute() {
         this.isMuted = !this.isMuted;
+        this.saveMuteStateToStorage();
+        this.updateMuteButton();
+
         if (this.music) {
             this.music.volume = this.isMuted ? 0 : 0.3;
         }

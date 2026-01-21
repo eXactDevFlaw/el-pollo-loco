@@ -78,6 +78,10 @@ class ThrowableObject extends MovableObject {
         this.speedY = 25;
         this.applyGravity();
 
+        if (world?.audioManager) {
+            world.audioManager.play('bottleThrow');
+        }
+
         this.throwInterval = setStoppableInterval(() => {
             if (!this.isSplashing) {
                 this.playAnimation(this.IMAGES_THROW);
@@ -100,6 +104,10 @@ class ThrowableObject extends MovableObject {
         this.speedX = 0;
 
         this.currentImage = 0;
+
+        if (world?.audioManager) {
+            world.audioManager.play('bottleSplash');
+        }
 
         const splashInterval = setStoppableInterval(() => {
             if (this.currentImage < this.IMAGES_SPLASH.length) {

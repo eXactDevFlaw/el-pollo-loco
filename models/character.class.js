@@ -305,9 +305,15 @@ class Character extends MovableObject {
     switch (this.currentState) {
       case "dead":
         this.playAnimationOnce(this.IMAGES_DEAD);
+        if (this.currentImage === 1 && this.world?.audioManager) {
+          this.world.audioManager.play('death');
+        }
         break;
       case "hurt":
         this.playAnimation(this.IMAGES_HURT);
+        if (this.currentImage === 1 && this.world?.audioManager) {
+          this.world.audioManager.play('hurt');
+        }
         break;
       case "jump":
         this.playAnimationOnce(this.IMAGES_JUMP);
@@ -326,6 +332,9 @@ class Character extends MovableObject {
         break;
       case "idle_long":
         this.playAnimation(this.IMAGES_IDLE_LONG);
+        if (this.currentImage === 1 && this.world?.audioManager) {
+          this.world.audioManager.play('snoring');
+        }
         break;
     }
   }

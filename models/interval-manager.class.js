@@ -41,7 +41,6 @@ class IntervalManager {
             clearInterval(intervalId);
         });
         this.intervals = [];
-        console.log('All intervals stopped');
     }
 
     /**

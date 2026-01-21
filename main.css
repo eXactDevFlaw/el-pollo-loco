@@ -8,7 +8,6 @@
   --font-heading: "westernCowboy", Georgia, serif;
   --font-mono: "Courier New", monospace;
 
-  /* Western Color Palette */
   --color-desert-sand: #d4a574;
   --color-canyon-red: #8b4513;
   --color-sunset-orange: #d97636;
@@ -19,7 +18,6 @@
   --color-gold: #ffd700;
   --color-wood: #8b7355;
 
-  /* Typography Scale (rem) */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -30,7 +28,6 @@
   --font-size-4xl: 2.5rem;
   --font-size-5xl: 3rem;
 
-  /* Spacing Scale (rem) */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
@@ -38,7 +35,6 @@
   --space-xl: 3rem;
   --space-2xl: 4rem;
 
-  /* Border & Shadow */
   --border-width: 0.25rem;
   --border-radius: 0.5rem;
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
@@ -46,7 +42,6 @@
   --shadow-lg: 0.25rem 0.25rem 1rem rgba(0, 0, 0, 0.6);
 }
 
-/* ===== RESET & BASE STYLES ===== */
 * {
   padding: 0;
   margin: 0;
@@ -71,7 +66,6 @@ body {
   background-attachment: fixed;
 }
 
-/* ===== TYPOGRAPHY ===== */
 h1,
 h2 {
   font-family: var(--font-heading);
@@ -102,7 +96,6 @@ h4 {
   font-size: var(--font-size-xl);
 }
 
-/* ===== LAYOUT ===== */
 .content-container {
   position: absolute;
   top: 50%;
@@ -125,7 +118,6 @@ canvas:fullscreen {
   object-fit: contain;
 }
 
-/* ===== INFO CONTAINER (START SCREEN) ===== */
 .info-container {
   background-image: url("./img/9_intro_outro_screens/start/startscreen_1.png");
   background-position: center;
@@ -160,7 +152,6 @@ canvas:fullscreen {
   object-fit: cover;
 }
 
-/* Start Button Container */
 .game-startBtn {
   width: 100%;
   display: flex;
@@ -194,7 +185,6 @@ canvas:fullscreen {
   min-width: 350px;
 }
 
-/* Glanz-Effekt auf Button */
 .game-startBtn button::before {
   content: "";
   position: absolute;
@@ -233,7 +223,6 @@ canvas:fullscreen {
     0 0 1rem rgba(255, 140, 66, 0.3);
 }
 
-/* How To & Impress Sections */
 .game-howTo,
 .information {
   width: 720px;
@@ -296,11 +285,10 @@ canvas:fullscreen {
   font-size: var(--font-size-sm);
 }
 
-/* ===== FULLSCREEN BUTTON ===== */
-.fullscreen-btn {
+.fullscreen-btn,
+.audio-mute-btn {
   position: fixed;
   bottom: var(--space-md);
-  right: var(--space-md);
   width: 3.125rem;
   height: 3.125rem;
   background: rgba(0, 0, 0, 0.7);
@@ -313,16 +301,25 @@ canvas:fullscreen {
   transition: all 0.3s ease;
 }
 
-.fullscreen-btn:hover {
+.fullscreen-btn {
+  right: var(--space-md);
+}
+
+.audio-mute-btn {
+  right: calc(var(--space-md) + 3.125rem + var(--space-sm));
+}
+
+.fullscreen-btn:hover,
+.audio-mute-btn:hover {
   background: rgba(0, 0, 0, 0.9);
   transform: scale(1.1);
 }
 
-.fullscreen-btn:active {
+.fullscreen-btn:active,
+.audio-mute-btn:active {
   transform: scale(0.95);
 }
 
-/* ===== MOBILE CONTROLS ===== */
 .mobile-controls {
   display: none;
   position: fixed;
@@ -370,7 +367,6 @@ canvas:fullscreen {
   text-align: center;
 }
 
-/* ===== ROTATE DEVICE OVERLAY ===== */
 .rotate-device-overlay {
   display: none;
   position: fixed;
@@ -417,7 +413,6 @@ canvas:fullscreen {
   opacity: 0.8;
 }
 
-/* ===== GAME END SCREENS ===== */
 .game-end-screen {
   position: fixed;
   top: 0;
@@ -445,7 +440,6 @@ canvas:fullscreen {
   animation: fadeInScale 0.6s ease-out;
 }
 
-/* End Screen Bild */
 .end-screen-image {
   max-width: 600px;
   width: 90%;
@@ -453,17 +447,14 @@ canvas:fullscreen {
   filter: drop-shadow(0 0.625rem 1.875rem rgba(0, 0, 0, 0.7));
 }
 
-/* Win-Bild Animation */
 .win-image {
   animation: bounceIn 1s ease-out;
 }
 
-/* Game Over-Bild Animation */
 .game-over-image {
   animation: shakeIn 0.8s ease-out;
 }
 
-/* Button in End Screens - GLEICHER STYLE wie Landing Page */
 .game-end-screen .game-startBtn {
   width: 100%;
   display: flex;
@@ -497,7 +488,6 @@ canvas:fullscreen {
   min-width: 350px;
 }
 
-/* Glanz-Effekt auf Button */
 .game-end-screen .game-startBtn button::before {
   content: "";
   position: absolute;
@@ -536,7 +526,6 @@ canvas:fullscreen {
     0 0 1rem rgba(255, 140, 66, 0.3);
 }
 
-/* Animationen */
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -585,7 +574,6 @@ canvas:fullscreen {
   }
 }
 
-/* Spezielle Backgrounds */
 #winScreen {
   background: linear-gradient(
     135deg,
@@ -602,7 +590,6 @@ canvas:fullscreen {
   );
 }
 
-/* Mobile Anpassung */
 @media (max-width: 768px) {
   .end-screen-image {
     max-width: 350px;
@@ -615,24 +602,17 @@ canvas:fullscreen {
   }
 }
 
-/* ===== UTILITY CLASSES ===== */
 .d-none {
   display: none;
 }
 
-/* ===== RESPONSIVE - MOBILE & DESKTOP ===== */
-
-/* DESKTOP (ab 768px) - Standard-Design */
 @media only screen and (min-width: 769px) {
-  /* Alle Standard-Styles gelten */
   .rotate-device-overlay {
     display: none !important;
   }
 }
 
-/* MOBILE (bis 768px) */
 @media only screen and (max-width: 768px) {
-  /* Start Screen Mobile Anpassungen */
   .info-content {
     width: 95%;
     padding: var(--space-md);
@@ -641,7 +621,6 @@ canvas:fullscreen {
     border-width: 0.25rem;
   }
 
-  /* Nieten anpassen für Mobile */
   .info-content::after {
     top: 1rem;
     left: 1rem;
@@ -697,12 +676,12 @@ canvas:fullscreen {
     font-size: var(--font-size-sm);
   }
 
-  /* Game Canvas - verstecke Desktop-Elemente */
   .content-container h1 {
     display: none;
   }
 
-  .fullscreen-btn {
+  .fullscreen-btn,
+  .audio-mute-btn {
     display: none;
   }
 
@@ -712,7 +691,6 @@ canvas:fullscreen {
   }
 }
 
-/* MOBILE PORTRAIT (Hochformat) - Zeige NUR Rotate Overlay */
 @media only screen and (max-width: 768px) and (orientation: portrait) {
   .rotate-device-overlay {
     display: flex !important;
@@ -728,18 +706,15 @@ canvas:fullscreen {
   }
 }
 
-/* MOBILE LANDSCAPE (Querformat) - Zeige Start Screen ODER Game */
 @media only screen and (max-width: 768px) and (orientation: landscape) {
   .rotate-device-overlay {
     display: none !important;
   }
 
-  /* Info-Container sichtbar wenn nicht d_none */
   .info-container {
     display: flex;
   }
 
-  /* Mobile Controls nur im Game (wenn content-container aktiv) */
   .content-container:not(.d_none) .mobile-controls {
     display: flex;
   }
@@ -750,3 +725,77 @@ canvas:fullscreen {
     height: 100vh;
   }
 }
+
+.imprint-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 0.625rem;
+        box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
+      }
+
+      .imprint-container h1 {
+        color: var(--color-canyon-red);
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+      }
+
+      .imprint-container h2 {
+        color: var(--color-dust-brown);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .imprint-container p {
+        color: #333;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+      }
+
+      .imprint-container a {
+        color: var(--color-sunset-orange);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .imprint-container a:hover {
+        color: var(--color-canyon-red);
+        text-decoration: underline;
+      }
+
+      .back-button {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.75rem 2rem;
+        background: var(--color-sunset-orange);
+        color: white;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .back-button:hover {
+        background: var(--color-canyon-red);
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .imprint-container {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
+
+        .imprint-container h1 {
+          font-size: 2rem;
+        }
+
+        .imprint-container h2 {
+          font-size: 1.25rem;
+        }
+      }

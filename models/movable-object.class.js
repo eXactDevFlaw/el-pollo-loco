@@ -109,6 +109,10 @@ class MovableObject extends DrawableObject {
    */
   jump() {
     this.speedY = 30;
+
+    if (this instanceof Character && this.world?.audioManager) {
+      this.world.audioManager.play('jump');
+    }
   }
 
   /**
@@ -151,19 +155,8 @@ class MovableObject extends DrawableObject {
    * @returns {boolean} True wenn Kollision vorliegt
    */
   isColliding(moveObject) {
-    const a = {
-      left: this.x + this.offsetHitbox.left,
-      right: this.x + this.width - this.offsetHitbox.right,
-      top: this.y + this.offsetHitbox.top,
-      bottom: this.y + this.height - this.offsetHitbox.bottom,
-    };
-
-    const b = {
-      left: moveObject.x + moveObject.offsetHitbox.left,
-      right: moveObject.x + moveObject.width - moveObject.offsetHitbox.right,
-      top: moveObject.y + moveObject.offsetHitbox.top,
-      bottom: moveObject.y + moveObject.height - moveObject.offsetHitbox.bottom,
-    };
+    const a = this.getHitbox();
+    const b = moveObject.getHitbox();
 
     return (
       a.left < b.right &&

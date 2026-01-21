@@ -112,6 +112,22 @@ function initFullscreen() {
 }
 
 /**
+ * Initialisiert die Mute-Button Funktionalität
+ * @returns {void}
+ */
+function initMuteButton() {
+    const muteBtn = document.getElementById('audioMuteBtn');
+
+    if (muteBtn) {
+        muteBtn.addEventListener('click', () => {
+            if (world && world.audioManager) {
+                world.audioManager.toggleMute();
+            }
+        });
+    }
+}
+
+/**
  * Toggles fullscreen mode on and off
  * @returns {void}
  */
@@ -154,6 +170,7 @@ function initResponsiveFeatures() {
     bindKeyboardEvents();
     bindMobileControls();
     initFullscreen();
+    initMuteButton();
     checkOrientation();
 
     window.addEventListener('resize', checkOrientation);
@@ -168,15 +185,55 @@ function startGame() {
     const startBtn = document.querySelector('#game-startBtn');
     const contentContainer = document.querySelector('#canvas-container');
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
+    const muteBtn = document.querySelector('.audio-mute-btn');
     infoContainer = document.querySelector('.info-container');
     startBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         infoContainer.classList.add('d-none');
         contentContainer.classList.remove('d-none');
         fullscreenBtn.classList.remove('d-none');
+        muteBtn.classList.remove('d-none');
         initLevel();
         world = new World(canvas, keyboard);
     })
+}
+
+/**
+ * Startet das Spiel neu ohne Page Reload
+ * @returns {void}
+ */
+function restartGame() {
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const winScreen = document.getElementById('winScreen');
+
+    if (gameOverScreen) gameOverScreen.classList.add('d-none');
+    if (winScreen) winScreen.classList.add('d-none');
+
+    stopAllIntervals();
+
+    initLevel();
+    world = new World(canvas, keyboard);
+}
+
+/**
+ * Kehrt zum Hauptmenü zurück
+ * @returns {void}
+ */
+function returnToHome() {
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const winScreen = document.getElementById('winScreen');
+    const contentContainer = document.querySelector('#canvas-container');
+    const fullscreenBtn = document.querySelector('.fullscreen-btn');
+    const muteBtn = document.querySelector('.audio-mute-btn');
+
+    if (gameOverScreen) gameOverScreen.classList.add('d-none');
+    if (winScreen) winScreen.classList.add('d-none');
+    if (contentContainer) contentContainer.classList.add('d-none');
+    if (fullscreenBtn) fullscreenBtn.classList.add('d-none');
+    if (muteBtn) muteBtn.classList.add('d-none');
+    if (infoContainer) infoContainer.classList.remove('d-none');
+
+    stopAllIntervals();
 }
 
 /**
