@@ -308,34 +308,83 @@ class Character extends MovableObject {
         if (this.currentImage === 1 && this.world?.audioManager) {
           this.world.audioManager.play('death');
         }
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "hurt":
         this.playAnimation(this.IMAGES_HURT);
         if (this.currentImage === 1 && this.world?.audioManager) {
           this.world.audioManager.play('hurt');
         }
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "jump":
         this.playAnimationOnce(this.IMAGES_JUMP);
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "peak":
         this.playAnimationOnce(this.IMAGES_PEAK);
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "fall":
         this.playAnimationOnce(this.IMAGES_FALL);
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "walk":
         this.playAnimation(this.IMAGES_WALK);
+        this.playWalkingSound();
+        this.stopSnoringSound();
         break;
       case "idle":
         this.playAnimation(this.IMAGES_IDLE);
+        this.stopWalkingSound();
+        this.stopSnoringSound();
         break;
       case "idle_long":
         this.playAnimation(this.IMAGES_IDLE_LONG);
-        if (this.currentImage === 1 && this.world?.audioManager) {
-          this.world.audioManager.play('snoring');
-        }
+        this.playSnoringSound();
+        this.stopWalkingSound();
         break;
+    }
+  }
+
+  /**
+   * Startet den Walking Sound Loop
+   */
+  playWalkingSound() {
+    if (this.world?.audioManager) {
+      this.world.audioManager.playLoop('walking');
+    }
+  }
+
+  /**
+   * Stoppt den Walking Sound
+   */
+  stopWalkingSound() {
+    if (this.world?.audioManager) {
+      this.world.audioManager.stopLoop('walking');
+    }
+  }
+
+  /**
+   * Startet den Snoring Sound Loop
+   */
+  playSnoringSound() {
+    if (this.world?.audioManager) {
+      this.world.audioManager.playLoop('snoring');
+    }
+  }
+
+  /**
+   * Stoppt den Snoring Sound
+   */
+  stopSnoringSound() {
+    if (this.world?.audioManager) {
+      this.world.audioManager.stopLoop('snoring');
     }
   }
 }

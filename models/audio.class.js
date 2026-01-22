@@ -42,31 +42,46 @@ class AudioManager {
 
     /**
      * Lädt alle Sound-Dateien
+     * Lautstärke-Werte: 0.0 (stumm) bis 1.0 (maximum)
      */
     loadAllSounds() {
-        this.loadSound('coin', 'audio/coin_collect.wav');
-        this.loadSound('flask', 'audio/flask_collect.wav');
-        this.loadSound('jump', 'audio/jump.mp3');
-        this.loadSound('hurt', 'audio/hurt.mp3');
-        this.loadSound('death', 'audio/death.mp3');
-        this.loadSound('snoring', 'audio/snoring.mp3');
-        this.loadSound('walking', 'audio/walking.mp3');
-        this.loadSound('chickenDeath', 'audio/chicken_death.mp3');
-        this.loadSound('bossHurt', 'audio/boss_hurt.mp3');
-        this.loadSound('bossAttack', 'audio/boss_attack.mp3');
-        this.loadSound('bottleThrow', 'audio/bottle_throw.mp3');
-        this.loadSound('bottleSplash', 'audio/bottle_splash.mp3');
+        // Collectibles (gut hörbar)
+        this.loadSound('coin', 'audio/coin_collect.wav', 0.6);
+        this.loadSound('flask', 'audio/flask_collect.wav', 0.6);
 
-        this.loadMusic('audio/background_music.mp3');
+        // Character Movement (mittel)
+        this.loadSound('jump', 'audio/jump.mp3', 0.5);
+        this.loadSound('walking', 'audio/walking.mp3', 0.3);
+
+        // Character States (deutlich)
+        this.loadSound('hurt', 'audio/hurt.wav', 0.7);
+        // this.loadSound('death', 'audio/death.mp3', 0.8);
+        this.loadSound('snoring', 'audio/snoring.mp3', 0.4);
+
+        // Enemies (mittel)
+        // this.loadSound('chickenDeath', 'audio/chicken_death.mp3', 0.6);
+
+        // Boss (laut und wichtig)
+        // this.loadSound('bossHurt', 'audio/boss_hurt.mp3', 0.8);
+        // this.loadSound('bossAttack', 'audio/boss_attack.mp3', 0.7);
+
+        // Weapons (gut hörbar)
+        // this.loadSound('bottleThrow', 'audio/bottle_throw.mp3', 0.5);
+        this.loadSound('bottleSplash', 'audio/bottle_splash.wav', 0.7);
+
+        // Background Music (leise im Hintergrund)
+        this.loadMusic('audio/background_music.wav');
     }
 
     /**
      * Lädt einen einzelnen Sound
      * @param {string} name - Name des Sounds
      * @param {string} path - Pfad zur Sound-Datei
+     * @param {number} volume - Lautstärke (0.0 - 1.0, Standard: 0.5)
      */
-    loadSound(name, path) {
+    loadSound(name, path, volume = 0.5) {
         this.sounds[name] = new Audio(path);
+        this.sounds[name].volume = volume;
     }
 
     /**
@@ -76,7 +91,7 @@ class AudioManager {
     loadMusic(path) {
         this.music = new Audio(path);
         this.music.loop = true;
-        this.music.volume = 0.3;
+        this.music.volume = 0.075;
     }
 
     /**
@@ -87,6 +102,32 @@ class AudioManager {
         if (!this.isMuted && this.sounds[name]) {
             this.sounds[name].currentTime = 0;
             this.sounds[name].play();
+        }
+    }
+
+    /**
+     * Spielt einen Sound in Endlosschleife ab
+     * Startet nur wenn der Sound nicht bereits läuft
+     * @param {string} name - Name des Sounds
+     */
+    playLoop(name) {
+        if (!this.isMuted && this.sounds[name]) {
+            if (this.sounds[name].paused) {
+                this.sounds[name].loop = true;
+                this.sounds[name].play();
+            }
+        }
+    }
+
+    /**
+     * Stoppt einen laufenden Loop-Sound
+     * @param {string} name - Name des Sounds
+     */
+    stopLoop(name) {
+        if (this.sounds[name]) {
+            this.sounds[name].pause();
+            this.sounds[name].currentTime = 0;
+            this.sounds[name].loop = false;
         }
     }
 
@@ -118,7 +159,7 @@ class AudioManager {
         this.updateMuteButton();
 
         if (this.music) {
-            this.music.volume = this.isMuted ? 0 : 0.3;
+            this.music.volume = this.isMuted ? 0 : 0.15;
         }
     }
 }

@@ -18,16 +18,19 @@ class World {
   throwableObjects = [];
 
   /**
+   * Set zur Verfolgung welche Enemies bereits Schaden verursacht haben
+   * Verhindert mehrfachen Schaden von gleicher Collision
+   * @type {Set}
+   */
+  damageDealtBy = new Set();
+
+  /**
    * Flag um zu verhindern dass Game Over/Win mehrfach getriggert wird
    * @type {boolean}
    */
   gameEnded = false;
 
   IMAGES_WIN = [
-    "./img/You won, you lost/Game over A.png",
-    "./img/You won, you lost/Game Over.png",
-    "./img/You won, you lost/You lost b.png",
-    "./img/You won, you lost/You lost.png",
     "./img/You won, you lost/You Win A.png",
     "./img/You won, you lost/You win B.png",
     "./img/You won, you lost/You won A.png",
@@ -35,9 +38,9 @@ class World {
   ];
 
   IMAGES_LOOSE = [
-    "./img/9_intro_outro_screens/game_over/game over!.png",
-    "./img/9_intro_outro_screens/game_over/game over.png",
-    "./img/9_intro_outro_screens/game_over/oh no you lost!.png",
+    "./img/9_intro_outro_screens/game_over/Game over A.png",
+    "./img/9_intro_outro_screens/game_over/Game Over.png",
+    "./img/9_intro_outro_screens/game_over/You lost b.png",
     "./img/9_intro_outro_screens/game_over/you lost.png",
   ];
 
@@ -71,6 +74,7 @@ class World {
     setStoppableInterval(() => {
       this.checkCollisions();
       this.checkBottleCollisions();
+      this.cleanupBottles();
     }, 1000 / 60);
 
     setStoppableInterval(() => {
@@ -141,6 +145,24 @@ class World {
   }
 
   /**
+   * Entfernt Flaschen die aus dem Bildschirm gefallen sind
+   * Verhindert dass nicht-getroffene Flaschen das Werfen blockieren
+   */
+  cleanupBottles() {
+    this.throwableObjects = this.throwableObjects.filter((bottle) => {
+      const isOutOfBounds =
+        bottle.y > 500 ||
+        bottle.x > this.level.level_end_x + 300 ||
+        bottle.x < -100;
+
+      const isOldHitBottle =
+        bottle.hasHit && Date.now() - bottle.throwTime > 1000;
+
+      return !isOutOfBounds && !isOldHitBottle;
+    });
+  }
+
+  /**
    * Behandelt den Treffer einer Flasche auf einen Enemy
    * @param {ThrowableObject} bottle - Die geworfene Flasche
    * @param {MovableObject} enemy - Der getroffene Enemy
@@ -185,52 +207,77 @@ class World {
   /**
    * Prüft Kollisionen zwischen Character und Enemies
    * Unterscheidet zwischen Jump-Kills (nur normale Enemies) und normalen Kollisionen
+   * Trackt welche Enemies bereits Schaden verursacht haben
    */
   checkEnemyCollisions() {
+    const collidingEnemies = [];
+    const enemiesToKill = [];
+    const currentlyCollidingEnemyIds = new Set();
+    let shouldBounce = false;
+
+    // Pass 1: Sammle alle kollidierenden Enemies
     this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
-        this.handleEnemyCollision(enemy, index);
+        collidingEnemies.push({ enemy, index });
+        currentlyCollidingEnemyIds.add(enemy);
+      }
+    });
+
+    // Pass 2: Identifiziere welche Enemies getötet werden
+    collidingEnemies.forEach(({ enemy, index }) => {
+      if (this.isJumpingOnEnemy(enemy)) {
+        if (enemy instanceof Endboss) {
+          // Endboss gibt Schaden nur wenn noch nicht von diesem Enemy
+          if (!this.damageDealtBy.has(enemy)) {
+            this.character.hit();
+            this.healthStatusBar.setPercentage(this.character.energy);
+            this.damageDealtBy.add(enemy);
+          }
+        } else {
+          // Normale Enemies zum Töten markieren
+          enemiesToKill.push(index);
+          shouldBounce = true;
+        }
+      }
+    });
+
+    // Pass 3: Schaden nur wenn KEINE Jump-Kills
+    // Nur Schaden von Enemies die noch nicht getrackt sind
+    if (enemiesToKill.length === 0 && collidingEnemies.length > 0) {
+      collidingEnemies.forEach(({ enemy }) => {
+        if (!this.damageDealtBy.has(enemy)) {
+          this.character.hit();
+          this.healthStatusBar.setPercentage(this.character.energy);
+          this.damageDealtBy.add(enemy);
+        }
+      });
+    }
+
+    // Pass 4: Töte Enemies und Bounce (NACH allen Checks!)
+    if (enemiesToKill.length > 0) {
+      enemiesToKill.sort((a, b) => b - a);
+      enemiesToKill.forEach((index) => {
+        const enemy = this.level.enemies[index];
+        this.damageDealtBy.delete(enemy);
+        this.level.enemies.splice(index, 1);
+      });
+
+      this.audioManager.play("chickenDeath");
+
+      if (shouldBounce) {
+        this.character.speedY = 20;
+      }
+    }
+
+    // Pass 5: Cleanup - Entferne Enemies aus damageDealtBy die nicht mehr kollidieren
+    this.damageDealtBy.forEach((enemy) => {
+      if (!currentlyCollidingEnemyIds.has(enemy)) {
+        this.damageDealtBy.delete(enemy);
       }
     });
 
     this.checkGameOver();
     this.checkGameWin();
-  }
-
-  /**
-   * Behandelt eine Kollision zwischen Character und Enemy
-   * @param {MovableObject} enemy - Der Enemy
-   * @param {number} index - Index des Enemies
-   */
-  handleEnemyCollision(enemy, index) {
-    if (this.isJumpingOnEnemy(enemy)) {
-      this.handleJumpOnEnemy(enemy, index);
-    } else {
-      this.handleSideCollision();
-    }
-  }
-
-  /**
-   * Behandelt Jump-Kill auf Enemy
-   * @param {MovableObject} enemy - Der Enemy
-   * @param {number} index - Index des Enemies
-   */
-  handleJumpOnEnemy(enemy, index) {
-    if (!(enemy instanceof Endboss)) {
-      this.killEnemyByJump(enemy, index);
-    } else {
-      this.handleSideCollision();
-    }
-  }
-
-  /**
-   * Behandelt seitliche Kollision mit Enemy
-   */
-  handleSideCollision() {
-    if (!this.character.isHurt()) {
-      this.character.hit();
-      this.healthStatusBar.setPercentage(this.character.energy);
-    }
   }
 
   /**
@@ -281,9 +328,9 @@ class World {
     this.audioManager.stopMusic();
 
     const randomIndex = Math.floor(
-      Math.random() * this.IMAGES_GAME_OVER.length,
+      Math.random() * this.IMAGES_LOOSE.length,
     );
-    const randomImage = this.IMAGES_GAME_OVER[randomIndex];
+    const randomImage = this.IMAGES_LOOSE[randomIndex];
 
     const gameOverImg = document.getElementById("gameOverImage");
     if (gameOverImg) {
@@ -503,7 +550,7 @@ class World {
 
     moveObject.draw(this.ctx);
     // moveObject.drawRect(this.ctx);
-    // moveObject.drawRectHitbox(this.ctx);
+    moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);
