@@ -139,13 +139,13 @@ class MovableObject extends DrawableObject {
 
   /**
    * Prüft ob das Objekt gerade verletzt wurde
-   * Gilt für 1 Sekunde nach dem letzten Treffer
-   * @returns {boolean} True wenn innerhalb der letzten Sekunde getroffen
+   * Gilt für 0.5 Sekunden nach dem letzten Treffer
+   * @returns {boolean} True wenn innerhalb der letzten 0.5 Sekunden getroffen
    */
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
-    return timePassed < 1;
+    return timePassed < 0.5;
   }
 
   /**

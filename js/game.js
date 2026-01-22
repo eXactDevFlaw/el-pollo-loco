@@ -64,7 +64,7 @@ function bindMobileControls() {
     preventContextMenu();
     bindTouchButton(btnLeft, 'LEFT');
     bindTouchButton(btnRight, 'RIGHT');
-    bindTouchButton(btnJump, 'SPACE');
+    bindTouchButton(btnJump, 'UP');
     bindTouchButton(btnThrow, 'D');
 }
 
@@ -211,6 +211,11 @@ function restartGame() {
 
     stopAllIntervals();
 
+    // Cleanup altes Audio komplett
+    if (world?.audioManager) {
+        world.audioManager.cleanup();
+    }
+
     initLevel();
     world = new World(canvas, keyboard);
 }
@@ -234,6 +239,11 @@ function returnToHome() {
     if (infoContainer) infoContainer.classList.remove('d-none');
 
     stopAllIntervals();
+
+    // Cleanup Audio
+    if (world?.audioManager) {
+        world.audioManager.cleanup();
+    }
 }
 
 /**

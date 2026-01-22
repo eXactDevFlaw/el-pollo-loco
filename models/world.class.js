@@ -18,13 +18,6 @@ class World {
   throwableObjects = [];
 
   /**
-   * Set zur Verfolgung welche Enemies bereits Schaden verursacht haben
-   * Verhindert mehrfachen Schaden von gleicher Collision
-   * @type {Set}
-   */
-  damageDealtBy = new Set();
-
-  /**
    * Flag um zu verhindern dass Game Over/Win mehrfach getriggert wird
    * @type {boolean}
    */
@@ -54,7 +47,12 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.audioManager = new AudioManager();
-    this.audioManager.startMusic();
+
+    // Starte Musik nur wenn nicht gemutet
+    if (!this.audioManager.isMuted) {
+      this.audioManager.startMusic();
+    }
+
     this.draw();
     this.setWorld();
     this.run();
@@ -207,19 +205,17 @@ class World {
   /**
    * Prüft Kollisionen zwischen Character und Enemies
    * Unterscheidet zwischen Jump-Kills (nur normale Enemies) und normalen Kollisionen
-   * Trackt welche Enemies bereits Schaden verursacht haben
+   * Boss macht mehr Schaden als normale Enemies
    */
   checkEnemyCollisions() {
     const collidingEnemies = [];
     const enemiesToKill = [];
-    const currentlyCollidingEnemyIds = new Set();
     let shouldBounce = false;
 
     // Pass 1: Sammle alle kollidierenden Enemies
     this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
         collidingEnemies.push({ enemy, index });
-        currentlyCollidingEnemyIds.add(enemy);
       }
     });
 
@@ -227,11 +223,10 @@ class World {
     collidingEnemies.forEach(({ enemy, index }) => {
       if (this.isJumpingOnEnemy(enemy)) {
         if (enemy instanceof Endboss) {
-          // Endboss gibt Schaden nur wenn noch nicht von diesem Enemy
-          if (!this.damageDealtBy.has(enemy)) {
-            this.character.hit();
+          // Endboss gibt mehr Schaden beim Sprung (10 statt 5)
+          if (!this.character.isHurt()) {
+            this.character.hit(50);
             this.healthStatusBar.setPercentage(this.character.energy);
-            this.damageDealtBy.add(enemy);
           }
         } else {
           // Normale Enemies zum Töten markieren
@@ -241,24 +236,22 @@ class World {
       }
     });
 
-    // Pass 3: Schaden nur wenn KEINE Jump-Kills
-    // Nur Schaden von Enemies die noch nicht getrackt sind
+    // Pass 3: Schaden nur wenn KEINE Jump-Kills und nicht bereits hurt
     if (enemiesToKill.length === 0 && collidingEnemies.length > 0) {
-      collidingEnemies.forEach(({ enemy }) => {
-        if (!this.damageDealtBy.has(enemy)) {
-          this.character.hit();
-          this.healthStatusBar.setPercentage(this.character.energy);
-          this.damageDealtBy.add(enemy);
-        }
-      });
+      if (!this.character.isHurt()) {
+        // Bestimme Schaden basierend auf Enemy-Typ
+        const enemy = collidingEnemies[0].enemy;
+        const damage = enemy instanceof Endboss ? 15 : 5;
+
+        this.character.hit(damage);
+        this.healthStatusBar.setPercentage(this.character.energy);
+      }
     }
 
     // Pass 4: Töte Enemies und Bounce (NACH allen Checks!)
     if (enemiesToKill.length > 0) {
       enemiesToKill.sort((a, b) => b - a);
       enemiesToKill.forEach((index) => {
-        const enemy = this.level.enemies[index];
-        this.damageDealtBy.delete(enemy);
         this.level.enemies.splice(index, 1);
       });
 
@@ -268,13 +261,6 @@ class World {
         this.character.speedY = 20;
       }
     }
-
-    // Pass 5: Cleanup - Entferne Enemies aus damageDealtBy die nicht mehr kollidieren
-    this.damageDealtBy.forEach((enemy) => {
-      if (!currentlyCollidingEnemyIds.has(enemy)) {
-        this.damageDealtBy.delete(enemy);
-      }
-    });
 
     this.checkGameOver();
     this.checkGameWin();
@@ -550,7 +536,7 @@ class World {
 
     moveObject.draw(this.ctx);
     // moveObject.drawRect(this.ctx);
-    moveObject.drawRectHitbox(this.ctx);
+    // moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);
