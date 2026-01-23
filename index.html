@@ -31,15 +31,37 @@
     <script src="./models/flask.class.js"></script>
     <script src="./levels/level1.js"></script>
     <script src="./js/game.js"></script>
-    <script src="./js/mobile-fullscreen.js"></script>
   </head>
 
   <body>
+    <!-- Rotate Device Overlay (außerhalb content-container!) -->
+    <div class="rotate-device-overlay" id="rotateOverlay">
+      <div class="rotate-message">
+        <div class="rotate-icon">📱 ↻</div>
+        <h2>Turn your device</h2>
+        <p>Please rotate your device to landscape mode to play</p>
+      </div>
+    </div>
+
     <div class="content-container">
       <h1>El Pollo Loco</h1>
-      <div>
+      
+      <!-- DIESER DIV wird fullscreen! -->
+      <div class="game-wrapper">
         <div id="canvas-container" class="d-none">
           <canvas id="canvas" width="720" height="480"></canvas>
+          
+          <!-- Mobile Controls (NUR im canvas-container!) -->
+          <div class="mobile-controls">
+            <div class="control-group left-controls">
+              <button class="btn-mobile btn-left" id="btnLeft">◄</button>
+              <button class="btn-mobile btn-right" id="btnRight">►</button>
+            </div>
+            <div class="control-group right-controls">
+              <button class="btn-mobile btn-jump" id="btnJump">JUMP</button>
+              <button class="btn-mobile btn-throw" id="btnThrow">THROW</button>
+            </div>
+          </div>
         </div>
 
         <div class="info-container">
@@ -57,7 +79,6 @@
             </div>
           </div>
           
-          <!-- How To Play Section -->
           <div class="game-howTo d-none">
             <h3>How to Play</h3>
             <p>
@@ -70,17 +91,15 @@
             </div>
           </div>
 
-          <!-- Information / Impressum Section -->
           <div class="information d-none">
+            <h3>Information</h3>
             <div class="info-scroll-content">
-              <h3>Impressum</h3>
-
               <div class="info-section">
                 <h4>Angaben gemäß § 5 TMG</h4>
                 <p>
-                  Lutz Bölling<br />
-                  Böttcherei 226<br />
-                  28844 Weyhe<br />
+                  Max Mustermann<br />
+                  Musterstraße 123<br />
+                  12345 Musterstadt<br />
                   Deutschland
                 </p>
               </div>
@@ -88,34 +107,17 @@
               <div class="info-section">
                 <h4>Kontakt</h4>
                 <p>
-                  E-Mail: <a href="mailto:exactstack@gmail.com">exactstack[at]gmail.com</a><br />
-                  Telefon: +49 (0) 152 219 587 43
+                  E-Mail: <a href="/cdn-cgi/l/email-protection#4f2420213b2e243b0f2a372e223f232a612c2022"><span class="__cf_email__" data-cfemail="1a7175746e7b716e5a7f627b776a767f34797577">[email&#160;protected]</span></a><br />
+                  Telefon: +49 (0) 123 456789
                 </p>
               </div>
 
               <div class="info-section">
-                <h4>Haftungsausschluss</h4>
-                
-                <p class="info-subsection">
-                  <strong>Haftung für Inhalte:</strong><br />
-                  Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die
-                  Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch
-                  keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG
-                  für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
-                  verantwortlich.
-                </p>
-
-                <p class="info-subsection">
-                  <strong>Haftung für Links:</strong><br />
-                  Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren
-                  Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden
-                  Inhalte auch keine Gewähr übernehmen.
-                </p>
-
-                <p class="info-subsection">
-                  <strong>Urheberrecht:</strong><br />
-                  Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen
-                  Seiten unterliegen dem deutschen Urheberrecht.
+                <h4>Haftung für Inhalte</h4>
+                <p>
+                  Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt.
+                  Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte
+                  können wir jedoch keine Gewähr übernehmen.
                 </p>
               </div>
 
@@ -123,18 +125,17 @@
                 <h4>Datenschutz</h4>
                 <p>
                   Die Nutzung unserer Webseite ist in der Regel ohne Angabe
-                  personenbezogener Daten möglich. Soweit auf unseren Seiten
-                  personenbezogene Daten erhoben werden, erfolgt dies, soweit möglich, stets auf
-                  freiwilliger Basis.
+                  personenbezogener Daten möglich. Diese Daten werden ohne Ihre
+                  ausdrückliche Zustimmung nicht an Dritte weitergegeben.
                 </p>
               </div>
 
               <div class="info-section">
                 <h4>Spielgrafiken & Assets</h4>
                 <p>
-                  Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt. Alle verwendeten
-                  Grafiken und Assets stammen aus frei verfügbaren Quellen oder wurden zu
-                  Bildungszwecken verwendet.
+                  Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt. Alle
+                  verwendeten Grafiken und Assets stammen aus frei verfügbaren
+                  Quellen oder wurden zu Bildungszwecken verwendet.
                 </p>
               </div>
             </div>
@@ -144,29 +145,10 @@
             </div>
           </div>
         </div>
-
-        <!-- Mobile Controls -->
-        <div class="mobile-controls">
-          <div class="control-group left-controls">
-            <button class="btn-mobile btn-left" id="btnLeft">◄</button>
-            <button class="btn-mobile btn-right" id="btnRight">►</button>
-          </div>
-          <div class="control-group right-controls">
-            <button class="btn-mobile btn-jump" id="btnJump">JUMP</button>
-            <button class="btn-mobile btn-throw" id="btnThrow">THROW</button>
-          </div>
-        </div>
-
-        <!-- Rotate Device Overlay -->
-        <div class="rotate-device-overlay" id="rotateOverlay">
-          <div class="rotate-message">
-            <div class="rotate-icon">📱 ↻</div>
-            <h2>Turn your device</h2>
-            <p>Please rotate your device to landscape mode to play</p>
-          </div>
-        </div>
       </div>
+      <!-- Ende game-wrapper -->
     </div>
+    <!-- Ende content-container -->
 
     <!-- Fullscreen Button -->
     <button class="fullscreen-btn d-none" id="fullscreenBtn">
@@ -208,10 +190,4 @@
         <div class="game-startBtn">
           <button id="playAgainBtn">Play Again</button>
         </div>
-        <div class="game-startBtn">
-          <button id="mainMenuBtn2">Main Menu</button>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+        <div
