@@ -101,7 +101,9 @@ class AudioManager {
     play(name) {
         if (!this.isMuted && this.sounds[name]) {
             this.sounds[name].currentTime = 0;
-            this.sounds[name].play();
+            this.sounds[name].play().catch(err => {
+                console.log('Audio play failed:', err);
+            });
         }
     }
 
@@ -114,7 +116,9 @@ class AudioManager {
         if (!this.isMuted && this.sounds[name]) {
             if (this.sounds[name].paused) {
                 this.sounds[name].loop = true;
-                this.sounds[name].play();
+                this.sounds[name].play().catch(err => {
+                    console.log('Audio loop play failed:', err);
+                });
             }
         }
     }
@@ -136,7 +140,9 @@ class AudioManager {
      */
     startMusic() {
         if (!this.isMuted && this.music) {
-            this.music.play();
+            this.music.play().catch(err => {
+                console.log('Music play failed:', err);
+            });
         }
     }
 
@@ -159,7 +165,30 @@ class AudioManager {
         this.updateMuteButton();
 
         if (this.music) {
-            this.music.volume = this.isMuted ? 0 : 0.15;
+            if (this.isMuted) {
+                this.music.volume = 0;
+            } else {
+                this.music.volume = 0.075;
+                if (this.music.paused) {
+                    this.music.play().catch(err => {
+                        console.log('Music play failed:', err);
+                    });
+                }
+            }
         }
+    }
+
+    /**
+     * Stoppt alle Sounds und räumt auf
+     * Wird beim Neustart/Menü-Rückkehr aufgerufen
+     */
+    cleanup() {
+        // Stoppe alle Loop-Sounds
+        Object.keys(this.sounds).forEach(soundName => {
+            this.stopLoop(soundName);
+        });
+
+        // Stoppe Musik
+        this.stopMusic();
     }
 }

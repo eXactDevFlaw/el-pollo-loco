@@ -105,9 +105,112 @@ function bindTouchButton(button, keyProperty) {
  */
 function initFullscreen() {
     const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const canvasContainer = document.getElementById('canvas-container');
 
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+
+    // Fullscreen-Change Event Listener
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+
+    // Resize Event für Fullscreen
+    window.addEventListener('resize', handleFullscreenResize);
+}
+
+/**
+ * Handles resize events in fullscreen
+ * @returns {void}
+ */
+function handleFullscreenResize() {
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        const canvas = document.getElementById('canvas');
+        if (canvas) {
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+        }
+    }
+}
+
+/**
+ * Handles fullscreen state changes
+ * @returns {void}
+ */
+function handleFullscreenChange() {
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const fullscreenIcon = fullscreenBtn?.querySelector('.fullscreen-icon');
+    const canvas = document.getElementById('canvas');
+
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        // Fullscreen ist aktiv
+        if (fullscreenIcon) {
+            fullscreenIcon.textContent = '⛶'; // Exit Fullscreen Icon
+        }
+
+        // Canvas explizit auf Fullscreen-Größe setzen
+        if (canvas) {
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.maxWidth = '100vw';
+            canvas.style.maxHeight = '100vh';
+        }
+
+        showFullscreenInfo();
+    } else {
+        // Fullscreen ist inaktiv - Zurück zu Normalgröße
+        if (fullscreenIcon) {
+            fullscreenIcon.textContent = '⛶'; // Fullscreen Icon
+        }
+
+        // Canvas zurück auf Normalgröße
+        if (canvas) {
+            canvas.style.width = '';
+            canvas.style.height = '';
+            canvas.style.maxWidth = '';
+            canvas.style.maxHeight = '';
+        }
+
+        hideFullscreenInfo();
+    }
+}
+
+/**
+ * Zeigt Info-Text für Fullscreen-Exit an
+ * @returns {void}
+ */
+function showFullscreenInfo() {
+    let infoElement = document.getElementById('fullscreen-info');
+
+    if (!infoElement) {
+        infoElement = document.createElement('div');
+        infoElement.id = 'fullscreen-info';
+        infoElement.className = 'fullscreen-info';
+        infoElement.textContent = 'Press ESC to exit fullscreen';
+        document.body.appendChild(infoElement);
+    }
+
+    // Info für 3 Sekunden anzeigen
+    setTimeout(() => {
+        if (infoElement) {
+            infoElement.style.opacity = '1';
+        }
+    }, 100);
+
+    setTimeout(() => {
+        hideFullscreenInfo();
+    }, 3000);
+}
+
+/**
+ * Versteckt Fullscreen-Info
+ * @returns {void}
+ */
+function hideFullscreenInfo() {
+    const infoElement = document.getElementById('fullscreen-info');
+    if (infoElement) {
+        infoElement.style.opacity = '0';
     }
 }
 
@@ -132,13 +235,25 @@ function initMuteButton() {
  * @returns {void}
  */
 function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        canvas.requestFullscreen().catch(err => {
-            console.error('Fullscreen error:', err);
-        });
+    const canvasContainer = document.getElementById('canvas-container');
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+        // Enter fullscreen
+        if (canvasContainer.requestFullscreen) {
+            canvasContainer.requestFullscreen();
+        } else if (canvasContainer.webkitRequestFullscreen) {
+            canvasContainer.webkitRequestFullscreen();
+        } else if (canvasContainer.mozRequestFullScreen) {
+            canvasContainer.mozRequestFullScreen();
+        }
     } else {
+        // Exit fullscreen
         if (document.exitFullscreen) {
             document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
         }
     }
 }
@@ -152,7 +267,7 @@ function checkOrientation() {
 
     if (!rotateOverlay) return;
 
-    const isMobile = window.innerWidth <= 1024;
+    const isMobile = window.innerWidth <= 768;
     const isPortrait = window.innerHeight > window.innerWidth;
 
     if (isMobile && isPortrait) {
@@ -187,6 +302,7 @@ function startGame() {
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
     const muteBtn = document.querySelector('.audio-mute-btn');
     infoContainer = document.querySelector('.info-container');
+
     startBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         infoContainer.classList.add('d-none');
@@ -213,7 +329,7 @@ function restartGame() {
 
     // Cleanup altes Audio komplett
     if (world?.audioManager) {
-        world.audioManager.cleanup();
+        world.audioManager.stopMusic();
     }
 
     initLevel();
@@ -231,6 +347,17 @@ function returnToHome() {
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
     const muteBtn = document.querySelector('.audio-mute-btn');
 
+    // Exit fullscreen if active
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        }
+    }
+
     if (gameOverScreen) gameOverScreen.classList.add('d-none');
     if (winScreen) winScreen.classList.add('d-none');
     if (contentContainer) contentContainer.classList.add('d-none');
@@ -242,7 +369,7 @@ function returnToHome() {
 
     // Cleanup Audio
     if (world?.audioManager) {
-        world.audioManager.cleanup();
+        world.audioManager.stopMusic();
     }
 }
 
@@ -256,18 +383,31 @@ function infoGame() {
     const gameControls = document.querySelector('.game-howTo');
     const infoBtn = document.querySelector('#game-infoBtn');
     const gameInfo = document.querySelector('.information');
+    const impressumLink = document.getElementById('impressumLink');
 
     controlBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         infoContent.classList.add('d-none');
         gameControls.classList.remove('d-none');
+        gameInfo.classList.add('d-none');
     })
 
     infoBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         infoContent.classList.add('d-none');
+        gameControls.classList.add('d-none');
         gameInfo.classList.remove('d-none');
     })
+
+    // Impressum Link öffnet Information-Bereich
+    if (impressumLink) {
+        impressumLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            infoContent.classList.add('d-none');
+            gameControls.classList.add('d-none');
+            gameInfo.classList.remove('d-none');
+        });
+    }
 }
 
 /**
@@ -277,12 +417,14 @@ function infoGame() {
 function backHomeScreen() {
     const backBtn = document.querySelectorAll('.backBtn');
     const infoContent = document.querySelector('.info-content');
-    const gameInfo = document.querySelector('.game-howTo');
-    const infoContainer = document.querySelector('.information');
+    const gameControls = document.querySelector('.game-howTo');
+    const gameInfo = document.querySelector('.information');
+
     backBtn.forEach(btn => {
         btn.addEventListener('click', (e) => {
-            infoContainer.classList.add('d-none');
+            e.stopPropagation();
             gameInfo.classList.add('d-none');
+            gameControls.classList.add('d-none');
             infoContent.classList.remove('d-none');
         })
     })
@@ -293,4 +435,35 @@ function backHomeScreen() {
  */
 window.addEventListener('DOMContentLoaded', () => {
     init();
+    initEndScreenButtons();
 });
+
+/**
+ * Initializes event listeners for game end screen buttons
+ * @returns {void}
+ */
+function initEndScreenButtons() {
+    // Game Over Screen Buttons
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const mainMenuBtn1 = document.getElementById('mainMenuBtn1');
+
+    // Win Screen Buttons
+    const playAgainBtn = document.getElementById('playAgainBtn');
+    const mainMenuBtn2 = document.getElementById('mainMenuBtn2');
+
+    if (tryAgainBtn) {
+        tryAgainBtn.addEventListener('click', restartGame);
+    }
+
+    if (playAgainBtn) {
+        playAgainBtn.addEventListener('click', restartGame);
+    }
+
+    if (mainMenuBtn1) {
+        mainMenuBtn1.addEventListener('click', returnToHome);
+    }
+
+    if (mainMenuBtn2) {
+        mainMenuBtn2.addEventListener('click', returnToHome);
+    }
+}

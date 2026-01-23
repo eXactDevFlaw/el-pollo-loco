@@ -112,10 +112,75 @@ canvas {
   display: block;
 }
 
-canvas:fullscreen {
-  width: 100vw;
-  height: 100vh;
-  object-fit: contain;
+/* === FULLSCREEN MODE FIXES === */
+/* Canvas-Container im Fullscreen */
+#canvas-container:fullscreen,
+#canvas-container:-webkit-full-screen,
+#canvas-container:-moz-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: black !important;
+}
+
+/* Canvas selbst im Fullscreen - VOLLE GRÖßE */
+#canvas-container:fullscreen canvas,
+#canvas-container:-webkit-full-screen canvas,
+#canvas-container:-moz-full-screen canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  object-fit: contain !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+/* Buttons und Controls bleiben im Fullscreen sichtbar */
+#canvas-container:fullscreen .fullscreen-btn,
+#canvas-container:fullscreen .audio-mute-btn,
+#canvas-container:fullscreen .mobile-controls {
+  position: fixed !important;
+  z-index: 10000 !important;
+}
+
+/* Browser-spezifische Fullscreen-Prefixes */
+#canvas-container:-webkit-full-screen .fullscreen-btn,
+#canvas-container:-webkit-full-screen .audio-mute-btn,
+#canvas-container:-webkit-full-screen .mobile-controls {
+  position: fixed !important;
+  z-index: 10000 !important;
+}
+
+#canvas-container:-moz-full-screen .fullscreen-btn,
+#canvas-container:-moz-full-screen .audio-mute-btn,
+#canvas-container:-moz-full-screen .mobile-controls {
+  position: fixed !important;
+  z-index: 10000 !important;
+}
+
+/* Fullscreen-Info-Text */
+.fullscreen-info {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+#canvas-container:fullscreen .fullscreen-info {
+  opacity: 1;
 }
 
 .info-container {
@@ -227,6 +292,7 @@ canvas:fullscreen {
 .information {
   width: 720px;
   min-height: 480px;
+  max-height: 480px;
   padding: var(--space-md);
   background: linear-gradient(
     135deg,
@@ -247,6 +313,105 @@ canvas:fullscreen {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  overflow: hidden;
+}
+
+/* Information Container mit Scroll */
+.information {
+  justify-content: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-md);
+}
+
+.info-scroll-content {
+  width: 100%;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: var(--space-md);
+  padding-right: var(--space-sm);
+  text-align: left;
+}
+
+/* Custom Scrollbar für Info-Bereich */
+.info-scroll-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.info-scroll-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.info-scroll-content::-webkit-scrollbar-thumb {
+  background: var(--color-sunset-orange);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.info-scroll-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-canyon-red);
+}
+
+/* Impressum Styles im Info-Container */
+.information h3 {
+  color: var(--color-gold);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-md);
+  text-align: center;
+  text-shadow:
+    0.0625rem 0.0625rem 0.25rem rgba(0, 0, 0, 0.8),
+    0 0 0.5rem rgba(255, 215, 0, 0.3);
+}
+
+.information h4 {
+  color: var(--color-desert-sand);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-lg);
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  text-shadow: 0.0625rem 0.0625rem 0.25rem rgba(0, 0, 0, 0.8);
+}
+
+.information p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  margin-bottom: var(--space-xs);
+}
+
+.information a {
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.information a:hover {
+  color: var(--color-sunset-orange);
+  text-decoration: underline;
+}
+
+.info-section {
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-section:last-of-type {
+  border-bottom: none;
+}
+
+.info-subsection {
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-xs);
+  padding-left: var(--space-sm);
+  border-left: 3px solid var(--color-sunset-orange);
+}
+
+.info-subsection strong {
+  color: var(--color-gold);
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 .game-howTo {
@@ -299,6 +464,9 @@ canvas:fullscreen {
   cursor: pointer;
   z-index: 1000;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fullscreen-btn {
@@ -320,6 +488,7 @@ canvas:fullscreen {
   transform: scale(0.95);
 }
 
+/* === MOBILE CONTROLS VERBESSERT === */
 .mobile-controls {
   display: none;
   position: fixed;
@@ -328,7 +497,7 @@ canvas:fullscreen {
   right: 0;
   width: 100%;
   padding: 0 var(--space-md);
-  z-index: 100;
+  z-index: 1000;
   justify-content: space-between;
   align-items: flex-end;
 }
@@ -339,19 +508,22 @@ canvas:fullscreen {
 }
 
 .btn-mobile {
-  width: 3.125rem;
-  height: 3.125rem;
+  width: 60px;
+  height: 60px;
   background: rgba(255, 255, 255, 0.3);
-  border: 0.1875rem solid rgba(255, 255, 255, 0.8);
+  border: 3px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   color: #fff;
   font-size: var(--font-size-xl);
   font-weight: bold;
   cursor: pointer;
   user-select: none;
-  backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(10px);
   transition: all 0.2s ease;
   touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-mobile:active {
@@ -361,9 +533,9 @@ canvas:fullscreen {
 
 .btn-jump,
 .btn-throw {
-  width: 3.125rem;
-  height: 3.125rem;
-  font-size: var(--font-size-xs);
+  width: 60px;
+  height: 60px;
+  font-size: 0.7rem;
   text-align: center;
 }
 
@@ -382,7 +554,7 @@ canvas:fullscreen {
 
 .rotate-message {
   text-align: center;
-  color: #000000;
+  color: #ffffff;
   padding: var(--space-xl);
 }
 
@@ -406,11 +578,13 @@ canvas:fullscreen {
   font-size: var(--font-size-3xl);
   margin-bottom: var(--space-xs);
   font-family: var(--font-heading);
+  color: #ffffff;
 }
 
 .rotate-message p {
   font-size: var(--font-size-lg);
   opacity: 0.8;
+  color: #ffffff;
 }
 
 .game-end-screen {
@@ -590,7 +764,42 @@ canvas:fullscreen {
   );
 }
 
-@media (max-width: 768px) {
+.d-none {
+  display: none !important;
+}
+
+/* === IMPRESSUM LINK === */
+.impressum-link-container {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 100;
+}
+
+.impressum-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.impressum-link:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* === DESKTOP ONLY === */
+@media only screen and (min-width: 769px) {
+  .rotate-device-overlay {
+    display: none !important;
+  }
+  
+  .mobile-controls {
+    display: none !important;
+  }
+}
+
+/* === TABLET & MOBILE === */
+@media only screen and (max-width: 768px) {
   .end-screen-image {
     max-width: 350px;
   }
@@ -600,19 +809,7 @@ canvas:fullscreen {
     padding: var(--space-sm) var(--space-lg);
     min-width: 250px;
   }
-}
 
-.d-none {
-  display: none;
-}
-
-@media only screen and (min-width: 769px) {
-  .rotate-device-overlay {
-    display: none !important;
-  }
-}
-
-@media only screen and (max-width: 768px) {
   .info-content {
     width: 95%;
     padding: var(--space-md);
@@ -647,11 +844,35 @@ canvas:fullscreen {
     font-size: var(--font-size-lg);
     padding: var(--space-sm) var(--space-lg);
     letter-spacing: 0.125rem;
+    min-width: 250px;
   }
 
   .game-howTo,
   .impress {
     padding: var(--space-sm);
+    width: 95%;
+  }
+
+  .information {
+    width: 95%;
+    padding: var(--space-sm);
+  }
+
+  .info-scroll-content {
+    max-height: 340px;
+    padding: var(--space-sm);
+  }
+
+  .information h3 {
+    font-size: var(--font-size-xl);
+  }
+
+  .information h4 {
+    font-size: var(--font-size-base);
+  }
+
+  .information p {
+    font-size: 0.8rem;
   }
 
   .game-howTo h3 {
@@ -680,9 +901,10 @@ canvas:fullscreen {
     display: none;
   }
 
+  /* Desktop-Buttons auf Mobile verstecken */
   .fullscreen-btn,
   .audio-mute-btn {
-    display: none;
+    display: none !important;
   }
 
   canvas {
@@ -691,6 +913,7 @@ canvas:fullscreen {
   }
 }
 
+/* === MOBILE PORTRAIT === */
 @media only screen and (max-width: 768px) and (orientation: portrait) {
   .rotate-device-overlay {
     display: flex !important;
@@ -706,6 +929,7 @@ canvas:fullscreen {
   }
 }
 
+/* === MOBILE LANDSCAPE === */
 @media only screen and (max-width: 768px) and (orientation: landscape) {
   .rotate-device-overlay {
     display: none !important;
@@ -715,8 +939,9 @@ canvas:fullscreen {
     display: flex;
   }
 
-  .content-container:not(.d_none) .mobile-controls {
-    display: flex;
+  /* Mobile Controls im Landscape sichtbar machen */
+  .content-container:not(.d-none) .mobile-controls {
+    display: flex !important;
   }
 
   canvas {
@@ -724,78 +949,100 @@ canvas:fullscreen {
     width: 100vw;
     height: 100vh;
   }
+  
+  /* Buttons größer und besser sichtbar im Landscape */
+  .btn-mobile {
+    width: 70px;
+    height: 70px;
+    font-size: 1.5rem;
+  }
+  
+  .btn-jump,
+  .btn-throw {
+    width: 70px;
+    height: 70px;
+    font-size: 0.75rem;
+  }
 }
 
+/* === IMPRESSUM STYLES === */
 .imprint-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 0.625rem;
-        box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
-      }
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 0.625rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
+}
 
-      .imprint-container h1 {
-        color: var(--color-canyon-red);
-        margin-bottom: 1.5rem;
-        font-size: 2.5rem;
-      }
+.imprint-container h1 {
+  color: var(--color-canyon-red);
+  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+}
 
-      .imprint-container h2 {
-        color: var(--color-dust-brown);
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-      }
+.imprint-container h2 {
+  color: var(--color-dust-brown);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
 
-      .imprint-container p {
-        color: #333;
-        line-height: 1.8;
-        margin-bottom: 1rem;
-      }
+.imprint-container h3 {
+  color: var(--color-dust-brown);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
 
-      .imprint-container a {
-        color: var(--color-sunset-orange);
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
+.imprint-container p {
+  color: #333;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
 
-      .imprint-container a:hover {
-        color: var(--color-canyon-red);
-        text-decoration: underline;
-      }
+.imprint-container a {
+  color: var(--color-sunset-orange);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-      .back-button {
-        display: inline-block;
-        margin-top: 2rem;
-        padding: 0.75rem 2rem;
-        background: var(--color-sunset-orange);
-        color: white;
-        text-decoration: none;
-        border-radius: 0.5rem;
-        font-family: var(--font-heading);
-        font-size: 1.25rem;
-        transition: all 0.3s ease;
-        cursor: pointer;
-      }
+.imprint-container a:hover {
+  color: var(--color-canyon-red);
+  text-decoration: underline;
+}
 
-      .back-button:hover {
-        background: var(--color-canyon-red);
-        transform: translateY(-2px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
-      }
+.back-button {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  background: var(--color-sunset-orange);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
 
-      @media (max-width: 768px) {
-        .imprint-container {
-          margin: 1rem;
-          padding: 1.5rem;
-        }
+.back-button:hover {
+  background: var(--color-canyon-red);
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
 
-        .imprint-container h1 {
-          font-size: 2rem;
-        }
+@media (max-width: 768px) {
+  .imprint-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
 
-        .imprint-container h2 {
-          font-size: 1.25rem;
-        }
-      }
+  .imprint-container h1 {
+    font-size: 2rem;
+  }
+
+  .imprint-container h2 {
+    font-size: 1.25rem;
+  }
+}

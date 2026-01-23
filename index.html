@@ -56,6 +56,8 @@
               <button id="game-infoBtn">Information</button>
             </div>
           </div>
+          
+          <!-- How To Play Section -->
           <div class="game-howTo d-none">
             <h3>How to Play</h3>
             <p>
@@ -68,18 +70,79 @@
             </div>
           </div>
 
+          <!-- Information / Impressum Section -->
           <div class="information d-none">
-            <h4>Information</h4>
-            <p>Defeat chickens and the final boss to win!</p>
+            <div class="info-scroll-content">
+              <h3>Impressum</h3>
+
+              <div class="info-section">
+                <h4>Angaben gemäß § 5 TMG</h4>
+                <p>
+                  Lutz Bölling<br />
+                  Böttcherei 226<br />
+                  28844 Weyhe<br />
+                  Deutschland
+                </p>
+              </div>
+
+              <div class="info-section">
+                <h4>Kontakt</h4>
+                <p>
+                  E-Mail: <a href="mailto:exactstack@gmail.com">exactstack[at]gmail.com</a><br />
+                  Telefon: +49 (0) 152 219 587 43
+                </p>
+              </div>
+
+              <div class="info-section">
+                <h4>Haftungsausschluss</h4>
+                
+                <p class="info-subsection">
+                  <strong>Haftung für Inhalte:</strong><br />
+                  Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die
+                  Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch
+                  keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG
+                  für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
+                  verantwortlich.
+                </p>
+
+                <p class="info-subsection">
+                  <strong>Haftung für Links:</strong><br />
+                  Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren
+                  Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden
+                  Inhalte auch keine Gewähr übernehmen.
+                </p>
+
+                <p class="info-subsection">
+                  <strong>Urheberrecht:</strong><br />
+                  Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen
+                  Seiten unterliegen dem deutschen Urheberrecht.
+                </p>
+              </div>
+
+              <div class="info-section">
+                <h4>Datenschutz</h4>
+                <p>
+                  Die Nutzung unserer Webseite ist in der Regel ohne Angabe
+                  personenbezogener Daten möglich. Soweit auf unseren Seiten
+                  personenbezogene Daten erhoben werden, erfolgt dies, soweit möglich, stets auf
+                  freiwilliger Basis.
+                </p>
+              </div>
+
+              <div class="info-section">
+                <h4>Spielgrafiken & Assets</h4>
+                <p>
+                  Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt. Alle verwendeten
+                  Grafiken und Assets stammen aus frei verfügbaren Quellen oder wurden zu
+                  Bildungszwecken verwendet.
+                </p>
+              </div>
+            </div>
+            
             <div class="game-startBtn">
               <button class="backBtn">Back</button>
             </div>
           </div>
-        </div>
-
-        <!-- Impressum Link -->
-        <div style="position: fixed; bottom: 10px; left: 10px; z-index: 100;">
-          <a href="imprint.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.875rem; transition: color 0.3s;" onmouseover="this.style.color='rgba(255,255,255,1)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Impressum</a>
         </div>
 
         <!-- Mobile Controls -->
@@ -125,10 +188,10 @@
           class="end-screen-image game-over-image"
         />
         <div class="game-startBtn">
-          <button onclick="restartGame()">Try Again</button>
+          <button id="tryAgainBtn">Try Again</button>
         </div>
         <div class="game-startBtn">
-          <button onclick="returnToHome()">Main Menu</button>
+          <button id="mainMenuBtn1">Main Menu</button>
         </div>
       </div>
     </div>
@@ -143,10 +206,10 @@
           class="end-screen-image win-image"
         />
         <div class="game-startBtn">
-          <button onclick="restartGame()">Play Again</button>
+          <button id="playAgainBtn">Play Again</button>
         </div>
         <div class="game-startBtn">
-          <button onclick="returnToHome()">Main Menu</button>
+          <button id="mainMenuBtn2">Main Menu</button>
         </div>
       </div>
     </div>
