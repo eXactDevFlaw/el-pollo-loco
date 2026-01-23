@@ -1,5 +1,4 @@
 /**
- * Level-Klasse
  * Definiert ein Spiel-Level mit allen Enemies, Objekten und Hintergründen
  */
 class Level {

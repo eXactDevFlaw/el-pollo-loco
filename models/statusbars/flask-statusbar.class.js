@@ -1,5 +1,4 @@
 /**
- * FlaskStatusBar-Klasse
  * Zeigt die Anzahl gesammelter Flaschen an
  */
 class FlaskStatusBar extends StatusBar {

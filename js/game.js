@@ -1,23 +1,10 @@
-/**
- * @fileoverview Main game initialization and control handling
- * Manages keyboard input, mobile touch controls, fullscreen mode, and device orientation
- */
-
-/** @type {HTMLCanvasElement} Canvas element for game rendering */
 let canvas;
-
-/** @type {World} Game world instance */
 let world;
-
-/** @type {Keyboard} Keyboard state object */
 let keyboard = new Keyboard();
-
 let infoContainer;
 
 /**
- * Initializes the game
- * Creates canvas reference and sets up responsive features
- * @returns {void}
+ * Initialisiert das Spiel
  */
 function init() {
     canvas = document.getElementById('canvas');
@@ -28,8 +15,7 @@ function init() {
 }
 
 /**
- * Binds keyboard event listeners for desktop controls
- * @returns {void}
+ * Bindet Keyboard Event Listener für Desktop-Controls
  */
 function bindKeyboardEvents() {
     window.addEventListener('keydown', (e) => {
@@ -52,8 +38,7 @@ function bindKeyboardEvents() {
 }
 
 /**
- * Binds touch event listeners for mobile controls
- * @returns {void}
+ * Bindet Touch Event Listener für Mobile-Controls
  */
 function bindMobileControls() {
     const btnLeft = document.getElementById('btnLeft');
@@ -69,8 +54,7 @@ function bindMobileControls() {
 }
 
 /**
- * Prevents context menu on all mobile touch buttons
- * @returns {void}
+ * Verhindert Kontextmenü auf allen Mobile-Touch-Buttons
  */
 function preventContextMenu() {
     const mobileButtons = document.querySelectorAll('.btn-mobile');
@@ -80,10 +64,9 @@ function preventContextMenu() {
 }
 
 /**
- * Binds touch events to a button and maps them to keyboard state
- * @param {HTMLElement|null} button - The button element to bind
- * @param {string} keyProperty - The keyboard property to control
- * @returns {void}
+ * Bindet Touch-Events an einen Button
+ * @param {HTMLElement|null} button - Das Button-Element
+ * @param {string} keyProperty - Die Keyboard-Property
  */
 function bindTouchButton(button, keyProperty) {
     if (!button) return;
@@ -100,8 +83,7 @@ function bindTouchButton(button, keyProperty) {
 }
 
 /**
- * Initializes fullscreen button functionality
- * @returns {void}
+ * Initialisiert Fullscreen-Button Funktionalität
  */
 function initFullscreen() {
     const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -111,18 +93,15 @@ function initFullscreen() {
         fullscreenBtn.addEventListener('click', toggleFullscreen);
     }
 
-    // Fullscreen-Change Event Listener
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
 
-    // Resize Event für Fullscreen
     window.addEventListener('resize', handleFullscreenResize);
 }
 
 /**
- * Handles resize events in fullscreen
- * @returns {void}
+ * Behandelt Resize-Events im Fullscreen
  */
 function handleFullscreenResize() {
     if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
@@ -135,8 +114,7 @@ function handleFullscreenResize() {
 }
 
 /**
- * Handles fullscreen state changes
- * @returns {void}
+ * Behandelt Fullscreen-State Änderungen
  */
 function handleFullscreenChange() {
     const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -144,12 +122,10 @@ function handleFullscreenChange() {
     const canvas = document.getElementById('canvas');
 
     if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-        // Fullscreen ist aktiv
         if (fullscreenIcon) {
-            fullscreenIcon.textContent = '⛶'; // Exit Fullscreen Icon
+            fullscreenIcon.textContent = '⛶';
         }
 
-        // Canvas explizit auf Fullscreen-Größe setzen
         if (canvas) {
             canvas.style.width = '100vw';
             canvas.style.height = '100vh';
@@ -159,12 +135,10 @@ function handleFullscreenChange() {
 
         showFullscreenInfo();
     } else {
-        // Fullscreen ist inaktiv - Zurück zu Normalgröße
         if (fullscreenIcon) {
-            fullscreenIcon.textContent = '⛶'; // Fullscreen Icon
+            fullscreenIcon.textContent = '⛶';
         }
 
-        // Canvas zurück auf Normalgröße
         if (canvas) {
             canvas.style.width = '';
             canvas.style.height = '';
@@ -178,7 +152,6 @@ function handleFullscreenChange() {
 
 /**
  * Zeigt Info-Text für Fullscreen-Exit an
- * @returns {void}
  */
 function showFullscreenInfo() {
     let infoElement = document.getElementById('fullscreen-info');
@@ -191,7 +164,6 @@ function showFullscreenInfo() {
         document.body.appendChild(infoElement);
     }
 
-    // Info für 3 Sekunden anzeigen
     setTimeout(() => {
         if (infoElement) {
             infoElement.style.opacity = '1';
@@ -205,7 +177,6 @@ function showFullscreenInfo() {
 
 /**
  * Versteckt Fullscreen-Info
- * @returns {void}
  */
 function hideFullscreenInfo() {
     const infoElement = document.getElementById('fullscreen-info');
@@ -216,7 +187,6 @@ function hideFullscreenInfo() {
 
 /**
  * Initialisiert die Mute-Button Funktionalität
- * @returns {void}
  */
 function initMuteButton() {
     const muteBtn = document.getElementById('audioMuteBtn');
@@ -231,14 +201,12 @@ function initMuteButton() {
 }
 
 /**
- * Toggles fullscreen mode on and off
- * @returns {void}
+ * Schaltet Fullscreen-Modus ein/aus
  */
 function toggleFullscreen() {
     const canvasContainer = document.getElementById('canvas-container');
 
     if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
-        // Enter fullscreen
         if (canvasContainer.requestFullscreen) {
             canvasContainer.requestFullscreen();
         } else if (canvasContainer.webkitRequestFullscreen) {
@@ -247,7 +215,6 @@ function toggleFullscreen() {
             canvasContainer.mozRequestFullScreen();
         }
     } else {
-        // Exit fullscreen
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -259,8 +226,7 @@ function toggleFullscreen() {
 }
 
 /**
- * Checks device orientation and displays rotate overlay if needed
- * @returns {void}
+ * Prüft Geräte-Orientierung und zeigt Rotate-Overlay wenn nötig
  */
 function checkOrientation() {
     const rotateOverlay = document.getElementById('rotateOverlay');
@@ -278,8 +244,7 @@ function checkOrientation() {
 }
 
 /**
- * Initializes all responsive features
- * @returns {void}
+ * Initialisiert alle Responsive-Features
  */
 function initResponsiveFeatures() {
     bindKeyboardEvents();
@@ -293,8 +258,7 @@ function initResponsiveFeatures() {
 }
 
 /**
- * Starts the game and creates world instance
- * @returns {void}
+ * Startet das Spiel und erstellt World-Instanz
  */
 function startGame() {
     const startBtn = document.querySelector('#game-startBtn');
@@ -316,7 +280,6 @@ function startGame() {
 
 /**
  * Startet das Spiel neu ohne Page Reload
- * @returns {void}
  */
 function restartGame() {
     const gameOverScreen = document.getElementById('gameOverScreen');
@@ -327,7 +290,6 @@ function restartGame() {
 
     stopAllIntervals();
 
-    // Cleanup altes Audio komplett
     if (world?.audioManager) {
         world.audioManager.stopMusic();
     }
@@ -338,7 +300,6 @@ function restartGame() {
 
 /**
  * Kehrt zum Hauptmenü zurück
- * @returns {void}
  */
 function returnToHome() {
     const gameOverScreen = document.getElementById('gameOverScreen');
@@ -347,7 +308,6 @@ function returnToHome() {
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
     const muteBtn = document.querySelector('.audio-mute-btn');
 
-    // Exit fullscreen if active
     if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
         if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -367,15 +327,13 @@ function returnToHome() {
 
     stopAllIntervals();
 
-    // Cleanup Audio
     if (world?.audioManager) {
         world.audioManager.stopMusic();
     }
 }
 
 /**
- * Initializes info game sections
- * @returns {void}
+ * Initialisiert Info-Game Bereiche
  */
 function infoGame() {
     const infoContent = document.querySelector('.info-content');
@@ -399,7 +357,6 @@ function infoGame() {
         gameInfo.classList.remove('d-none');
     })
 
-    // Impressum Link öffnet Information-Bereich
     if (impressumLink) {
         impressumLink.addEventListener('click', (e) => {
             e.preventDefault();
@@ -411,8 +368,7 @@ function infoGame() {
 }
 
 /**
- * Handles back button to return to home screen
- * @returns {void}
+ * Behandelt Back-Button um zum Home-Screen zurückzukehren
  */
 function backHomeScreen() {
     const backBtn = document.querySelectorAll('.backBtn');
@@ -431,7 +387,7 @@ function backHomeScreen() {
 }
 
 /**
- * Entry point - initializes game when DOM is fully loaded
+ * Entry Point - initialisiert Spiel wenn DOM geladen ist
  */
 window.addEventListener('DOMContentLoaded', () => {
     init();
@@ -439,15 +395,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Initializes event listeners for game end screen buttons
- * @returns {void}
+ * Initialisiert Event Listener für Game-End-Screen Buttons
  */
 function initEndScreenButtons() {
-    // Game Over Screen Buttons
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const mainMenuBtn1 = document.getElementById('mainMenuBtn1');
 
-    // Win Screen Buttons
     const playAgainBtn = document.getElementById('playAgainBtn');
     const mainMenuBtn2 = document.getElementById('mainMenuBtn2');
 

@@ -1,6 +1,5 @@
 /**
- * Flask-Klasse - Sammelbare Flasche
- * Wird verwendet als Munition für Wurfattacken
+ * Sammelbare Flasche als Munition für Wurfattacken
  */
 class Flask extends DrawableObject {
     width = 80;

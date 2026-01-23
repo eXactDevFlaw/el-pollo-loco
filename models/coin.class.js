@@ -1,6 +1,5 @@
 /**
- * Coin-Klasse - Sammelbare Münze
- * Erscheint an zufälligen Positionen im Level
+ * Sammelbare Münze
  */
 class Coin extends DrawableObject {
     width = 150;

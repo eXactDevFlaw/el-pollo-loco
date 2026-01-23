@@ -1,34 +1,14 @@
 /**
  * Basisklasse für alle beweglichen Objekte im Spiel
- * Erweitert DrawableObject um Bewegung, Physik und Kollisionserkennung
  */
 class MovableObject extends DrawableObject {
-  /** @type {number} Horizontale Bewegungsgeschwindigkeit */
   speed = 0.15;
-
-  /** @type {number} Vertikale Geschwindigkeit (negativ = fallen, positiv = steigen) */
   speedY = 0;
-
-  /** @type {number} Schwerkraft-Beschleunigung */
   acceleration = 2.5;
-
-  /** @type {boolean} Gibt an ob das Objekt in die andere Richtung schaut */
   otherDirection = false;
-
-  /** @type {number} Energie/Leben des Objekts (0-100) */
   energy = 100;
-
-  /** @type {number} Zeitstempel des letzten Treffers */
   lastHit = 0;
 
-  /**
-   * Hitbox-Offsets für präzisere Kollisionserkennung
-   * @type {Object}
-   * @property {number} top - Offset oben
-   * @property {number} left - Offset links
-   * @property {number} right - Offset rechts
-   * @property {number} bottom - Offset unten
-   */
   offsetHitbox = {
     top: 0,
     left: 0,
@@ -38,7 +18,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Spielt eine Animation in einer Schleife ab
-   * Durchläuft die Bilder wiederholt
    * @param {string[]} images - Array mit Bildpfaden
    */
   playAnimation(images) {
@@ -50,7 +29,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Spielt eine Animation genau einmal ab
-   * Bleibt am Ende beim letzten Bild stehen
    * @param {string[]} images - Array mit Bildpfaden
    */
   playAnimationOnce(images) {
@@ -81,7 +59,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Wendet Schwerkraft auf das Objekt an
-   * Lässt das Objekt fallen wenn es in der Luft ist
    */
   applyGravity() {
     setStoppableInterval(() => {
@@ -105,7 +82,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Lässt das Objekt springen
-   * Setzt die vertikale Geschwindigkeit nach oben
    */
   jump() {
     this.speedY = 30;
@@ -117,8 +93,7 @@ class MovableObject extends DrawableObject {
 
   /**
    * Fügt dem Objekt Schaden zu
-   * Reduziert die Energie und speichert den Zeitpunkt des Treffers
-   * @param {number} damage - Schadenswert (Standard: 5)
+   * @param {number} damage - Schadenswert
    */
   hit(damage = 5) {
     this.energy -= damage;
@@ -139,7 +114,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Prüft ob das Objekt gerade verletzt wurde
-   * Gilt für 0.5 Sekunden nach dem letzten Treffer
    * @returns {boolean} True wenn innerhalb der letzten 0.5 Sekunden getroffen
    */
   isHurt() {
@@ -150,7 +124,6 @@ class MovableObject extends DrawableObject {
 
   /**
    * Prüft ob dieses Objekt mit einem anderen kollidiert
-   * Berücksichtigt die Hitbox-Offsets beider Objekte
    * @param {MovableObject} moveObject - Das andere Objekt
    * @returns {boolean} True wenn Kollision vorliegt
    */

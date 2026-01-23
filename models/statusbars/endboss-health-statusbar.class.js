@@ -1,5 +1,4 @@
 /**
- * EndbossHealthStatusBar-Klasse
  * Zeigt die Lebensenergie des Endbosses an
  */
 class EndbossHealthStatusBar extends StatusBar {
@@ -36,7 +35,7 @@ class EndbossHealthStatusBar extends StatusBar {
      * Aktualisiert die Position der Statusbar basierend auf der Endboss-Position
      * @param {Endboss} endboss - Der Endboss
      */
-    updatePosition(endboss){
+    updatePosition(endboss) {
         this.x = endboss.x + this.offsetX;
         this.y = endboss.y + this.offsetY;
     }

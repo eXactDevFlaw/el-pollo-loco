@@ -1,5 +1,4 @@
 /**
- * Keyboard-Klasse
  * Speichert den Status aller Tasten
  */
 class Keyboard {

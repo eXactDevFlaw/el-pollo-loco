@@ -45,13 +45,9 @@
 
     <div class="content-container">
       <h1>El Pollo Loco</h1>
-      
-      <!-- DIESER DIV wird fullscreen! -->
       <div class="game-wrapper">
         <div id="canvas-container" class="d-none">
           <canvas id="canvas" width="720" height="480"></canvas>
-          
-          <!-- Mobile Controls (NUR im canvas-container!) -->
           <div class="mobile-controls">
             <div class="control-group left-controls">
               <button class="btn-mobile btn-left" id="btnLeft">◄</button>
@@ -97,9 +93,9 @@
               <div class="info-section">
                 <h4>Angaben gemäß § 5 TMG</h4>
                 <p>
-                  Max Mustermann<br />
-                  Musterstraße 123<br />
-                  12345 Musterstadt<br />
+                  Lutz Bölling<br />
+                  Böttcherei 226<br />
+                  288 Weyhe<br />
                   Deutschland
                 </p>
               </div>
@@ -107,8 +103,8 @@
               <div class="info-section">
                 <h4>Kontakt</h4>
                 <p>
-                  E-Mail: <a href="/cdn-cgi/l/email-protection#4f2420213b2e243b0f2a372e223f232a612c2022"><span class="__cf_email__" data-cfemail="1a7175746e7b716e5a7f627b776a767f34797577">[email&#160;protected]</span></a><br />
-                  Telefon: +49 (0) 123 456789
+                  E-Mail: <a href="mailto:exactstack@gmail.com"><span>exactstack[at]gmail.com</span></a><br />
+                  Telefon: +49 (0) 152 219 587 43
                 </p>
               </div>
 
@@ -146,21 +142,16 @@
           </div>
         </div>
       </div>
-      <!-- Ende game-wrapper -->
     </div>
-    <!-- Ende content-container -->
 
-    <!-- Fullscreen Button -->
     <button class="fullscreen-btn d-none" id="fullscreenBtn">
       <span class="fullscreen-icon">⛶</span>
     </button>
     
-    <!-- Mute Button -->
     <button class="audio-mute-btn d-none" id="audioMuteBtn">
       <span class="audio-icon">🔊</span>
     </button>
 
-    <!-- Game Over Screen -->
     <div id="gameOverScreen" class="game-end-screen d-none">
       <div class="end-screen-content">
         <img
@@ -178,7 +169,6 @@
       </div>
     </div>
 
-    <!-- Win Screen -->
     <div id="winScreen" class="game-end-screen d-none">
       <div class="end-screen-content">
         <img

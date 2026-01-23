@@ -1,6 +1,5 @@
 /**
- * StatusBar-Klasse - Basisklasse für alle Statusanzeigen
- * Zeigt verschiedene Zustände durch unterschiedliche Bilder an
+ * Basisklasse für alle Statusanzeigen
  */
 class StatusBar extends DrawableObject {
     percentage = 100;

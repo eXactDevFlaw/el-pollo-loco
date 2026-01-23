@@ -1,6 +1,5 @@
 /**
- * BackgroundObject-Klasse - Hintergrund-Layer
- * Wird verwendet für Parallax-Scrolling Effekt
+ * Hintergrund-Layer für Parallax-Scrolling Effekt
  */
 class BackgroundObject extends MovableObject {
     width = 720;
@@ -11,7 +10,7 @@ class BackgroundObject extends MovableObject {
      * @param {string} imagePath - Pfad zum Hintergrundbild
      * @param {number} x - X-Position
      */
-    constructor(imagePath, x){
+    constructor(imagePath, x) {
         super()
         this.loadImage(imagePath)
         this.x = x;

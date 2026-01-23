@@ -1,5 +1,4 @@
 /**
- * CoinStatusBar-Klasse
  * Zeigt die Anzahl gesammelter Münzen an
  */
 class CoinStatusBar extends StatusBar {

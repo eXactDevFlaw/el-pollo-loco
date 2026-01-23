@@ -1,5 +1,4 @@
 /**
- * HealthStatusBar-Klasse
  * Zeigt die Lebensenergie des Characters an
  */
 class HealthStatusBar extends StatusBar {

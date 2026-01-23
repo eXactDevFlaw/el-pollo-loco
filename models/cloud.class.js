@@ -1,6 +1,5 @@
 /**
- * Cloud-Klasse - Wolke im Hintergrund
- * Bewegt sich langsam von rechts nach links
+ * Wolke im Hintergrund
  */
 class Cloud extends MovableObject {
     y = 20;

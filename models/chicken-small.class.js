@@ -1,6 +1,5 @@
 /**
- * SmallChicken-Klasse - Kleines Hühnchen als Enemy
- * Bewegt sich von rechts nach links
+ * Kleines Hühnchen als Enemy
  */
 class SmallChicken extends MovableObject {
     y = 380;

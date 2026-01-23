@@ -1,6 +1,5 @@
 /**
- * Chicken-Klasse - Normales Hühnchen als Enemy
- * Bewegt sich von rechts nach links
+ * Normales Hühnchen als Enemy
  */
 class Chicken extends MovableObject {
     y = 360;

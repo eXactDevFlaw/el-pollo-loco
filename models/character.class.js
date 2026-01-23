@@ -1,17 +1,12 @@
 /**
- * Character-Klasse - Der spielbare Hauptcharacter
+ * Der spielbare Hauptcharacter
  * Verwaltet alle Animationen, Bewegungen und States des Spielers
- * @extends MovableObject
  */
 class Character extends MovableObject {
   height = 280;
   y = 160;
   speed = 10;
 
-  /**
-   * Hitbox-Offsets für präzisere Kollisionserkennung
-   * @type {Object}
-   */
   offsetHitbox = {
     top: 120,
     left: 30,
@@ -19,10 +14,6 @@ class Character extends MovableObject {
     bottom: 30,
   };
 
-  /**
-   * Bilder für die Walk-Animation
-   * @type {string[]}
-   */
   IMAGES_WALK = [
     "./img/2_character_pepe/2_walk/W-21.png",
     "./img/2_character_pepe/2_walk/W-22.png",
@@ -32,10 +23,6 @@ class Character extends MovableObject {
     "./img/2_character_pepe/2_walk/W-26.png",
   ];
 
-  /**
-   * Bilder für die Jump-Animation
-   * @type {string[]}
-   */
   IMAGES_JUMP = [
     "./img/2_character_pepe/3_jump/J-31.png",
     "./img/2_character_pepe/3_jump/J-32.png",
@@ -43,16 +30,8 @@ class Character extends MovableObject {
     "./img/2_character_pepe/3_jump/J-34.png",
   ];
 
-  /**
-   * Bild für die Peak-Animation
-   * @type {string[]}
-   */
   IMAGES_PEAK = ["./img/2_character_pepe/3_jump/J-35.png"];
 
-  /**
-   * Bilder für die Fall-Animation
-   * @type {string[]}
-   */
   IMAGES_FALL = [
     "./img/2_character_pepe/3_jump/J-36.png",
     "./img/2_character_pepe/3_jump/J-37.png",
@@ -60,10 +39,6 @@ class Character extends MovableObject {
     "./img/2_character_pepe/3_jump/J-39.png",
   ];
 
-  /**
-   * Bilder für die Death-Animation
-   * @type {string[]}
-   */
   IMAGES_DEAD = [
     "./img/2_character_pepe/5_dead/D-51.png",
     "./img/2_character_pepe/5_dead/D-52.png",
@@ -74,20 +49,12 @@ class Character extends MovableObject {
     "./img/2_character_pepe/5_dead/D-57.png",
   ];
 
-  /**
-   * Bilder für die Hurt-Animation
-   * @type {string[]}
-   */
   IMAGES_HURT = [
     "./img/2_character_pepe/4_hurt/H-41.png",
     "./img/2_character_pepe/4_hurt/H-42.png",
     "./img/2_character_pepe/4_hurt/H-43.png",
   ];
 
-  /**
-   * Bilder für die Idle-Animation
-   * @type {string[]}
-   */
   IMAGES_IDLE = [
     './img/2_character_pepe/1_idle/idle/I-1.png',
     './img/2_character_pepe/1_idle/idle/I-2.png',
@@ -101,10 +68,6 @@ class Character extends MovableObject {
     './img/2_character_pepe/1_idle/idle/I-10.png',
   ];
 
-  /**
-   * Bilder für die Idle-Long-Animation
-   * @type {string[]}
-   */
   IMAGES_IDLE_LONG = [
     './img/2_character_pepe/1_idle/long_idle/I-11.png',
     './img/2_character_pepe/1_idle/long_idle/I-12.png',
@@ -118,45 +81,15 @@ class Character extends MovableObject {
     './img/2_character_pepe/1_idle/long_idle/I-20.png',
   ];
 
-  /**
-   * Referenz zur World-Instanz
-   * @type {World}
-   */
   world;
-
-  /**
-   * Aktueller Animations-State des Characters
-   * @type {string}
-   */
   currentState = "idle";
-
-  /**
-   * Zeitstempel wann Character zuletzt idle wurde
-   * @type {number}
-   */
   idleStartTime = 0;
-
-  /**
-   * Zeit in Millisekunden bis idle_long Animation startet
-   * @type {number}
-   */
   idleLongDelay = 5000;
-
-  /**
-   * Anzahl gesammelter Münzen
-   * @type {number}
-   */
   collectedCoins = 0;
-
-  /**
-   * Anzahl gesammelter Flaschen
-   * @type {number}
-   */
   collectedFlasks = 0;
 
   /**
    * Erstellt einen neuen Character
-   * Lädt alle Bilder und startet Animationen
    */
   constructor() {
     super();

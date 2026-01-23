@@ -1,12 +1,7 @@
 /**
  * Zentrale Verwaltung aller Intervals im Spiel
- * Ermöglicht das einfache Stoppen aller Animationen und Game-Loops
  */
 class IntervalManager {
-    /**
-     * Speichert alle aktiven Intervals
-     * @type {number[]}
-     */
     static intervals = [];
 
     /**
@@ -34,7 +29,7 @@ class IntervalManager {
     }
 
     /**
-     * Stoppt ALLE registrierten Intervals
+     * Stoppt alle registrierten Intervals
      */
     static clearAllIntervals() {
         this.intervals.forEach(intervalId => {

@@ -1,6 +1,5 @@
 /**
- * Klasse für geworfene Flaschen
- * Verwaltet Wurf-Animation, Flug und Splash-Effekt bei Treffer
+ * Geworfene Flaschen mit Wurf-Animation und Splash-Effekt
  */
 class ThrowableObject extends MovableObject {
     IMAGES_GROUND = [
@@ -24,28 +23,10 @@ class ThrowableObject extends MovableObject {
         './img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
     ];
 
-    /**
-     * Gibt an ob die Flasche bereits getroffen hat
-     * @type {boolean}
-     */
     hasHit = false;
-
-    /**
-     * Gibt an ob die Splash-Animation gerade läuft
-     * @type {boolean}
-     */
     isSplashing = false;
-
-    /**
-     * Interval für die Rotation während des Flugs
-     * @type {number}
-     */
     throwInterval;
 
-    /**
-     * Hitbox-Offsets für die Flasche
-     * @type {Object}
-     */
     offsetHitbox = {
         top: 10,
         left: 10,

@@ -1,7 +1,6 @@
 /**
- * Basisklasse für alle zeichenbaren Objekte
- * Verwaltet Bilder, Position und grundlegende Rendering-Funktionalität
- */
+* Basisklasse für alle zeichenbaren Objekte
+*/
 class DrawableObject {
     img;
     imageCache = {};
@@ -12,10 +11,6 @@ class DrawableObject {
     height = 150;
     width = 150;
 
-    /**
-     * Hitbox-Offsets für präzisere Kollisionserkennung
-     * @type {Object}
-     */
     offsetHitbox = {
         top: 0,
         left: 0,
@@ -25,7 +20,7 @@ class DrawableObject {
 
     /**
      * Lädt ein einzelnes Bild
-     * @param {String} path - Pfad zum Bild
+     * @param {string} path - Pfad zum Bild
      */
     loadImage(path) {
         this.img = new Image();
@@ -34,7 +29,7 @@ class DrawableObject {
 
     /**
      * Lädt mehrere Bilder in den Cache
-     * @param {Array} arr - Array mit Bildpfaden
+     * @param {string[]} arr - Array mit Bildpfaden
      */
     loadImages(arr) {
         arr.forEach((path) => {
@@ -68,7 +63,6 @@ class DrawableObject {
             console.warn('Error loading image', e);
             console.log('Could not load image,', this.img.src);
         }
-
     }
 
     /**

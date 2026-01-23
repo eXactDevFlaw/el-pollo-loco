@@ -1,6 +1,5 @@
 /**
  * Hauptklasse für die Spielwelt
- * Verwaltet alle Spielobjekte, Kollisionen und das Rendering
  */
 class World {
   character = new Character();
@@ -16,11 +15,6 @@ class World {
   endbossStatusBar = new EndbossHealthStatusBar();
 
   throwableObjects = [];
-
-  /**
-   * Flag um zu verhindern dass Game Over/Win mehrfach getriggert wird
-   * @type {boolean}
-   */
   gameEnded = false;
 
   IMAGES_WIN = [
@@ -48,7 +42,6 @@ class World {
     this.keyboard = keyboard;
     this.audioManager = new AudioManager();
 
-    // Starte Musik nur wenn nicht gemutet
     if (!this.audioManager.isMuted) {
       this.audioManager.startMusic();
     }
@@ -130,7 +123,6 @@ class World {
 
   /**
    * Prüft Kollisionen zwischen geworfenen Flaschen und Enemies
-   * Spielt Splash-Animation ab und fügt Schaden zu oder tötet den Enemy
    */
   checkBottleCollisions() {
     this.throwableObjects.forEach((bottle, bottleIndex) => {
@@ -144,7 +136,6 @@ class World {
 
   /**
    * Entfernt Flaschen die aus dem Bildschirm gefallen sind
-   * Verhindert dass nicht-getroffene Flaschen das Werfen blockieren
    */
   cleanupBottles() {
     this.throwableObjects = this.throwableObjects.filter((bottle) => {
@@ -204,42 +195,34 @@ class World {
 
   /**
    * Prüft Kollisionen zwischen Character und Enemies
-   * Unterscheidet zwischen Jump-Kills (nur normale Enemies) und normalen Kollisionen
-   * Boss macht mehr Schaden als normale Enemies
    */
   checkEnemyCollisions() {
     const collidingEnemies = [];
     const enemiesToKill = [];
     let shouldBounce = false;
 
-    // Pass 1: Sammle alle kollidierenden Enemies
     this.level.enemies.forEach((enemy, index) => {
       if (this.character.isColliding(enemy)) {
         collidingEnemies.push({ enemy, index });
       }
     });
 
-    // Pass 2: Identifiziere welche Enemies getötet werden
     collidingEnemies.forEach(({ enemy, index }) => {
       if (this.isJumpingOnEnemy(enemy)) {
         if (enemy instanceof Endboss) {
-          // Endboss gibt mehr Schaden beim Sprung (10 statt 5)
           if (!this.character.isHurt()) {
             this.character.hit(50);
             this.healthStatusBar.setPercentage(this.character.energy);
           }
         } else {
-          // Normale Enemies zum Töten markieren
           enemiesToKill.push(index);
           shouldBounce = true;
         }
       }
     });
 
-    // Pass 3: Schaden nur wenn KEINE Jump-Kills und nicht bereits hurt
     if (enemiesToKill.length === 0 && collidingEnemies.length > 0) {
       if (!this.character.isHurt()) {
-        // Bestimme Schaden basierend auf Enemy-Typ
         const enemy = collidingEnemies[0].enemy;
         const damage = enemy instanceof Endboss ? 15 : 5;
 
@@ -248,7 +231,6 @@ class World {
       }
     }
 
-    // Pass 4: Töte Enemies und Bounce (NACH allen Checks!)
     if (enemiesToKill.length > 0) {
       enemiesToKill.sort((a, b) => b - a);
       enemiesToKill.forEach((index) => {
@@ -307,7 +289,6 @@ class World {
 
   /**
    * Zeigt den Game Over Screen an und stoppt das Spiel
-   * Wählt zufälliges Game Over Bild aus
    */
   showGameOver() {
     stopAllIntervals();
@@ -331,7 +312,6 @@ class World {
 
   /**
    * Zeigt den Win Screen an und stoppt das Spiel
-   * Wählt zufälliges Win Bild aus
    */
   showGameWin() {
     stopAllIntervals();
@@ -383,7 +363,6 @@ class World {
 
   /**
    * Besiegt einen Enemy durch Draufspringen
-   * Entfernt den Enemy aus dem Level und lässt den Character hochspringen
    * @param {MovableObject} enemy - Der zu besiegende Enemy
    * @param {number} index - Index des Enemies im enemies-Array
    */
@@ -397,7 +376,6 @@ class World {
 
   /**
    * Prüft Kollisionen zwischen Character und Münzen
-   * Sammelt Münzen beim Berühren ein
    */
   checkCoinCollisions() {
     this.level.coins.forEach((coin, index) => {
@@ -409,7 +387,6 @@ class World {
 
   /**
    * Sammelt eine Münze ein
-   * Entfernt die Münze aus dem Level und aktualisiert die Statusbar
    * @param {number} index - Index der Münze im coins-Array
    */
   collectCoin(index) {
@@ -424,7 +401,6 @@ class World {
 
   /**
    * Prüft Kollisionen zwischen Character und Flaschen
-   * Sammelt Flaschen ein, wenn das Maximum noch nicht erreicht ist
    */
   checkFlaskCollisions() {
     this.level.flasks.forEach((flask, index) => {
@@ -439,7 +415,6 @@ class World {
 
   /**
    * Sammelt eine Flasche ein
-   * Entfernt die Flasche aus dem Level und aktualisiert die Statusbar
    * @param {number} index - Index der Flasche im flasks-Array
    */
   collectFlask(index) {
@@ -451,7 +426,6 @@ class World {
 
   /**
    * Aktualisiert die Flaschen-Statusbar
-   * Berechnet den Prozentsatz basierend auf der maximalen Anzahl (5)
    */
   updateFlaskStatusbar() {
     let percentage = (this.character.collectedFlasks / 5) * 100;
@@ -461,8 +435,6 @@ class World {
 
   /**
    * Hauptzeichenmethode - rendert alle Spielobjekte
-   * Wird kontinuierlich über requestAnimationFrame aufgerufen
-   * Rundet camera_x ab um 1px-Lücken im Background zu verhindern
    */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -493,8 +465,7 @@ class World {
   }
 
   /**
-   * Zeichnet die statischen Statusbars (oben links)
-   * Diese bewegen sich nicht mit der Kamera
+   * Zeichnet die statischen Statusbars
    */
   addStaticStatusBars() {
     this.addToMap(this.healthStatusBar);
@@ -503,8 +474,7 @@ class World {
   }
 
   /**
-   * Zeichnet die dynamischen Statusbars (z.B. Endboss-Healthbar)
-   * Diese bewegen sich mit der Kamera
+   * Zeichnet die dynamischen Statusbars
    */
   addDynamicStatusBars() {
     let endboss = this.level.enemies.find((e) => e instanceof Endboss);
@@ -526,7 +496,6 @@ class World {
 
   /**
    * Zeichnet ein einzelnes Objekt auf die Map
-   * Berücksichtigt dabei die Blickrichtung (Spiegelung)
    * @param {MovableObject} moveObject - Das zu zeichnende Objekt
    */
   addToMap(moveObject) {
@@ -535,8 +504,6 @@ class World {
     }
 
     moveObject.draw(this.ctx);
-    // moveObject.drawRect(this.ctx);
-    // moveObject.drawRectHitbox(this.ctx);
 
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);
@@ -544,7 +511,7 @@ class World {
   }
 
   /**
-   * Spiegelt das Bild horizontal (für Blickrichtung nach links)
+   * Spiegelt das Bild horizontal
    * @param {MovableObject} moveObject - Das zu spiegelnde Objekt
    */
   flipImage(moveObject) {
