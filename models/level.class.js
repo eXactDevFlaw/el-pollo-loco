@@ -1,5 +1,5 @@
 /**
- * Definiert ein Spiel-Level mit allen Enemies, Objekten und Hintergründen
+ * Defines a game level with all enemies, objects and backgrounds
  */
 class Level {
     enemies;
@@ -10,12 +10,12 @@ class Level {
     flasks;
 
     /**
-     * Erstellt ein neues Level
-     * @param {Array} enemies - Array mit allen Enemies
-     * @param {Array} clouds - Array mit allen Wolken
-     * @param {Array} backgroundObjects - Array mit allen Hintergrund-Objekten
-     * @param {Array} coins - Array mit allen Münzen
-     * @param {Array} flasks - Array mit allen Flaschen
+     * Creates a new level
+     * @param {Array} enemies - Array of all enemies
+     * @param {Array} clouds - Array of all clouds
+     * @param {Array} backgroundObjects - Array of all background objects
+     * @param {Array} coins - Array of all coins
+     * @param {Array} flasks - Array of all flasks
      */
     constructor(enemies, clouds, backgroundObjects, coins, flasks) {
         this.enemies = enemies;

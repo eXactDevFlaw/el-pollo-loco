@@ -1,5 +1,5 @@
 /**
- * Zeigt die Lebensenergie des Characters an
+ * Displays character's health
  */
 class HealthStatusBar extends StatusBar {
     x = 10;
@@ -18,7 +18,7 @@ class HealthStatusBar extends StatusBar {
     ]
 
     /**
-     * Erstellt eine neue HealthStatusBar
+     * Creates a new health status bar
      */
     constructor() {
         super();

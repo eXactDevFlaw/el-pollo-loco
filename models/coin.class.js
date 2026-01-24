@@ -1,5 +1,5 @@
 /**
- * Sammelbare Münze
+ * Collectable coin
  */
 class Coin extends DrawableObject {
     width = 150;
@@ -18,7 +18,7 @@ class Coin extends DrawableObject {
     ];
 
     /**
-     * Erstellt eine neue Münze an zufälliger Position
+     * Creates a new coin at random position
      */
     constructor() {
         super();
@@ -27,10 +27,10 @@ class Coin extends DrawableObject {
         this.x = 250 + Math.round(Math.random() * 1900);
         this.y = 100 + Math.round(Math.random() * 200);
         this.animate();
-    };
+    }
 
     /**
-     * Startet die Animation der Münze
+     * Starts coin animation
      */
     animate() {
         setStoppableInterval(() => {
@@ -39,13 +39,13 @@ class Coin extends DrawableObject {
     }
 
     /**
-     * Spielt eine Animation ab
-     * @param {string[]} images - Array mit Bildpfaden
+     * Plays animation
+     * @param {string[]} images - Array of image paths
      */
     playAnimation(images) {
         let index = this.currentImage % images.length;
         let path = images[index];
         this.img = this.imageCache[path];
         this.currentImage++;
-    };
+    }
 }

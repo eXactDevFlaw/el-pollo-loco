@@ -1,5 +1,5 @@
 /**
- * Der finale Gegner des Spiels
+ * The final boss enemy
  */
 class Endboss extends MovableObject {
     height = 400;
@@ -8,6 +8,9 @@ class Endboss extends MovableObject {
     x = 2400;
     energy = 100;
     speed = 2;
+    baseSpeed = 2;
+    maxSpeed = 8;
+    speedIncreasePerHit = 1;
 
     offsetHitbox = {
         top: 100,
@@ -58,57 +61,155 @@ class Endboss extends MovableObject {
     ];
 
     hadFirstContact = false;
+    characterX = 0;
 
     /**
-     * Erstellt einen neuen Endboss
+     * Creates a new endboss
      */
     constructor() {
         super();
+        this.loadAllImages();
+        this.animate();
+    }
+
+    /**
+     * Loads all endboss images
+     */
+    loadAllImages() {
         this.loadImage('./img/4_enemie_boss_chicken/2_alert/G5.png');
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_WALK);
-        this.animate();
     }
 
     /**
-     * Verwaltet alle Animationen und Bewegung des Endbosses
+     * Manages all animations and movement
      */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+    }
+
+    /**
+     * Starts the movement update loop
+     */
+    startMovementLoop() {
         setStoppableInterval(() => {
-            if (this.hadFirstContact && this.energy > 0) {
-                this.moveLeft();
+            if (this.shouldMove()) {
+                this.moveTowardsCharacter();
             }
         }, 1000 / 60);
+    }
 
+    /**
+     * Checks if endboss should move
+     * @returns {boolean} True if should move
+     */
+    shouldMove() {
+        return this.hadFirstContact && this.energy > 0;
+    }
+
+    /**
+     * Moves endboss towards character position
+     */
+    moveTowardsCharacter() {
+        const distanceToCharacter = this.characterX - this.x;
+        const minDistance = 10;
+        if (distanceToCharacter < -minDistance) {
+            this.moveLeft();
+            this.otherDirection = false;
+        } else if (distanceToCharacter > minDistance) {
+            this.moveRight();
+            this.otherDirection = true;
+        }
+    }
+
+    /**
+     * Starts the animation update loop
+     */
+    startAnimationLoop() {
         setStoppableInterval(() => {
-            if (this.energy == 0) {
-                this.speed = 0;
-                this.playAnimationOnce(this.IMAGES_DEAD);
-                return;
-            }
-
-            if (this.isHurt()) {
-                this.playAnimationOnce(this.IMAGES_HURT);
-                return;
-            }
-
-            if (this.isColliding(world.character)) {
-                this.playAnimation(this.IMAGES_ATTACK);
-                return;
-            }
-
-            if (this.hadFirstContact) {
-                this.playAnimation(this.IMAGES_WALK);
-            } else {
-                this.playAnimation(this.IMAGES_ALERT);
-            }
-
-            if (world.character.x > 2000 && !this.hadFirstContact) {
-                this.hadFirstContact = true;
-            }
+            this.updateAnimation();
         }, 200);
+    }
+
+    /**
+     * Updates current animation state
+     */
+    updateAnimation() {
+        if (this.isDead()) {
+            this.handleDeathAnimation();
+            return;
+        }
+        if (this.isHurt()) {
+            this.playAnimationOnce(this.IMAGES_HURT);
+            return;
+        }
+        if (this.isAttacking()) {
+            this.playAnimation(this.IMAGES_ATTACK);
+            return;
+        }
+        this.playIdleAnimation();
+    }
+
+    /**
+     * Handles death animation
+     */
+    handleDeathAnimation() {
+        this.speed = 0;
+        this.playAnimationOnce(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Checks if endboss is attacking character
+     * @returns {boolean} True if colliding with character
+     */
+    isAttacking() {
+        return this.isColliding(world.character);
+    }
+
+    /**
+     * Plays idle or walk animation
+     */
+    playIdleAnimation() {
+        if (this.hadFirstContact) {
+            this.playAnimation(this.IMAGES_WALK);
+        } else {
+            this.playAnimation(this.IMAGES_ALERT);
+        }
+    }
+
+    /**
+     * Takes damage and increases speed
+     * @param {number} damage - Amount of damage
+     */
+    hit(damage = 20) {
+        super.hit(damage);
+        this.increaseSpeed();
+    }
+
+    /**
+     * Increases speed after taking damage
+     */
+    increaseSpeed() {
+        if (this.energy > 0) {
+            this.speed = Math.min(
+                this.speed + this.speedIncreasePerHit,
+                this.maxSpeed
+            );
+        }
+    }
+
+    /**
+     * Updates behavior based on character position
+     * @param {Character} character - The player character
+     */
+    updateBehavior(character) {
+        this.characterX = character.x;
+        if (!this.hadFirstContact && character.x > 2000) {
+            this.hadFirstContact = true;
+        }
     }
 }

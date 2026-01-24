@@ -1,5 +1,5 @@
 /**
- * Zeigt die Anzahl gesammelter Flaschen an
+ * Displays number of collected flasks
  */
 class FlaskStatusBar extends StatusBar {
     x = 10;
@@ -18,7 +18,7 @@ class FlaskStatusBar extends StatusBar {
     ]
 
     /**
-     * Erstellt eine neue FlaskStatusBar
+     * Creates a new flask status bar
      */
     constructor() {
         super();

@@ -1,5 +1,5 @@
 /**
- * Zeigt die Anzahl gesammelter Münzen an
+ * Displays number of collected coins
  */
 class CoinStatusBar extends StatusBar {
     x = 10;
@@ -18,7 +18,7 @@ class CoinStatusBar extends StatusBar {
     ]
 
     /**
-     * Erstellt eine neue CoinStatusBar
+     * Creates a new coin status bar
      */
     constructor() {
         super();

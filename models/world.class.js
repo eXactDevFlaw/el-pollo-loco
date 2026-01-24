@@ -1,5 +1,5 @@
 /**
- * Hauptklasse für die Spielwelt
+ * Main class for the game world
  */
 class World {
   character = new Character();
@@ -32,64 +32,68 @@ class World {
   ];
 
   /**
-   * Erstellt eine neue Spielwelt
-   * @param {HTMLCanvasElement} canvas - Das Canvas-Element
-   * @param {Object} keyboard - Das Keyboard-Objekt mit Tastenstatus
+   * Creates a new game world
+   * @param {HTMLCanvasElement} canvas - The canvas element
+   * @param {Object} keyboard - The keyboard object with key status
    */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.audioManager = new AudioManager();
-
-    if (!this.audioManager.isMuted) {
-      this.audioManager.startMusic();
-    }
-
+    this.startBackgroundMusic();
     this.draw();
     this.setWorld();
     this.run();
   }
 
   /**
-   * Setzt die World-Referenz im Character
+   * Starts background music if not muted
+   */
+  startBackgroundMusic() {
+    if (!this.audioManager.isMuted) {
+      this.audioManager.startMusic();
+    }
+  }
+
+  /**
+   * Sets world reference in character
    */
   setWorld() {
     this.character.world = this;
   }
 
   /**
-   * Startet die Game-Loops für Kollisionsprüfung und Wurfobjekte
+   * Starts game loops for collision detection and throw objects
    */
   run() {
     setStoppableInterval(() => {
       this.checkCollisions();
       this.checkBottleCollisions();
       this.cleanupBottles();
+      this.updateEnemyBehavior();
     }, 1000 / 60);
-
     setStoppableInterval(() => {
       this.checkThrowObjects();
     }, 150);
   }
 
   /**
-   * Prüft ob der Spieler eine Flasche werfen möchte und erstellt diese
+   * Checks if player wants to throw bottle and creates it
    */
   checkThrowObjects() {
     const hasActiveBottle = this.throwableObjects.some(
       (bottle) => !bottle.hasHit,
     );
-
     if (this.canThrowBottle(hasActiveBottle)) {
       this.throwBottle();
     }
   }
 
   /**
-   * Prüft ob eine Flasche geworfen werden kann
-   * @param {boolean} hasActiveBottle - Gibt es bereits eine fliegende Flasche
-   * @returns {boolean} True wenn werfen möglich ist
+   * Checks if bottle can be thrown
+   * @param {boolean} hasActiveBottle - Is there already a flying bottle
+   * @returns {boolean} True if throw is possible
    */
   canThrowBottle(hasActiveBottle) {
     return (
@@ -100,12 +104,14 @@ class World {
   }
 
   /**
-   * Wirft eine neue Flasche
+   * Throws a new bottle
    */
   throwBottle() {
+    const xOffset = this.character.otherDirection ? 0 : 100;
     let bottle = new ThrowableObject(
-      this.character.x + 100,
+      this.character.x + xOffset,
       this.character.y + 100,
+      this.character.otherDirection
     );
     this.throwableObjects.push(bottle);
     this.character.collectedFlasks--;
@@ -113,7 +119,7 @@ class World {
   }
 
   /**
-   * Prüft alle Arten von Kollisionen im Spiel
+   * Checks all types of collisions in game
    */
   checkCollisions() {
     this.checkEnemyCollisions();
@@ -122,7 +128,18 @@ class World {
   }
 
   /**
-   * Prüft Kollisionen zwischen geworfenen Flaschen und Enemies
+   * Updates enemy behavior based on character position
+   */
+  updateEnemyBehavior() {
+    this.level.enemies.forEach(enemy => {
+      if (enemy.updateBehavior) {
+        enemy.updateBehavior(this.character);
+      }
+    });
+  }
+
+  /**
+   * Checks collisions between thrown bottles and enemies
    */
   checkBottleCollisions() {
     this.throwableObjects.forEach((bottle, bottleIndex) => {
@@ -135,38 +152,45 @@ class World {
   }
 
   /**
-   * Entfernt Flaschen die aus dem Bildschirm gefallen sind
+   * Removes bottles that fell off screen
    */
   cleanupBottles() {
     this.throwableObjects = this.throwableObjects.filter((bottle) => {
-      const isOutOfBounds =
-        bottle.y > 500 ||
-        bottle.x > this.level.level_end_x + 300 ||
-        bottle.x < -100;
-
-      const isOldHitBottle =
-        bottle.hasHit && Date.now() - bottle.throwTime > 1000;
-
-      return !isOutOfBounds && !isOldHitBottle;
+      return !this.isBottleOutOfBounds(bottle) && !this.isOldHitBottle(bottle);
     });
   }
 
   /**
-   * Behandelt den Treffer einer Flasche auf einen Enemy
-   * @param {ThrowableObject} bottle - Die geworfene Flasche
-   * @param {MovableObject} enemy - Der getroffene Enemy
-   * @param {number} enemyIndex - Index des Enemies im Array
-   * @param {number} bottleIndex - Index der Flasche im Array
+   * Checks if bottle is out of bounds
+   * @param {ThrowableObject} bottle - The bottle to check
+   * @returns {boolean} True if out of bounds
+   */
+  isBottleOutOfBounds(bottle) {
+    return bottle.y > 500 ||
+      bottle.x > this.level.level_end_x + 300 ||
+      bottle.x < -100;
+  }
+
+  /**
+   * Checks if bottle is old hit bottle
+   * @param {ThrowableObject} bottle - The bottle to check
+   * @returns {boolean} True if old hit bottle
+   */
+  isOldHitBottle(bottle) {
+    return bottle.hasHit && Date.now() - bottle.throwTime > 1000;
+  }
+
+  /**
+   * Handles bottle hit on enemy
+   * @param {ThrowableObject} bottle - The thrown bottle
+   * @param {MovableObject} enemy - The hit enemy
+   * @param {number} enemyIndex - Enemy index in array
+   * @param {number} bottleIndex - Bottle index in array
    */
   handleBottleHit(bottle, enemy, enemyIndex, bottleIndex) {
     bottle.hasHit = true;
-
     bottle.playSplash();
-
-    setTimeout(() => {
-      this.throwableObjects.splice(bottleIndex, 1);
-    }, 200);
-
+    this.scheduleBottleRemoval(bottleIndex);
     if (enemy instanceof Endboss) {
       this.damageEndboss(enemy);
     } else {
@@ -175,8 +199,18 @@ class World {
   }
 
   /**
-   * Fügt dem Endboss Schaden zu
-   * @param {Endboss} endboss - Der Endboss
+   * Schedules bottle removal after delay
+   * @param {number} bottleIndex - Index of bottle to remove
+   */
+  scheduleBottleRemoval(bottleIndex) {
+    setTimeout(() => {
+      this.throwableObjects.splice(bottleIndex, 1);
+    }, 200);
+  }
+
+  /**
+   * Damages endboss
+   * @param {Endboss} endboss - The endboss
    */
   damageEndboss(endboss) {
     endboss.hit(20);
@@ -185,8 +219,8 @@ class World {
   }
 
   /**
-   * Tötet einen normalen Enemy durch Flaschen-Treffer
-   * @param {number} enemyIndex - Index des zu tötenden Enemies
+   * Kills normal enemy by bottle hit
+   * @param {number} enemyIndex - Index of enemy to kill
    */
   killEnemyByBottle(enemyIndex) {
     this.level.enemies.splice(enemyIndex, 1);
@@ -194,73 +228,125 @@ class World {
   }
 
   /**
-   * Prüft Kollisionen zwischen Character und Enemies
+   * Checks collisions between character and enemies
    */
   checkEnemyCollisions() {
     const collidingEnemies = [];
     const enemiesToKill = [];
     let shouldBounce = false;
-
-    this.level.enemies.forEach((enemy, index) => {
-      if (this.character.isColliding(enemy)) {
-        collidingEnemies.push({ enemy, index });
-      }
-    });
-
-    collidingEnemies.forEach(({ enemy, index }) => {
-      if (this.isJumpingOnEnemy(enemy)) {
-        if (enemy instanceof Endboss) {
-          if (!this.character.isHurt()) {
-            this.character.hit(50);
-            this.healthStatusBar.setPercentage(this.character.energy);
-          }
-        } else {
-          enemiesToKill.push(index);
-          shouldBounce = true;
-        }
-      }
-    });
-
-    if (enemiesToKill.length === 0 && collidingEnemies.length > 0) {
-      if (!this.character.isHurt()) {
-        const enemy = collidingEnemies[0].enemy;
-        const damage = enemy instanceof Endboss ? 15 : 5;
-
-        this.character.hit(damage);
-        this.healthStatusBar.setPercentage(this.character.energy);
-      }
-    }
-
-    if (enemiesToKill.length > 0) {
-      enemiesToKill.sort((a, b) => b - a);
-      enemiesToKill.forEach((index) => {
-        this.level.enemies.splice(index, 1);
-      });
-
-      this.audioManager.play("chickenDeath");
-
-      if (shouldBounce) {
-        this.character.speedY = 20;
-      }
-    }
-
+    this.findCollidingEnemies(collidingEnemies);
+    this.processCollidingEnemies(collidingEnemies, enemiesToKill);
+    this.handleSideCollisions(collidingEnemies);
+    this.killMarkedEnemies(enemiesToKill, shouldBounce);
     this.checkGameOver();
     this.checkGameWin();
   }
 
   /**
-   * Prüft ob der Character gestorben ist und zeigt Game Over Screen
+   * Finds all enemies colliding with character
+   * @param {Array} collidingEnemies - Array to store colliding enemies
+   */
+  findCollidingEnemies(collidingEnemies) {
+    this.level.enemies.forEach((enemy, index) => {
+      if (this.character.isColliding(enemy)) {
+        collidingEnemies.push({ enemy, index });
+      }
+    });
+  }
+
+  /**
+   * Processes colliding enemies for jump kills
+   * @param {Array} collidingEnemies - Enemies colliding with character
+   * @param {Array} enemiesToKill - Enemies marked for death
+   */
+  processCollidingEnemies(collidingEnemies, enemiesToKill) {
+    collidingEnemies.forEach(({ enemy, index }) => {
+      if (this.isJumpingOnEnemy(enemy)) {
+        this.handleJumpOnEnemy(enemy, index, enemiesToKill);
+      }
+    });
+  }
+
+  /**
+   * Handles jump on enemy
+   * @param {MovableObject} enemy - The enemy
+   * @param {number} index - Enemy index
+   * @param {Array} enemiesToKill - Enemies to kill
+   */
+  handleJumpOnEnemy(enemy, index, enemiesToKill) {
+    if (enemy instanceof Endboss) {
+      this.damageCharacterByEndboss();
+    } else {
+      enemiesToKill.push(index);
+    }
+  }
+
+  /**
+   * Damages character by endboss
+   */
+  damageCharacterByEndboss() {
+    if (!this.character.isHurt()) {
+      this.character.hit(50);
+      this.healthStatusBar.setPercentage(this.character.energy);
+    }
+  }
+
+  /**
+   * Handles side collisions with enemies
+   * @param {Array} collidingEnemies - Colliding enemies
+   */
+  handleSideCollisions(collidingEnemies) {
+    if (collidingEnemies.length > 0 && !this.hasJumpKills(collidingEnemies)) {
+      this.damageCharacter(collidingEnemies[0].enemy);
+    }
+  }
+
+  /**
+   * Checks if any collisions resulted in jump kills
+   * @param {Array} collidingEnemies - Colliding enemies
+   * @returns {boolean} True if jump kills occurred
+   */
+  hasJumpKills(collidingEnemies) {
+    return collidingEnemies.some(({ enemy }) =>
+      this.isJumpingOnEnemy(enemy) && !(enemy instanceof Endboss)
+    );
+  }
+
+  /**
+   * Damages character by enemy
+   * @param {MovableObject} enemy - The enemy
+   */
+  damageCharacter(enemy) {
+    if (!this.character.isHurt()) {
+      const damage = enemy instanceof Endboss ? 15 : 5;
+      this.character.hit(damage);
+      this.healthStatusBar.setPercentage(this.character.energy);
+    }
+  }
+
+  /**
+   * Kills marked enemies
+   * @param {Array} enemiesToKill - Enemies to kill
+   * @param {boolean} shouldBounce - Should character bounce
+   */
+  killMarkedEnemies(enemiesToKill, shouldBounce) {
+    if (enemiesToKill.length > 0) {
+      enemiesToKill.sort((a, b) => b - a);
+      enemiesToKill.forEach((index) => {
+        this.level.enemies.splice(index, 1);
+      });
+      this.audioManager.play("chickenDeath");
+      this.character.speedY = 15;
+    }
+  }
+
+  /**
+   * Checks if game over and shows screen
    */
   checkGameOver() {
     if (this.character.isDead() && !this.gameEnded) {
       this.gameEnded = true;
-
-      const frameCount = this.character.IMAGES_DEAD.length;
-      const frameDelay = 50;
-      const loops = 1;
-
-      const animationDuration = frameCount * frameDelay * loops;
-
+      const animationDuration = this.calculateDeathAnimationDuration();
       setTimeout(() => {
         this.showGameOver();
       }, animationDuration);
@@ -268,19 +354,24 @@ class World {
   }
 
   /**
-   * Prüft ob der Endboss besiegt wurde und zeigt Win Screen
+   * Calculates death animation duration
+   * @returns {number} Duration in milliseconds
+   */
+  calculateDeathAnimationDuration() {
+    const frameCount = this.character.IMAGES_DEAD.length;
+    const frameDelay = 50;
+    const loops = 1;
+    return frameCount * frameDelay * loops;
+  }
+
+  /**
+   * Checks if game won and shows screen
    */
   checkGameWin() {
     let endboss = this.level.enemies.find((e) => e instanceof Endboss);
     if (endboss && endboss.isDead() && !this.gameEnded) {
       this.gameEnded = true;
-
-      const frameCount = endboss.IMAGES_DEAD.length;
-      const frameDelay = 200;
-      const loops = 1;
-
-      const animationDuration = frameCount * frameDelay * loops;
-
+      const animationDuration = this.calculateEndbossDeathDuration(endboss);
       setTimeout(() => {
         this.showGameWin();
       }, animationDuration);
@@ -288,22 +379,35 @@ class World {
   }
 
   /**
-   * Zeigt den Game Over Screen an und stoppt das Spiel
+   * Calculates endboss death animation duration
+   * @param {Endboss} endboss - The endboss
+   * @returns {number} Duration in milliseconds
+   */
+  calculateEndbossDeathDuration(endboss) {
+    const frameCount = endboss.IMAGES_DEAD.length;
+    const frameDelay = 200;
+    const loops = 1;
+    return frameCount * frameDelay * loops;
+  }
+
+  /**
+   * Shows game over screen and stops game
    */
   showGameOver() {
     stopAllIntervals();
-    this.audioManager.stopMusic();
+    this.audioManager.cleanup();
+    this.displayGameOverScreen();
+  }
 
-    const randomIndex = Math.floor(
-      Math.random() * this.IMAGES_LOOSE.length,
-    );
-    const randomImage = this.IMAGES_LOOSE[randomIndex];
-
+  /**
+   * Displays game over screen with random image
+   */
+  displayGameOverScreen() {
+    const randomImage = this.getRandomImage(this.IMAGES_LOOSE);
     const gameOverImg = document.getElementById("gameOverImage");
     if (gameOverImg) {
       gameOverImg.src = randomImage;
     }
-
     const gameOverScreen = document.getElementById("gameOverScreen");
     if (gameOverScreen) {
       gameOverScreen.classList.remove("d-none");
@@ -311,20 +415,23 @@ class World {
   }
 
   /**
-   * Zeigt den Win Screen an und stoppt das Spiel
+   * Shows win screen and stops game
    */
   showGameWin() {
     stopAllIntervals();
-    this.audioManager.stopMusic();
+    this.audioManager.cleanup();
+    this.displayWinScreen();
+  }
 
-    const randomIndex = Math.floor(Math.random() * this.IMAGES_WIN.length);
-    const randomImage = this.IMAGES_WIN[randomIndex];
-
+  /**
+   * Displays win screen with random image
+   */
+  displayWinScreen() {
+    const randomImage = this.getRandomImage(this.IMAGES_WIN);
     const winImg = document.getElementById("winImage");
     if (winImg) {
       winImg.src = randomImage;
     }
-
     const winScreen = document.getElementById("winScreen");
     if (winScreen) {
       winScreen.classList.remove("d-none");
@@ -332,9 +439,19 @@ class World {
   }
 
   /**
-   * Prüft ob der Character von oben auf einen Enemy springt
-   * @param {MovableObject} enemy - Der zu prüfende Enemy
-   * @returns {boolean} True wenn Character von oben auf Enemy springt
+   * Gets random image from array
+   * @param {Array} images - Array of image paths
+   * @returns {string} Random image path
+   */
+  getRandomImage(images) {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  }
+
+  /**
+   * Checks if character is jumping on enemy
+   * @param {MovableObject} enemy - The enemy to check
+   * @returns {boolean} True if jumping on enemy from above
    */
   isJumpingOnEnemy(enemy) {
     return (
@@ -346,9 +463,9 @@ class World {
   }
 
   /**
-   * Prüft ob Character von oben auf Enemy kommt
-   * @param {MovableObject} enemy - Der Enemy
-   * @returns {boolean} True wenn von oben kommend
+   * Checks if character is coming from above enemy
+   * @param {MovableObject} enemy - The enemy
+   * @returns {boolean} True if coming from above
    */
   isComingFromAbove(enemy) {
     const characterBottom =
@@ -357,25 +474,11 @@ class World {
       this.character.offsetHitbox.bottom;
     const enemyTop = enemy.y + (enemy.offsetHitbox?.top || 0);
     const verticalDistance = characterBottom - enemyTop;
-
     return verticalDistance >= 0 && verticalDistance <= 50;
   }
 
   /**
-   * Besiegt einen Enemy durch Draufspringen
-   * @param {MovableObject} enemy - Der zu besiegende Enemy
-   * @param {number} index - Index des Enemies im enemies-Array
-   */
-  killEnemyByJump(enemy, index) {
-    this.level.enemies.splice(index, 1);
-
-    this.character.speedY = 20;
-
-    this.audioManager.play('chickenDeath');
-  }
-
-  /**
-   * Prüft Kollisionen zwischen Character und Münzen
+   * Checks collisions between character and coins
    */
   checkCoinCollisions() {
     this.level.coins.forEach((coin, index) => {
@@ -386,36 +489,49 @@ class World {
   }
 
   /**
-   * Sammelt eine Münze ein
-   * @param {number} index - Index der Münze im coins-Array
+   * Collects a coin
+   * @param {number} index - Coin index in coins array
    */
   collectCoin(index) {
     this.level.coins.splice(index, 1);
     this.character.collectedCoins++;
-
-    let percentage = (this.character.collectedCoins / 10) * 100;
-    if (percentage > 100) percentage = 100;
-    this.coinStatusBar.setPercentage(percentage);
+    this.updateCoinStatusbar();
     this.audioManager.play("coin");
   }
 
   /**
-   * Prüft Kollisionen zwischen Character und Flaschen
+   * Updates coin status bar
+   */
+  updateCoinStatusbar() {
+    let percentage = (this.character.collectedCoins / 10) * 100;
+    if (percentage > 100) percentage = 100;
+    this.coinStatusBar.setPercentage(percentage);
+  }
+
+  /**
+   * Checks collisions between character and flasks
    */
   checkFlaskCollisions() {
     this.level.flasks.forEach((flask, index) => {
-      if (
-        this.character.isColliding(flask) &&
-        this.character.collectedFlasks < 5
-      ) {
+      if (this.canCollectFlask(flask)) {
         this.collectFlask(index);
       }
     });
   }
 
   /**
-   * Sammelt eine Flasche ein
-   * @param {number} index - Index der Flasche im flasks-Array
+   * Checks if flask can be collected
+   * @param {Flask} flask - The flask
+   * @returns {boolean} True if can collect
+   */
+  canCollectFlask(flask) {
+    return this.character.isColliding(flask) &&
+      this.character.collectedFlasks < 5;
+  }
+
+  /**
+   * Collects a flask
+   * @param {number} index - Flask index in flasks array
    */
   collectFlask(index) {
     this.level.flasks.splice(index, 1);
@@ -425,7 +541,7 @@ class World {
   }
 
   /**
-   * Aktualisiert die Flaschen-Statusbar
+   * Updates flask status bar
    */
   updateFlaskStatusbar() {
     let percentage = (this.character.collectedFlasks / 5) * 100;
@@ -434,30 +550,45 @@ class World {
   }
 
   /**
-   * Hauptzeichenmethode - rendert alle Spielobjekte
+   * Main drawing method - renders all game objects
    */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     const roundedCameraX = Math.floor(this.camera_x);
-
     this.ctx.translate(roundedCameraX, 0);
+    this.drawBackgroundObjects();
+    this.drawDynamicObjects();
+    this.ctx.translate(-roundedCameraX, 0);
+    this.addStaticStatusBars();
+    this.ctx.translate(roundedCameraX, 0);
+    this.addToMap(this.character);
+    this.ctx.translate(-roundedCameraX, 0);
+    this.scheduleNextFrame();
+  }
 
+  /**
+   * Draws background objects
+   */
+  drawBackgroundObjects() {
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addObjectsToMap(this.level.clouds);
+  }
+
+  /**
+   * Draws dynamic game objects
+   */
+  drawDynamicObjects() {
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.flasks);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.throwableObjects);
     this.addDynamicStatusBars();
+  }
 
-    this.ctx.translate(-roundedCameraX, 0);
-    this.addStaticStatusBars();
-    this.ctx.translate(roundedCameraX, 0);
-
-    this.addToMap(this.character);
-    this.ctx.translate(-roundedCameraX, 0);
-
+  /**
+   * Schedules next animation frame
+   */
+  scheduleNextFrame() {
     let self = this;
     requestAnimationFrame(function () {
       self.draw();
@@ -465,7 +596,7 @@ class World {
   }
 
   /**
-   * Zeichnet die statischen Statusbars
+   * Draws static status bars
    */
   addStaticStatusBars() {
     this.addToMap(this.healthStatusBar);
@@ -474,7 +605,7 @@ class World {
   }
 
   /**
-   * Zeichnet die dynamischen Statusbars
+   * Draws dynamic status bars
    */
   addDynamicStatusBars() {
     let endboss = this.level.enemies.find((e) => e instanceof Endboss);
@@ -485,8 +616,8 @@ class World {
   }
 
   /**
-   * Zeichnet ein Array von Objekten auf die Map
-   * @param {Array} objects - Array von Objekten die gezeichnet werden sollen
+   * Draws array of objects to map
+   * @param {Array} objects - Array of objects to draw
    */
   addObjectsToMap(objects) {
     objects.forEach((element) => {
@@ -495,24 +626,22 @@ class World {
   }
 
   /**
-   * Zeichnet ein einzelnes Objekt auf die Map
-   * @param {MovableObject} moveObject - Das zu zeichnende Objekt
+   * Draws single object to map
+   * @param {MovableObject} moveObject - Object to draw
    */
   addToMap(moveObject) {
     if (moveObject.otherDirection) {
       this.flipImage(moveObject);
     }
-
     moveObject.draw(this.ctx);
-
     if (moveObject.otherDirection) {
       this.flipImageBack(moveObject);
     }
   }
 
   /**
-   * Spiegelt das Bild horizontal
-   * @param {MovableObject} moveObject - Das zu spiegelnde Objekt
+   * Flips image horizontally
+   * @param {MovableObject} moveObject - Object to flip
    */
   flipImage(moveObject) {
     this.ctx.save();
@@ -522,8 +651,8 @@ class World {
   }
 
   /**
-   * Stellt die normale Bildausrichtung wieder her
-   * @param {MovableObject} moveObject - Das Objekt dessen Spiegelung rückgängig gemacht wird
+   * Restores normal image orientation
+   * @param {MovableObject} moveObject - Object to restore
    */
   flipImageBack(moveObject) {
     moveObject.x = moveObject.x * -1;

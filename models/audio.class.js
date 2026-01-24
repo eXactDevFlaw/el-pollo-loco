@@ -1,9 +1,9 @@
 /**
- * Verwaltet alle Sound-Effekte und Musik im Spiel
+ * Manages all sound effects and music in the game
  */
 class AudioManager {
     /**
-     * Erstellt einen neuen AudioManager
+     * Creates a new AudioManager
      */
     constructor() {
         this.sounds = {};
@@ -13,7 +13,7 @@ class AudioManager {
     }
 
     /**
-     * Lädt den Mute-Status aus dem LocalStorage
+     * Loads mute status from LocalStorage
      */
     loadMuteStateFromStorage() {
         const savedMuteState = localStorage.getItem('elPolloLocoMuted');
@@ -22,14 +22,14 @@ class AudioManager {
     }
 
     /**
-     * Speichert den Mute-Status im LocalStorage
+     * Saves mute status to LocalStorage
      */
     saveMuteStateToStorage() {
         localStorage.setItem('elPolloLocoMuted', this.isMuted);
     }
 
     /**
-     * Aktualisiert das Mute Button Icon
+     * Updates mute button icon
      */
     updateMuteButton() {
         const muteBtn = document.getElementById('audioMuteBtn');
@@ -40,7 +40,7 @@ class AudioManager {
     }
 
     /**
-     * Lädt alle Sound-Dateien mit vordefinierten Lautstärken
+     * Loads all sound files with predefined volumes
      */
     loadAllSounds() {
         this.loadSound('coin', 'audio/coin_collect.wav', 0.6);
@@ -54,10 +54,10 @@ class AudioManager {
     }
 
     /**
-     * Lädt einen einzelnen Sound
-     * @param {string} name - Name des Sounds
-     * @param {string} path - Pfad zur Sound-Datei
-     * @param {number} volume - Lautstärke (0.0 - 1.0)
+     * Loads a single sound
+     * @param {string} name - Sound name
+     * @param {string} path - Path to sound file
+     * @param {number} volume - Volume (0.0 - 1.0)
      */
     loadSound(name, path, volume = 0.5) {
         this.sounds[name] = new Audio(path);
@@ -65,8 +65,8 @@ class AudioManager {
     }
 
     /**
-     * Lädt Hintergrundmusik
-     * @param {string} path - Pfad zur Musik-Datei
+     * Loads background music
+     * @param {string} path - Path to music file
      */
     loadMusic(path) {
         this.music = new Audio(path);
@@ -75,8 +75,8 @@ class AudioManager {
     }
 
     /**
-     * Spielt einen Sound ab
-     * @param {string} name - Name des abzuspielenden Sounds
+     * Plays a sound
+     * @param {string} name - Name of sound to play
      */
     play(name) {
         if (!this.isMuted && this.sounds[name]) {
@@ -86,8 +86,8 @@ class AudioManager {
     }
 
     /**
-     * Spielt einen Sound in Endlosschleife ab
-     * @param {string} name - Name des Sounds
+     * Plays a sound in endless loop
+     * @param {string} name - Sound name
      */
     playLoop(name) {
         if (!this.isMuted && this.sounds[name]) {
@@ -99,8 +99,8 @@ class AudioManager {
     }
 
     /**
-     * Stoppt einen laufenden Loop-Sound
-     * @param {string} name - Name des Sounds
+     * Stops a running loop sound
+     * @param {string} name - Sound name
      */
     stopLoop(name) {
         if (this.sounds[name]) {
@@ -111,7 +111,7 @@ class AudioManager {
     }
 
     /**
-     * Startet die Hintergrundmusik
+     * Starts background music
      */
     startMusic() {
         if (!this.isMuted && this.music) {
@@ -120,7 +120,7 @@ class AudioManager {
     }
 
     /**
-     * Stoppt die Hintergrundmusik
+     * Stops background music
      */
     stopMusic() {
         if (this.music) {
@@ -130,13 +130,19 @@ class AudioManager {
     }
 
     /**
-     * Schaltet den Ton ein/aus
+     * Toggles sound on/off
      */
     toggleMute() {
         this.isMuted = !this.isMuted;
         this.saveMuteStateToStorage();
         this.updateMuteButton();
+        this.updateMusicVolume();
+    }
 
+    /**
+     * Updates music volume based on mute state
+     */
+    updateMusicVolume() {
         if (this.music) {
             if (this.isMuted) {
                 this.music.volume = 0;
@@ -150,7 +156,7 @@ class AudioManager {
     }
 
     /**
-     * Stoppt alle Sounds und räumt auf
+     * Stops all sounds and cleans up
      */
     cleanup() {
         Object.keys(this.sounds).forEach(soundName => {

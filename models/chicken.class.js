@@ -1,10 +1,11 @@
 /**
- * Normales Hühnchen als Enemy
+ * Regular chicken enemy
  */
 class Chicken extends MovableObject {
     y = 360;
     height = 60;
     width = 60;
+    hasSeenCharacter = false;
 
     offsetHitbox = {
         top: 10,
@@ -24,7 +25,7 @@ class Chicken extends MovableObject {
     ];
 
     /**
-     * Erstellt ein neues Hühnchen an zufälliger Position
+     * Creates a new chicken at random position
      */
     constructor() {
         super();
@@ -34,18 +35,57 @@ class Chicken extends MovableObject {
         this.x = 200 + Math.round(Math.random() * 2000);
         this.speed = 0.15 + Math.random() * 0.25;
         this.animate();
-    };
+    }
 
     /**
-     * Startet Bewegung und Animation
+     * Starts movement and animation
      */
     animate() {
         setStoppableInterval(() => {
-            this.moveLeft();
+            this.move();
         }, 1000 / 60)
 
         setStoppableInterval(() => {
             this.playAnimation(this.IMAGES_WALK);
         }, 100);
-    };
+    }
+
+    /**
+     * Moves chicken based on current direction
+     */
+    move() {
+        if (this.otherDirection) {
+            this.moveRight();
+        } else {
+            this.moveLeft();
+        }
+    }
+
+    /**
+     * Updates behavior based on character position
+     * @param {Character} character - The player character
+     */
+    updateBehavior(character) {
+        if (this.shouldChaseCharacter(character)) {
+            this.chaseCharacter(character);
+        }
+    }
+
+    /**
+     * Checks if chicken should chase character
+     * @param {Character} character - The player character
+     * @returns {boolean} True if should chase
+     */
+    shouldChaseCharacter(character) {
+        return character.x > this.x && !this.hasSeenCharacter;
+    }
+
+    /**
+     * Makes chicken chase the character
+     * @param {Character} character - The player character
+     */
+    chaseCharacter(character) {
+        this.hasSeenCharacter = true;
+        this.otherDirection = true;
+    }
 }

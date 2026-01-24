@@ -440,7 +440,7 @@ canvas {
   align-items: flex-end;
 }
 
-/* Controls nur anzeigen wenn canvas-container sichtbar ist (Spiel läuft) */
+/* Controls nur anzeigen wenn canvas-container sichtbar ist (Spiel lÃ¤uft) */
 #canvas-container:not(.d-none) .mobile-controls {
   display: none; /* Erstmal versteckt */
 }
@@ -651,14 +651,13 @@ canvas {
 #canvas-container:fullscreen canvas,
 #canvas-container:-webkit-full-screen canvas,
 #canvas-container:-moz-full-screen canvas {
-  width: 100vw !important;
-  height: 100vh !important;
+  width: auto !important;
+  height: auto !important;
   max-width: 100vw !important;
   max-height: 100vh !important;
   object-fit: contain !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
+  position: relative !important;
+  aspect-ratio: 3 / 2 !important;
 }
 
 #canvas-container:fullscreen .fullscreen-btn,
@@ -862,7 +861,7 @@ canvas {
     z-index: 1 !important;
   }
 
-  /* info-container füllt game-wrapper aus */
+  /* info-container fÃ¼llt game-wrapper aus */
   .info-container {
     display: flex;
     width: 100% !important;
@@ -889,12 +888,12 @@ canvas {
     overflow-y: auto !important;
   }
 
-  /* Buttons im Landscape Menü - weniger margin */
+  /* Buttons im Landscape MenÃ¼ - weniger margin */
   .info-content .game-startBtn {
     margin-bottom: 0 !important;
   }
 
-  /* Größere Buttons im Landscape Menü */
+  /* GrÃ¶ÃŸere Buttons im Landscape MenÃ¼ */
   .info-content .game-startBtn button {
     font-size: var(--font-size-2xl) !important;
     padding: var(--space-md) var(--space-xl) !important;
@@ -910,7 +909,7 @@ canvas {
     z-index: 100 !important;
   }
 
-  /* Impressum-Link ausblenden (stört im Landscape) */
+  /* Impressum-Link ausblenden (stÃ¶rt im Landscape) */
   .impressum-link-container {
     display: none !important;
   }
@@ -935,7 +934,7 @@ canvas {
     font-size: 1.5rem !important;
   }
 
-  /* Controls NUR wenn Spiel läuft (canvas-container sichtbar) */
+  /* Controls NUR wenn Spiel lÃ¤uft (canvas-container sichtbar) */
   #canvas-container:not(.d-none) .mobile-controls {
     display: flex !important;
   }
@@ -984,7 +983,7 @@ canvas {
     object-fit: contain !important;
   }
 
-  /* Noch größere Buttons im Fullscreen (80px) */
+  /* Noch grÃ¶ÃŸere Buttons im Fullscreen (80px) */
   #canvas-container:fullscreen .btn-mobile,
   #canvas-container:-webkit-full-screen .btn-mobile,
   #canvas-container:-moz-full-screen .btn-mobile {
@@ -1010,7 +1009,7 @@ canvas {
     font-size: 0.85rem !important;
   }
 
-  /* Game Over / Win Screens für Mobile - KOMPAKT! */
+  /* Game Over / Win Screens fÃ¼r Mobile - KOMPAKT! */
   .game-end-screen {
     padding: var(--space-xs) !important;
   }
@@ -1044,7 +1043,7 @@ canvas {
 
 /* ============================================
    IMPRESSUM PAGE STYLES
-   (Falls separate Impressum-Seite benötigt)
+   (Falls separate Impressum-Seite benÃ¶tigt)
    ============================================ */
 .imprint-container {
   max-width: 800px;

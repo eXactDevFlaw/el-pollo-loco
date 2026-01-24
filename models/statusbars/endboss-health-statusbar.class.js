@@ -1,5 +1,5 @@
 /**
- * Zeigt die Lebensenergie des Endbosses an
+ * Displays endboss health
  */
 class EndbossHealthStatusBar extends StatusBar {
     x = 400;
@@ -22,7 +22,7 @@ class EndbossHealthStatusBar extends StatusBar {
     ]
 
     /**
-     * Erstellt eine neue EndbossHealthStatusBar
+     * Creates a new endboss health status bar
      */
     constructor() {
         super();
@@ -32,8 +32,8 @@ class EndbossHealthStatusBar extends StatusBar {
     }
 
     /**
-     * Aktualisiert die Position der Statusbar basierend auf der Endboss-Position
-     * @param {Endboss} endboss - Der Endboss
+     * Updates position based on endboss position
+     * @param {Endboss} endboss - The endboss
      */
     updatePosition(endboss) {
         this.x = endboss.x + this.offsetX;

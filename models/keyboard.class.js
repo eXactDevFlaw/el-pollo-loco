@@ -1,5 +1,5 @@
 /**
- * Speichert den Status aller Tasten
+ * Stores the status of all keys
  */
 class Keyboard {
     LEFT = false;

@@ -1,5 +1,5 @@
 /**
- * Geworfene Flaschen mit Wurf-Animation und Splash-Effekt
+ * Thrown bottles with throw animation and splash effect
  */
 class ThrowableObject extends MovableObject {
     IMAGES_GROUND = [
@@ -26,6 +26,7 @@ class ThrowableObject extends MovableObject {
     hasHit = false;
     isSplashing = false;
     throwInterval;
+    throwLeft = false;
 
     offsetHitbox = {
         top: 10,
@@ -35,17 +36,20 @@ class ThrowableObject extends MovableObject {
     };
 
     /**
-     * Erstellt eine neue geworfene Flasche
-     * @param {number} x - Start X-Position
-     * @param {number} y - Start Y-Position
+     * Creates a new throwable bottle
+     * @param {number} x - Start X position
+     * @param {number} y - Start Y position
+     * @param {boolean} throwLeft - Whether to throw left instead of right
      */
-    constructor(x, y) {
+    constructor(x, y, throwLeft = false) {
         super();
         this.loadImage('./img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
         this.x = x;
         this.y = y;
         this.height = 60;
         this.width = 60;
+        this.throwLeft = throwLeft;
+        this.otherDirection = throwLeft;
         this.loadImages(this.IMAGES_GROUND);
         this.loadImages(this.IMAGES_SPLASH);
         this.loadImages(this.IMAGES_THROW);
@@ -53,51 +57,108 @@ class ThrowableObject extends MovableObject {
     }
 
     /**
-     * Wirft die Flasche
+     * Throws the bottle in the specified direction
      */
     throw() {
         this.speedY = 25;
         this.applyGravity();
+        this.playThrowSound();
+        this.startThrowAnimation();
+    }
 
+    /**
+     * Plays the bottle throw sound effect
+     */
+    playThrowSound() {
         if (world?.audioManager) {
             world.audioManager.play('bottleThrow');
         }
+    }
 
+    /**
+     * Starts the throw animation and movement
+     */
+    startThrowAnimation() {
         this.throwInterval = setStoppableInterval(() => {
             if (!this.isSplashing) {
                 this.playAnimation(this.IMAGES_THROW);
-                this.x += 20;
+                this.moveBottle();
             }
         }, 50);
     }
 
     /**
-     * Spielt die Splash-Animation ab wenn die Flasche trifft
+     * Moves the bottle based on throw direction
+     */
+    moveBottle() {
+        const speed = 20;
+        this.x += this.throwLeft ? -speed : speed;
+    }
+
+    /**
+     * Plays the splash animation when bottle hits
      */
     playSplash() {
         if (this.isSplashing) return;
-
         this.isSplashing = true;
+        this.stopMovement();
+        this.resetAnimationIndex();
+        this.playBottleSplashSound();
+        this.animateSplash();
+    }
 
+    /**
+     * Stops bottle movement
+     */
+    stopMovement() {
         clearInterval(this.throwInterval);
-
         this.speedY = 0;
         this.speedX = 0;
+    }
 
+    /**
+     * Resets animation index for splash
+     */
+    resetAnimationIndex() {
         this.currentImage = 0;
+    }
 
+    /**
+     * Plays bottle splash sound
+     */
+    playBottleSplashSound() {
         if (world?.audioManager) {
             world.audioManager.play('bottleSplash');
         }
+    }
 
+    /**
+     * Animates the splash effect
+     */
+    animateSplash() {
         const splashInterval = setStoppableInterval(() => {
-            if (this.currentImage < this.IMAGES_SPLASH.length) {
-                let path = this.IMAGES_SPLASH[this.currentImage];
-                this.img = this.imageCache[path];
-                this.currentImage++;
+            if (this.shouldContinueSplash()) {
+                this.showNextSplashFrame();
             } else {
                 clearInterval(splashInterval);
             }
         }, 50);
+    }
+
+    /**
+     * Checks if splash animation should continue
+     * @returns {boolean} True if more frames remain
+     */
+    shouldContinueSplash() {
+        return this.currentImage < this.IMAGES_SPLASH.length;
+    }
+
+    /**
+     * Shows next frame of splash animation
+     */
+    showNextSplashFrame() {
+        let path = this.IMAGES_SPLASH[this.currentImage];
+        this.img = this.imageCache[path];
+        this.currentImage++;
     }
 }

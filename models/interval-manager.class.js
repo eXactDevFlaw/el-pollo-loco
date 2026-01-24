@@ -1,14 +1,14 @@
 /**
- * Zentrale Verwaltung aller Intervals im Spiel
+ * Central management of all intervals in the game
  */
 class IntervalManager {
     static intervals = [];
 
     /**
-     * Registriert ein neues Interval
-     * @param {Function} callback - Die auszuführende Funktion
-     * @param {number} delay - Verzögerung in Millisekunden
-     * @returns {number} Die Interval-ID
+     * Registers a new interval
+     * @param {Function} callback - The function to execute
+     * @param {number} delay - Delay in milliseconds
+     * @returns {number} The interval ID
      */
     static setInterval(callback, delay) {
         const intervalId = setInterval(callback, delay);
@@ -17,8 +17,8 @@ class IntervalManager {
     }
 
     /**
-     * Stoppt ein einzelnes Interval
-     * @param {number} intervalId - Die ID des zu stoppenden Intervals
+     * Stops a single interval
+     * @param {number} intervalId - ID of interval to stop
      */
     static clearInterval(intervalId) {
         clearInterval(intervalId);
@@ -29,7 +29,7 @@ class IntervalManager {
     }
 
     /**
-     * Stoppt alle registrierten Intervals
+     * Stops all registered intervals
      */
     static clearAllIntervals() {
         this.intervals.forEach(intervalId => {
@@ -39,8 +39,8 @@ class IntervalManager {
     }
 
     /**
-     * Gibt die Anzahl der aktiven Intervals zurück
-     * @returns {number} Anzahl aktiver Intervals
+     * Returns number of active intervals
+     * @returns {number} Number of active intervals
      */
     static getActiveCount() {
         return this.intervals.length;

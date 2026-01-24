@@ -1,5 +1,5 @@
 /**
- * Sammelbare Flasche als Munition für Wurfattacken
+ * Collectable bottle as ammunition for throwing attacks
  */
 class Flask extends DrawableObject {
     width = 80;
@@ -18,7 +18,7 @@ class Flask extends DrawableObject {
     ];
 
     /**
-     * Erstellt eine neue Flasche an zufälliger Position
+     * Creates a new flask at random position
      */
     constructor() {
         super();
@@ -30,7 +30,7 @@ class Flask extends DrawableObject {
     }
 
     /**
-     * Startet die Animation der Flasche
+     * Starts flask animation
      */
     animate() {
         setStoppableInterval(() => {
@@ -39,8 +39,8 @@ class Flask extends DrawableObject {
     }
 
     /**
-     * Spielt eine Animation ab
-     * @param {string[]} images - Array mit Bildpfaden
+     * Plays animation
+     * @param {string[]} images - Array of image paths
      */
     playAnimation(images) {
         let index = this.currentImage % images.length;

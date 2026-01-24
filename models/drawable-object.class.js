@@ -1,6 +1,6 @@
 /**
-* Basisklasse für alle zeichenbaren Objekte
-*/
+ * Base class for all drawable objects
+ */
 class DrawableObject {
     img;
     imageCache = {};
@@ -19,8 +19,8 @@ class DrawableObject {
     };
 
     /**
-     * Lädt ein einzelnes Bild
-     * @param {string} path - Pfad zum Bild
+     * Loads a single image
+     * @param {string} path - Path to the image
      */
     loadImage(path) {
         this.img = new Image();
@@ -28,8 +28,8 @@ class DrawableObject {
     }
 
     /**
-     * Lädt mehrere Bilder in den Cache
-     * @param {string[]} arr - Array mit Bildpfaden
+     * Loads multiple images into cache
+     * @param {string[]} arr - Array of image paths
      */
     loadImages(arr) {
         arr.forEach((path) => {
@@ -40,8 +40,8 @@ class DrawableObject {
     }
 
     /**
-     * Berechnet die Hitbox des Objekts
-     * @returns {Object} Hitbox mit left, right, top, bottom
+     * Calculates the hitbox of the object
+     * @returns {Object} Hitbox with left, right, top, bottom
      */
     getHitbox() {
         return {
@@ -53,8 +53,8 @@ class DrawableObject {
     }
 
     /**
-     * Zeichnet das Objekt auf das Canvas
-     * @param {CanvasRenderingContext2D} ctx - Canvas Context
+     * Draws the object on canvas
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
      */
     draw(ctx) {
         try {
@@ -66,11 +66,11 @@ class DrawableObject {
     }
 
     /**
-     * Zeichnet eine Rechteck-Hitbox um das Objekt
-     * @param {CanvasRenderingContext2D} ctx - Canvas Context
+     * Draws rectangle hitbox around object
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
      */
     drawRect(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
+        if (this.shouldDrawRect()) {
             ctx.beginPath();
             ctx.lineWidth = '2';
             ctx.strokeStyle = 'blue';
@@ -80,19 +80,52 @@ class DrawableObject {
     }
 
     /**
-     * Zeichnet die tatsächliche Hitbox mit Offsets
-     * @param {CanvasRenderingContext2D} ctx - Canvas Context
+     * Checks if rect should be drawn
+     * @returns {boolean} True if debug hitbox should show
+     */
+    shouldDrawRect() {
+        return this instanceof Character ||
+            this instanceof Chicken ||
+            this instanceof Endboss;
+    }
+
+    /**
+     * Draws actual hitbox with offsets
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
      */
     drawRectHitbox(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof Endboss || this instanceof Coin || this instanceof Flask) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = 'red';
-            ctx.rect(this.x + this.offsetHitbox.left,
-                this.y + this.offsetHitbox.top,
-                this.width - this.offsetHitbox.left - this.offsetHitbox.right,
-                this.height - this.offsetHitbox.top - this.offsetHitbox.bottom);
-            ctx.stroke();
+        if (this.shouldDrawHitbox()) {
+            this.renderHitbox(ctx);
         }
+    }
+
+    /**
+     * Checks if hitbox should be drawn
+     * @returns {boolean} True if object type should show hitbox
+     */
+    shouldDrawHitbox() {
+        return this instanceof Character ||
+            this instanceof Chicken ||
+            this instanceof SmallChicken ||
+            this instanceof Endboss ||
+            this instanceof Coin ||
+            this instanceof Flask;
+    }
+
+    /**
+     * Renders the hitbox rectangle
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     */
+    renderHitbox(ctx) {
+        ctx.beginPath();
+        ctx.lineWidth = '2';
+        ctx.strokeStyle = 'red';
+        ctx.rect(
+            this.x + this.offsetHitbox.left,
+            this.y + this.offsetHitbox.top,
+            this.width - this.offsetHitbox.left - this.offsetHitbox.right,
+            this.height - this.offsetHitbox.top - this.offsetHitbox.bottom
+        );
+        ctx.stroke();
     }
 }
