@@ -2,6 +2,8 @@
 
 A browser-based jump-and-run game built with vanilla JavaScript and object-oriented programming.
 
+![Preview](docs/preview.png)
+
 ## Live Demo
 
 [pollo-loco.lutz-boelling.de](https://pollo-loco.lutz-boelling.de)
